@@ -9,18 +9,21 @@
         "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\""
     },
     "dependencies": {
+        "@prisma/adapter-pg": "^7.4.0",
         "@prisma/client": "^7.4.0",
         "@prisma/extension-accelerate": "^3.0.1",
         "@supabase/supabase-js": "^2.97.0",
         "bcryptjs": "^3.0.3",
         "hono": "^4.11.10",
-        "jsonwebtoken": "^9.0.3"
+        "jsonwebtoken": "^9.0.3",
+        "pg": "^8.18.0"
     },
     "devDependencies": {
         "@cloudflare/workers-types": "^4.20260218.0",
         "@types/bcryptjs": "^2.4.6",
         "@types/jsonwebtoken": "^9.0.10",
         "@types/node": "^25.2.3",
+        "@types/pg": "^8.16.0",
         "concurrently": "^9.2.1",
         "prisma": "^7.4.0",
         "ts-node": "^10.9.2",

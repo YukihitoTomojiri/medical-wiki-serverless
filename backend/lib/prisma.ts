@@ -1,10 +1,10 @@
 import { PrismaClient } from '@prisma/client/edge'
-import { withAccelerate } from '@prisma/extension-accelerate'
+import { PrismaPg } from '@prisma/adapter-pg'
+import { Pool } from 'pg'
 
 export const getPrisma = (databaseUrl: string) => {
-    const prisma = new PrismaClient({
-        datasourceUrl: databaseUrl,
-    }).$extends(withAccelerate())
-
+    const pool = new Pool({ connectionString: databaseUrl })
+    const adapter = new PrismaPg(pool)
+    const prisma = new PrismaClient({ adapter })
     return prisma
 }
