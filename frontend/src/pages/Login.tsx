@@ -5,7 +5,7 @@ import { BookOpen, Eye, EyeOff, LogIn, Building2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 interface LoginProps {
-    onLogin: (user: User) => void;
+    onLogin: (user: User, token?: string) => void;
 }
 
 export default function Login({ onLogin }: LoginProps) {
@@ -23,7 +23,7 @@ export default function Login({ onLogin }: LoginProps) {
         try {
             const response = await api.login({ employeeId, password });
             if (response.success && response.user) {
-                onLogin(response.user);
+                onLogin(response.user, response.token);
             } else {
                 setError(response.message || 'ログインに失敗しました');
             }

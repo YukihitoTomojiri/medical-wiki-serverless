@@ -75,6 +75,10 @@ const getHeaders = (userId?: number): Record<string, string> => {
     if (userId) {
         headers['X-User-Id'] = userId.toString();
     }
+    const token = localStorage.getItem('token');
+    if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+    }
     return headers;
 };
 

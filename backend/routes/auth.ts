@@ -3,7 +3,12 @@ import { getPrisma } from '../lib/prisma'
 import { sign } from 'hono/jwt'
 import { env } from 'hono/adapter'
 
-const app = new Hono()
+type Bindings = {
+    DATABASE_URL: string
+    JWT_SECRET: string
+}
+
+const app = new Hono<{ Bindings: Bindings }>()
 
 app.post('/login', async (c) => {
     const prisma = getPrisma(c.env.DATABASE_URL as string)
@@ -22,9 +27,19 @@ app.post('/login', async (c) => {
 
     // Return user object as expected by frontend
     const { password: _, ...userWithoutPassword } = user
+
+    // Generate JWT token
+    const token = await sign({
+        id: user.id,
+        employeeId: user.employeeId,
+        role: user.role,
+        exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24 // 24 hours
+    }, c.env.JWT_SECRET || 'dev-secret')
+
     return c.json({
         success: true,
-        user: userWithoutPassword
+        user: userWithoutPassword,
+        token
     })
 })
 

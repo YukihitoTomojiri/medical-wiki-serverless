@@ -55,6 +55,7 @@ export interface LoginRequest {
 export interface LoginResponse {
     success: boolean;
     user?: User;
+    token?: string;
     message?: string;
 }
 
