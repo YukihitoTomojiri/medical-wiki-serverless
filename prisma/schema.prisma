@@ -1,0 +1,208 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id                 Int       @id @default(autoincrement())
+  employeeId         String    @unique @map("employee_id")
+  password           String
+  name               String
+  facility           String // Storing as string to match legacy structure
+  department         String // Storing as string to match legacy structure
+  role               Role
+  email              String?
+  paidLeaveDays      Float     @default(0.0) @map("paid_leave_days")
+  joinedDate         DateTime? @map("joined_date")
+  mustChangePassword Boolean   @default(false) @map("must_change_password")
+  invitationToken    String?   @map("invitation_token")
+  resetToken         String?   @map("reset_token")
+  resetTokenExpiry   DateTime? @map("reset_token_expiry")
+  lastSeenAt         DateTime? @map("last_seen_at")
+  createdAt          DateTime  @default(now()) @map("created_at")
+  updatedAt          DateTime  @updatedAt @map("updated_at")
+  deletedAt          DateTime? @map("deleted_at")
+
+  // Relations
+  paidLeaves        PaidLeave[]
+  trainingResponses TrainingResponse[]
+  progress          Progress[]
+  announcements     Announcement[] // Created announcements
+
+  @@map("users")
+}
+
+model Facility {
+  id        Int       @id @default(autoincrement())
+  name      String    @unique
+  createdAt DateTime  @default(now()) @map("created_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  departments Department[]
+
+  @@map("facilities")
+}
+
+model Department {
+  id         Int       @id @default(autoincrement())
+  name       String
+  facilityId Int       @map("facility_id")
+  createdAt  DateTime  @default(now()) @map("created_at")
+  deletedAt  DateTime? @map("deleted_at")
+
+  facility Facility @relation(fields: [facilityId], references: [id])
+
+  @@unique([facilityId, name, deletedAt])
+  @@map("departments")
+}
+
+model PaidLeave {
+  id              Int        @id @default(autoincrement())
+  userId          Int        @map("user_id")
+  type            RequestType @default(PAID_LEAVE)
+  durationType    DurationType? @map("duration_type")
+  startDate       DateTime   @map("start_date")
+  endDate         DateTime   @map("end_date")
+  startTime       String?    @map("start_time")
+  endTime         String?    @map("end_time")
+  reason          String
+  rejectionReason String?    @map("rejection_reason")
+  status          Status     @default(PENDING)
+  createdAt       DateTime   @default(now()) @map("created_at")
+  updatedAt       DateTime   @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("paid_leaves")
+}
+
+model Manual {
+  id         Int      @id @default(autoincrement())
+  title      String
+  content    String   @db.Text
+  category   String
+  authorName String   @map("author_name")
+  pdfUrl     String?  @map("pdf_url")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  progress Progress[]
+
+  @@map("manuals")
+}
+
+model Progress {
+  id       Int      @id @default(autoincrement())
+  userId   Int      @map("user_id")
+  manualId Int      @map("manual_id")
+  readAt   DateTime @default(now()) @map("read_at")
+
+  user   User   @relation(fields: [userId], references: [id])
+  manual Manual @relation(fields: [manualId], references: [id])
+
+  @@unique([userId, manualId])
+  @@map("progress")
+}
+
+model TrainingEvent {
+  id           Int      @id @default(autoincrement())
+  title        String
+  description  String?  @db.Text
+  startTime    DateTime @map("start_time")
+  endTime      DateTime @map("end_time")
+  videoUrl     String?  @map("video_url")
+  videoUrl2    String?  @map("video_url_2")
+  videoUrl3    String?  @map("video_url_3")
+  materialsUrl String?  @map("materials_url")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  responses TrainingResponse[]
+
+  @@map("training_events")
+}
+
+model TrainingResponse {
+  id            Int      @id @default(autoincrement())
+  userId        Int      @map("user_id")
+  eventId       Int      @map("event_id")
+  attendedAt    DateTime @default(now()) @map("attended_at")
+  comprehension Int
+  clarity       Int
+  comment       String?  @db.Text
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  user  User          @relation(fields: [userId], references: [id])
+  event TrainingEvent @relation(fields: [eventId], references: [id])
+
+  @@unique([userId, eventId])
+  @@map("training_responses")
+}
+
+model Announcement {
+  id             Int       @id @default(autoincrement())
+  title          String
+  content        String    @db.Text
+  priority       Priority  @default(NORMAL)
+  displayUntil   DateTime  @map("display_until")
+  facilityId     Int?      @map("facility_id") // For facility-specific targets
+  createdBy      Int       @map("created_by")
+  relatedType    RelatedType? @map("related_type")
+  relatedWikiId  Int?      @map("related_wiki_id")
+  relatedEventId Int?      @map("related_event_id")
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+
+  creator User @relation(fields: [createdBy], references: [id])
+
+  @@map("announcements")
+}
+
+model SystemLog {
+  id        Int      @id @default(autoincrement())
+  level     String
+  message   String
+  details   String?  @db.Text
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("system_logs")
+}
+
+enum Role {
+  ADMIN
+  USER
+  DEVELOPER
+}
+
+enum Status {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum RequestType {
+  PAID_LEAVE
+  ABSENCE
+  LATE
+  EARLY_DEPARTURE
+}
+
+enum DurationType {
+  FULL_DAY
+  HALF_DAY_AM
+  HALF_DAY_PM
+}
+
+enum Priority {
+  HIGH
+  NORMAL
+  LOW
+}
+
+enum RelatedType {
+  WIKI
+  TRAINING_EVENT
+}
