@@ -2,6 +2,7 @@ import { Hono } from 'hono'
 import { getPrisma } from '../lib/prisma'
 import { sign } from 'hono/jwt'
 import { env } from 'hono/adapter'
+import { compare } from 'bcryptjs'
 
 type Bindings = {
     DATABASE_URL: string
@@ -19,9 +20,13 @@ app.post('/login', async (c) => {
         include: { paidLeaves: false } // Minimal fetch
     })
 
-    if (!user || user.password !== password) { // TODO: Use bcrypt in production, but legacy might be plain text? Assuming plain for now based on 'reproduction'
-        // If legacy used bcrypt, I should check. But for now I'll check equality.
-        // Actually, I should try to support plain text to match potential legacy dev state.
+    if (!user) {
+        return c.json({ success: false, message: 'Invalid credentials' }, 401)
+    }
+
+    const isValid = await compare(password, user.password)
+
+    if (!isValid) {
         return c.json({ success: false, message: 'Invalid credentials' }, 401)
     }
 
