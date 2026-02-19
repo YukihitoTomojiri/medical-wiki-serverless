@@ -360,3 +360,26 @@ UIコンポーネントをMaterial Design 3の形状ガイドラインに準拠�
 - **権限管理**: 管理者は自施設のお知らせのみ、開発者は全施設共通のお知らせを作成できるように制御されています。一般ユーザーは、自身の所属施設のお知らせと、全施設共通のお知らせの両方を受信します。
 - **サイドメニュー改善**: ADMINセクションに「お知らせ管理」メニューを追加し、アクティブ状態のハイライト判定を`end`プロパティを用いて完全修正しました（ダッシュボードが他の管理者メニュー選択時にもハイライトされる問題を解消）。
 - **UI刷新**: お知らせ管理画面のヘッダーを`PageHeader`コンポーネントを使用するように変更し、他の管理画面（組織管理など）と統一されたMaterial Design 3デザイン（背景ブロック、アイコン、説明文）を適用しました。
+
+## 24. Serverless Migration (2026-02-19)
+
+### 🚀 Backend Architecture 刷新
+Java (Spring Boot) バックエンドから、Cloudflare Workers (Hono) + Supabase への完全移行を行いました。
+
+#### 変更の背景・目的
+- **コスト削減**: サーバーレス化により、待機時間のコストをゼロに。
+- **パフォーマンス**: エッジコンピューティング (Cloudflare Workers) による低遅延化。
+- **開発効率**: TypeScript (Frontend/Backend共通) によるユニファイド開発体験。
+
+#### 新しいアーキテクチャ
+- **Runtime**: Cloudflare Workers
+- **Framework**: Hono (Ultra-fast web framework)
+- **Database**: Supabase (PostgreSQL) + Prisma Accelerate
+- **Storage**: Supabase Storage (画像・ファイル管理)
+- **Frontend**: Vite proxy による統合開発環境 (`npm run dev` で一括起動)
+
+#### セットアップ・変更点
+- `backend/` ディレクトリを Hono (TypeScript) プロジェクトとして再構築。
+- `pom.xml`, `src/main/java` 等の旧Java資産を削除。
+- データベース接続を Prisma + Supabase へ変更し、スキーマ定義 (`prisma/schema.prisma`) を刷新。
+- ファイルアップロード機能を Supabase Storage へ移行。
