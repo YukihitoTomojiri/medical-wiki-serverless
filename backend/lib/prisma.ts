@@ -3,11 +3,7 @@ import { withAccelerate } from '@prisma/extension-accelerate'
 
 export const getPrisma = (databaseUrl: string) => {
     const prisma = new PrismaClient({
-        datasources: {
-            db: {
-                url: databaseUrl,
-            },
-        },
+        datasourceUrl: databaseUrl,
     }).$extends(withAccelerate())
 
     return prisma
