@@ -1,0 +1,69 @@
+import {
+    Users, BookOpen, LayoutDashboard, Database, Building2, Bell
+} from 'lucide-react';
+import { useMemo } from 'react';
+import { NavigationDrawer } from './ui/NavigationDrawer';
+import { useAuth } from '../context/AuthContext';
+
+interface SidebarProps {
+    onClose?: () => void;
+}
+
+export default function Sidebar({ onClose }: SidebarProps) {
+    const { user, isAdmin, isDeveloper } = useAuth();
+
+    // Fallback if user is null (shouldn't happen in protected routes)
+    if (!user) return null;
+
+    const mainItems = useMemo(() => [
+        { path: '/my-dashboard', label: 'Myダッシュボード', icon: LayoutDashboard },
+        { path: '/manuals', label: 'マニュアル', icon: BookOpen },
+        { path: '/training', label: '研修・アンケート', icon: BookOpen },
+    ], []);
+
+    const adminItems = useMemo(() => [
+        { path: '/admin', label: '管理者ダッシュボード', icon: LayoutDashboard, roles: ['ADMIN', 'DEVELOPER'], end: true },
+        { path: '/admin/users', label: 'ユーザー管理', icon: Users, roles: ['ADMIN', 'DEVELOPER'] },
+        { path: '/admin/announcements', label: 'お知らせ管理', icon: Bell, roles: ['ADMIN', 'DEVELOPER'] },
+        { path: '/admin/training', label: '研修管理', icon: BookOpen, roles: ['ADMIN', 'DEVELOPER'] },
+        { path: '/admin/organization', label: '組織管理', icon: Building2, roles: ['ADMIN', 'DEVELOPER'] },
+    ], []);
+
+    const devItems = useMemo(() => [
+        { path: '/developer', label: '開発者ダッシュボード', icon: Database, roles: ['DEVELOPER'] },
+    ], []);
+
+    return (
+        <div className="flex flex-col h-full bg-m3-surface-container-low border-r border-m3-outline-variant/20 font-sans">
+            {/* Branding Area for Mobile/Drawer */}
+            {/* Branding Area removed for Modern Header integration */}
+            <div className="h-4" />
+
+            <nav className="flex-1 overflow-y-auto px-2 pb-32 flex flex-col">
+                <div className="space-y-6">
+                    <div>
+                        <div className="px-6 mb-2 text-xs font-bold text-m3-outline uppercase tracking-wider">Main</div>
+                        <NavigationDrawer items={mainItems} user={user} onItemClick={onClose} />
+                    </div>
+
+                    {(isAdmin || isDeveloper) && (
+                        <div>
+                            <div className="px-6 mb-2 text-xs font-bold text-m3-outline uppercase tracking-wider">Admin</div>
+                            <NavigationDrawer items={adminItems} user={user} onItemClick={onClose} />
+                        </div>
+                    )}
+                </div>
+
+                {/* Dynamic Spacer to push Developer Menu towards the bottom (approx 1/4 of viewport) */}
+                <div className="flex-1 min-h-[100px]" />
+
+                {isDeveloper && (
+                    <div className="mt-auto">
+                        <div className="px-6 mb-2 text-xs font-bold text-m3-outline uppercase tracking-wider">System</div>
+                        <NavigationDrawer items={devItems} user={user} onItemClick={onClose} />
+                    </div>
+                )}
+            </nav>
+        </div>
+    );
+}

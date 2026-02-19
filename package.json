@@ -1,0 +1,26 @@
+{
+    "name": "medical-wiki-lms",
+    "version": "1.0.0",
+    "private": true,
+    "scripts": {
+        "test": "npm --prefix frontend test",
+        "dev": "docker compose up"
+    },
+    "dependencies": {
+        "@prisma/client": "^7.4.0",
+        "@supabase/supabase-js": "^2.97.0",
+        "bcryptjs": "^3.0.3",
+        "hono": "^4.11.10",
+        "jsonwebtoken": "^9.0.3"
+    },
+    "devDependencies": {
+        "@cloudflare/workers-types": "^4.20260218.0",
+        "@types/bcryptjs": "^2.4.6",
+        "@types/jsonwebtoken": "^9.0.10",
+        "@types/node": "^25.2.3",
+        "prisma": "^7.4.0",
+        "ts-node": "^10.9.2",
+        "typescript": "^5.9.3",
+        "wrangler": "^4.66.0"
+    }
+}

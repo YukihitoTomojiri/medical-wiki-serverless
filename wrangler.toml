@@ -1,0 +1,7 @@
+name = "medical-wiki-lms-serverless"
+main = "backend/index.ts"
+compatibility_date = "2024-02-19"
+
+[vars]
+# SUPABASE_URL = "..."
+# SUPABASE_ANON_KEY = "..."

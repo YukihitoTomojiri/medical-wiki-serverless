@@ -1,0 +1,11 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    background-color: #FBFCFD;
+    color: #191C1C;
+    @apply antialiased font-sans leading-relaxed tracking-wide;
+  }
+}
