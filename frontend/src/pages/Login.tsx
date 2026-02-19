@@ -72,7 +72,7 @@ export default function Login({ onLogin }: LoginProps) {
                                 value={employeeId}
                                 onChange={(e) => setEmployeeId(e.target.value)}
                                 className="w-full px-4 py-4 text-base rounded-m3-lg border border-m3-outline-variant bg-transparent focus:border-m3-primary focus:border-2 focus:ring-0 outline-none transition-all font-medium placeholder:text-m3-on-surface-variant/40 text-m3-on-surface"
-                                placeholder="例: user001"
+                                placeholder="例: dev001"
                                 required
                             />
                         </div>
@@ -131,18 +131,20 @@ export default function Login({ onLogin }: LoginProps) {
                     {/* Demo accounts */}
                     <div className="mt-6 pt-6 border-t border-m3-outline-variant/30">
                         <p className="text-xs text-m3-on-surface-variant mb-3 font-medium">テストアカウント:</p>
-                        <div className="grid grid-cols-3 gap-2 text-xs">
-                            <div className="p-2.5 bg-m3-surface-container rounded-m3-md">
-                                <p className="font-bold text-m3-on-surface">開発者</p>
-                                <p className="text-m3-on-surface-variant mt-0.5">dev / admin123</p>
+                        <div className="grid grid-cols-2 gap-3 text-xs">
+                            <div className="p-3 bg-m3-surface-container rounded-m3-md border border-m3-outline-variant/20">
+                                <p className="font-bold text-m3-on-surface flex items-center gap-1.5">
+                                    <span className="w-2 h-2 rounded-full bg-orange-500"></span>
+                                    開発者
+                                </p>
+                                <p className="text-m3-on-surface-variant mt-1 font-mono">dev001 / password123</p>
                             </div>
-                            <div className="p-2.5 bg-m3-surface-container rounded-m3-md">
-                                <p className="font-bold text-m3-on-surface">管理者</p>
-                                <p className="text-m3-on-surface-variant mt-0.5">admin / admin123</p>
-                            </div>
-                            <div className="p-2.5 bg-m3-surface-container rounded-m3-md">
-                                <p className="font-bold text-m3-on-surface">一般職員</p>
-                                <p className="text-m3-on-surface-variant mt-0.5">honkan001 / user123</p>
+                            <div className="p-3 bg-m3-surface-container rounded-m3-md border border-m3-outline-variant/20">
+                                <p className="font-bold text-m3-on-surface flex items-center gap-1.5">
+                                    <span className="w-2 h-2 rounded-full bg-blue-500"></span>
+                                    管理者
+                                </p>
+                                <p className="text-m3-on-surface-variant mt-1 font-mono">admin001 / password123</p>
                             </div>
                         </div>
                     </div>
