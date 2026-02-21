@@ -2,7 +2,8 @@ import { useState, useMemo } from 'react';
 import { User } from '../types';
 import ComplianceDashboard from '../components/ComplianceDashboard';
 import OrganizationStatsDashboard from '../components/OrganizationStatsDashboard';
-import { LayoutDashboard, BarChart3 } from 'lucide-react';
+import FeedbackDashboard from '../components/FeedbackDashboard';
+import { LayoutDashboard, BarChart3, MessageSquareHeart } from 'lucide-react';
 import PageHeader from '../components/layout/PageHeader';
 
 export default function AdminDashboard() {
@@ -13,6 +14,7 @@ export default function AdminDashboard() {
         const commonTabs = [
             { id: 'dashboard', label: '学習進捗', icon: LayoutDashboard, color: 'indigo' },
             { id: 'organization_stats', label: '組織統計', icon: BarChart3, color: 'teal' },
+            { id: 'feedback', label: '現場の声', icon: MessageSquareHeart, color: 'rose' },
         ];
         return commonTabs;
     }, [isDev]);
@@ -25,6 +27,7 @@ export default function AdminDashboard() {
         indigo: { activeBg: 'bg-indigo-100', activeText: 'text-indigo-900', activeAccent: 'bg-indigo-400/30', hoverIcon: 'group-hover:text-indigo-400', contentBg: 'bg-indigo-100' },
         teal: { activeBg: 'bg-teal-100', activeText: 'text-teal-900', activeAccent: 'bg-teal-400/30', hoverIcon: 'group-hover:text-teal-400', contentBg: 'bg-teal-100' },
         amber: { activeBg: 'bg-amber-100', activeText: 'text-amber-900', activeAccent: 'bg-amber-400/30', hoverIcon: 'group-hover:text-amber-400', contentBg: 'bg-amber-100' },
+        rose: { activeBg: 'bg-rose-100', activeText: 'text-rose-900', activeAccent: 'bg-rose-400/30', hoverIcon: 'group-hover:text-rose-400', contentBg: 'bg-rose-50/50' },
     };
 
     return (
@@ -36,7 +39,7 @@ export default function AdminDashboard() {
             />
 
             {/* Folder-style Tab Navigation */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 -mb-2 relative z-10 px-4 md:px-6 mt-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-2 -mb-2 relative z-10 px-4 md:px-6 mt-6">
                 {tabs.map((tab) => {
                     const Icon = tab.icon;
                     const isActive = activeTab === tab.id;
@@ -67,6 +70,7 @@ export default function AdminDashboard() {
                 <div className="animate-in fade-in slide-in-from-bottom-4 duration-300">
                     {activeTab === 'dashboard' && <ComplianceDashboard />}
                     {activeTab === 'organization_stats' && <OrganizationStatsDashboard />}
+                    {activeTab === 'feedback' && <FeedbackDashboard />}
                 </div>
             </div>
         </div>
