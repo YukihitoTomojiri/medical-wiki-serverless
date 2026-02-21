@@ -13,7 +13,9 @@ import {
     Send,
     AlertTriangle,
     BookOpen,
-    Activity
+    Activity,
+    FileText,
+    Clock
 } from 'lucide-react';
 import PageHeader from './PageHeader';
 
@@ -26,6 +28,19 @@ export default function ComplianceDashboard() {
     const [departmentFilter, setDepartmentFilter] = useState('');
     const [expandedUser, setExpandedUser] = useState<number | null>(null);
     const [exporting, setExporting] = useState(false);
+
+    // Mock data for new widgets (to be replaced with actual API calls in the future)
+    const [trainingProgressPreview] = useState<any[]>([
+        { id: 1, userName: '山田 太郎', employeeId: 'EMP001', trainingTitle: '2024年 医療安全基礎研修', dueDate: '2024-03-31', daysLeft: 5 },
+        { id: 2, userName: '鈴木 花子', employeeId: 'EMP002', trainingTitle: '情報セキュリティ研修', dueDate: '2024-03-28', daysLeft: 2 },
+        { id: 3, userName: '佐藤 次郎', employeeId: 'EMP003', trainingTitle: '感染管理マニュアルの遵守', dueDate: '2024-04-15', daysLeft: 20 },
+    ]);
+
+    const [recentWikiUpdates] = useState<any[]>([
+        { id: 1, title: '電子カルテ入力ガイドラインの改訂について', author: 'システム管理者', updatedAt: new Date().toISOString(), isNew: true },
+        { id: 2, title: 'インフルエンザ対応マニュアル 第4版', author: '感染制御部', updatedAt: new Date(Date.now() - 86400000).toISOString(), isNew: false },
+        { id: 3, title: '新規採用職員オリエンテーション資料', author: '人事部', updatedAt: new Date(Date.now() - 172800000).toISOString(), isNew: false },
+    ]);
 
     useEffect(() => {
         loadData();
@@ -170,6 +185,72 @@ export default function ComplianceDashboard() {
                         )) : (
                             <div className="text-center text-xs text-gray-400 py-2">データなし</div>
                         )}
+                    </div>
+                </div>
+            </div>
+
+            {/* Added Widgets Row */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                {/* Training Progress Widget (Orange Accent) */}
+                <div className="bg-white rounded-2xl p-5 border border-orange-100 shadow-sm flex flex-col">
+                    <div className="flex items-center justify-between mb-4">
+                        <div className="flex items-center gap-2">
+                            <BookOpen size={18} className="text-orange-500" />
+                            <h3 className="font-bold text-gray-800">未完了の研修（期限間近）</h3>
+                        </div>
+                        <span className="text-[10px] font-bold text-orange-600 bg-orange-50 px-2 py-1 rounded-md">要確認</span>
+                    </div>
+                    <div className="space-y-3 flex-1 overflow-y-auto max-h-[240px] pr-1">
+                        {trainingProgressPreview.map(item => (
+                            <div key={item.id} className="flex justify-between items-center bg-orange-50/40 hover:bg-orange-50/80 transition-colors p-3 rounded-xl border border-orange-50">
+                                <div className="min-w-0 pr-4">
+                                    <p className="font-bold text-sm text-gray-800 truncate">{item.userName} <span className="text-xs font-normal text-gray-500">({item.employeeId})</span></p>
+                                    <p className="text-xs text-gray-600 mt-0.5 truncate" title={item.trainingTitle}>{item.trainingTitle}</p>
+                                </div>
+                                <div className="text-right shrink-0">
+                                    <span className={`text-[10px] font-bold px-2 py-1 rounded-md ${item.daysLeft <= 3 ? 'bg-red-100 text-red-600' : 'bg-orange-100 text-orange-600'}`}>
+                                        残り{item.daysLeft}日
+                                    </span>
+                                    <p className="text-[10px] text-gray-400 mt-1 flex items-center justify-end gap-1">
+                                        <Clock size={10} /> {item.dueDate}
+                                    </p>
+                                </div>
+                            </div>
+                        ))}
+                        {trainingProgressPreview.length === 0 && (
+                            <div className="text-center text-xs text-gray-400 py-4">該当者なし</div>
+                        )}
+                    </div>
+                </div>
+
+                {/* Recent Wiki Updates Widget (Blue Accent) */}
+                <div className="bg-white rounded-2xl p-5 border border-blue-100 shadow-sm flex flex-col">
+                    <div className="flex items-center justify-between mb-4">
+                        <div className="flex items-center gap-2">
+                            <FileText size={18} className="text-blue-500" />
+                            <h3 className="font-bold text-gray-800">Wikiの最近の更新</h3>
+                        </div>
+                        <span className="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded-md">最新情報</span>
+                    </div>
+                    <div className="space-y-3 flex-1 overflow-y-auto max-h-[240px] pr-1">
+                        {recentWikiUpdates.map(item => (
+                            <div key={item.id} className="flex justify-between items-center bg-blue-50/40 hover:bg-blue-50/80 transition-colors p-3 rounded-xl border border-blue-50">
+                                <div className="min-w-0 pr-4">
+                                    <div className="flex items-center gap-2">
+                                        {item.isNew && <span className="text-[10px] font-bold bg-blue-500 text-white px-1.5 py-0.5 rounded shrink-0">NEW</span>}
+                                        <p className="font-bold text-sm text-gray-800 truncate" title={item.title}>{item.title}</p>
+                                    </div>
+                                    <p className="text-xs text-gray-500 mt-0.5 flex items-center gap-1">
+                                        <Users size={10} /> {item.author}
+                                    </p>
+                                </div>
+                                <div className="text-right shrink-0">
+                                    <span className="text-[10px] font-bold text-gray-500 bg-gray-100 px-2 py-1 rounded-md">
+                                        {new Date(item.updatedAt).toLocaleDateString('ja-JP', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                                    </span>
+                                </div>
+                            </div>
+                        ))}
                     </div>
                 </div>
             </div>

@@ -5,14 +5,10 @@ import { User, Progress } from '../types';
 import {
     BookOpen,
     CheckCircle2,
-    Calendar,
-    Clock,
-    XCircle,
     LayoutDashboard,
     AlertCircle
 } from 'lucide-react';
-import { useNavigate, useSearchParams, Link } from 'react-router-dom';
-import PaidLeaveRequestForm from '../components/PaidLeaveRequestForm';
+import { useSearchParams, Link } from 'react-router-dom';
 import DashboardAnnouncements from '../components/DashboardAnnouncements';
 
 interface MyDashboardProps {
@@ -20,37 +16,19 @@ interface MyDashboardProps {
 }
 
 export default function MyDashboard({ user }: MyDashboardProps) {
-    const navigate = useNavigate();
     const [searchParams] = useSearchParams();
     const tabParam = searchParams.get('tab');
 
-    const [dashboardData, setDashboardData] = useState<any>(null);
     const [progress, setProgress] = useState<Progress[]>([]);
-    const [leaveRequests, setLeaveRequests] = useState<any[]>([]);
-    const [leaveStatus, setLeaveStatus] = useState<any>(null);
     const [loading, setLoading] = useState(true);
-    const [activeTab, setActiveTab] = useState<'STUDY' | 'LEAVE' | 'NOTICE'>(() => {
+    const [activeTab, setActiveTab] = useState<'STUDY' | 'NOTICE'>(() => {
         if (tabParam === 'notice') return 'NOTICE';
-        if (tabParam === 'leave') return 'LEAVE';
         return 'STUDY';
     });
     const [trainingEvents, setTrainingEvents] = useState<any[]>([]);
     const [trainingResponses, setTrainingResponses] = useState<any[]>([]);
     const [announcements, setAnnouncements] = useState<any[]>([]);
     const [readAnnouncementIds, setReadAnnouncementIds] = useState<number[]>([]);
-
-    const [showLeaveForm, setShowLeaveForm] = useState(false);
-
-    // Leave Form State
-    const [requestType, setRequestType] = useState('PAID_LEAVE');
-    const [durationType, setDurationType] = useState('FULL_DAY');
-    const [startDate, setStartDate] = useState('');
-    const [endDate, setEndDate] = useState('');
-    const [startTime, setStartTime] = useState('');
-    const [endTime, setEndTime] = useState('');
-    const [reason, setReason] = useState('');
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const [submitError, setSubmitError] = useState<string | null>(null);
 
     const [historyStartDate] = useState(() => {
         const d = new Date();
@@ -64,7 +42,7 @@ export default function MyDashboard({ user }: MyDashboardProps) {
 
     const loadData = async () => {
         try {
-            const [dashData, progressData, historyData, statusData, eventsData, responsesData, announcementData] = await Promise.all([
+            const [, progressData, , , eventsData, responsesData, announcementData] = await Promise.all([
                 api.getMyDashboard(user.id),
                 api.getMyProgress(user.id),
                 api.getMyHistory(user.id, historyStartDate),
@@ -73,10 +51,7 @@ export default function MyDashboard({ user }: MyDashboardProps) {
                 api.getMyTrainingResponses(user.id),
                 api.getAnnouncements(user.id)
             ]);
-            setDashboardData(dashData);
             setProgress(progressData);
-            setLeaveRequests(historyData);
-            setLeaveStatus(statusData);
             setTrainingEvents(eventsData);
             setTrainingResponses(responsesData);
             setAnnouncements(announcementData);
@@ -93,58 +68,7 @@ export default function MyDashboard({ user }: MyDashboardProps) {
         }
     };
 
-    const handleSubmitLeave = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setIsSubmitting(true);
-        setSubmitError(null);
-        try {
-            if (requestType === 'PAID_LEAVE') {
-                let mappedType = 'FULL';
-                if (durationType === 'HALF_DAY_AM') mappedType = 'HALF_AM';
-                if (durationType === 'HALF_DAY_PM') mappedType = 'HALF_PM';
 
-                await api.submitPaidLeave(user.id, startDate, endDate, reason, mappedType);
-            } else {
-                const finalStartTime = (requestType === 'LATE' || requestType === 'EARLY_DEPARTURE') ? (startTime || null) : null;
-                const finalEndTime = (requestType === 'LATE' || requestType === 'EARLY_DEPARTURE') ? (endTime || null) : null;
-
-                await api.submitAttendanceRequest(
-                    user.id,
-                    requestType,
-                    null,
-                    startDate,
-                    endDate,
-                    finalStartTime as any,
-                    finalEndTime as any,
-                    reason
-                );
-            }
-
-            setStartDate('');
-            setEndDate('');
-            setStartTime('');
-            setEndTime('');
-            setReason('');
-            setRequestType('PAID_LEAVE');
-            setDurationType('FULL_DAY');
-
-            // Redirect to success page instead of alert
-            navigate('/submission-success');
-        } catch (error: any) {
-            console.error('Submission failed:', error);
-            setSubmitError(error.message || '申請に失敗しました');
-        } finally {
-            setIsSubmitting(false);
-        }
-    };
-
-    const getLeaveStatusBadge = (status: string) => {
-        switch (status) {
-            case 'APPROVED': return <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800"><CheckCircle2 size={12} /> 承認済み</span>;
-            case 'REJECTED': return <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800"><XCircle size={12} /> 却下</span>;
-            default: return <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800"><Clock size={12} /> 申請中</span>;
-        }
-    };
 
     if (loading) return <div className="p-12 text-center text-gray-400">Loading Dashboard...</div>;
 
@@ -161,7 +85,7 @@ export default function MyDashboard({ user }: MyDashboardProps) {
 
             {/* Summary Cards (Tabs) */}
             {/* Summary Cards (Tabs) */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-2 -mb-2 relative z-10 px-4 md:px-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 -mb-2 relative z-10 px-4 md:px-6">
                 {/* Card 1: Study */}
                 <button
                     onClick={() => setActiveTab('STUDY')}
@@ -183,26 +107,6 @@ export default function MyDashboard({ user }: MyDashboardProps) {
                     )}
                 </button>
 
-                {/* Card 2: Leave */}
-                <button
-                    onClick={() => setActiveTab('LEAVE')}
-                    className={`relative overflow-hidden rounded-t-2xl p-5 text-left transition-all duration-300 group ${activeTab === 'LEAVE'
-                        ? 'bg-emerald-100 text-emerald-900 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-20 pb-8'
-                        : 'bg-transparent text-gray-500 hover:bg-gray-50 z-0 border-b border-gray-200 pb-5'
-                        }`}
-                >
-                    <div className="flex items-center justify-between mb-2">
-                        <span className={`text-xs font-black uppercase tracking-wider ${activeTab === 'LEAVE' ? 'text-emerald-900' : 'text-gray-400'}`}>有給休暇</span>
-                        <Calendar className={activeTab === 'LEAVE' ? 'text-emerald-700' : 'text-gray-300 group-hover:text-emerald-400'} size={20} />
-                    </div>
-                    <div className="flex items-baseline gap-2">
-                        <span className={`text-2xl font-black ${activeTab === 'LEAVE' ? 'text-emerald-950' : 'text-gray-400'}`}>{leaveStatus?.remainingDays ?? dashboardData?.paidLeaveDays ?? 0}</span>
-                        <span className={`text-xs font-bold ${activeTab === 'LEAVE' ? 'text-emerald-800/70' : 'text-gray-300'}`}>日の残日数</span>
-                    </div>
-                    {activeTab === 'LEAVE' && (
-                        <div className="absolute top-0 left-0 w-full h-1 bg-emerald-400/30" />
-                    )}
-                </button>
 
                 {/* Card 3: Notices */}
                 <button
@@ -243,10 +147,7 @@ export default function MyDashboard({ user }: MyDashboardProps) {
 
             {/* Dynamic Content Area */}
             {/* Dynamic Content Area */}
-            <div className={`rounded-3xl p-6 transition-colors duration-300 shadow-sm relative z-0 ${activeTab === 'STUDY' ? 'bg-orange-100' :
-                activeTab === 'LEAVE' ? 'bg-emerald-100' :
-                    'bg-blue-100'
-                }`}>
+            <div className={`rounded-3xl p-6 transition-colors duration-300 shadow-sm relative z-0 ${activeTab === 'STUDY' ? 'bg-orange-100' : 'bg-blue-100'}`}>
                 <div className="animate-in fade-in slide-in-from-bottom-4 duration-300">
                     {activeTab === 'STUDY' && (
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -305,151 +206,7 @@ export default function MyDashboard({ user }: MyDashboardProps) {
                         </div>
                     )}
 
-                    {activeTab === 'LEAVE' && (
-                        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                            {/* Leave Status & Application Form */}
-                            <div className="lg:col-span-12 xl:col-span-7 space-y-6">
-                                {/* Obligation Progress */}
-                                <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-                                    <h3 className="font-bold text-gray-800 mb-4">有給休暇取得状況</h3>
-                                    {leaveStatus && leaveStatus.obligatoryTarget > 0 ? (
-                                        <div className="space-y-4">
-                                            <div className="flex justify-between items-end">
-                                                <div>
-                                                    <p className="text-xs text-gray-500 font-bold uppercase mb-1">義務取得日数</p>
-                                                    <p className="text-2xl font-black text-gray-800">{leaveStatus.obligatoryDaysTaken} <span className="text-sm text-gray-400 font-bold">/ {leaveStatus.obligatoryTarget}日</span></p>
-                                                </div>
-                                                <div className="text-right">
-                                                    <span className={`px-3 py-1 rounded-full text-xs font-bold ${leaveStatus.isObligationMet ? 'bg-emerald-100 text-emerald-700' : 'bg-orange-100 text-orange-700'}`}>
-                                                        {leaveStatus.isObligationMet ? "目標達成！" : "あと" + (leaveStatus.obligatoryTarget - leaveStatus.obligatoryDaysTaken) + "日不足"}
-                                                    </span>
-                                                </div>
-                                            </div>
-                                            <div className="h-3 w-full bg-gray-100 rounded-full overflow-hidden">
-                                                <div
-                                                    className={`h-full rounded-full transition-all duration-1000 ${leaveStatus.isObligationMet ? 'bg-emerald-500' : 'bg-orange-400'}`}
-                                                    style={{ width: `${Math.min(100, (leaveStatus.obligatoryDaysTaken / leaveStatus.obligatoryTarget) * 100)}%` }}
-                                                />
-                                            </div>
-                                            <p className="text-xs text-gray-400">※ 年間5日の有給休暇取得が義務付けられています。</p>
-                                        </div>
-                                    ) : (
-                                        <p className="text-sm text-gray-400">現在の取得義務情報はありません。</p>
-                                    )}
-                                </div>
 
-                                {/* Application Form */}
-                                <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-                                    <div className="flex items-center justify-between mb-4">
-                                        <h3 className="font-bold text-gray-800">新規申請</h3>
-                                        <button
-                                            onClick={() => setShowLeaveForm(!showLeaveForm)}
-                                            className="text-xs font-bold text-emerald-600 hover:text-emerald-700 bg-emerald-50 hover:bg-emerald-100 px-3 py-1.5 rounded-lg transition-colors"
-                                        >
-                                            {showLeaveForm ? '折りたたむ' : 'フォームを表示'}
-                                        </button>
-                                    </div>
-
-                                    {showLeaveForm && (
-                                        <div className="animate-in fade-in slide-in-from-top-2">
-                                            <div className="mb-4">
-                                                <label className="block text-xs font-bold text-gray-500 mb-1">申請種別</label>
-                                                <select
-                                                    value={requestType}
-                                                    onChange={(e) => setRequestType(e.target.value)}
-                                                    className="w-full p-2 rounded-lg border border-gray-200 bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
-                                                >
-                                                    <option value="PAID_LEAVE">有給休暇</option>
-                                                    <option value="ABSENCE">欠勤</option>
-                                                    <option value="LATE">遅刻</option>
-                                                    <option value="EARLY_DEPARTURE">早退</option>
-                                                </select>
-                                            </div>
-
-                                            {requestType === 'PAID_LEAVE' ? (
-                                                <PaidLeaveRequestForm userId={user.id} onSuccess={() => {
-                                                    loadData();
-                                                    navigate('/submission-success');
-                                                }} />
-                                            ) : (
-                                                <form onSubmit={handleSubmitLeave} className="space-y-4">
-                                                    <div className="grid grid-cols-2 gap-4">
-                                                        <div>
-                                                            <label className="block text-xs font-bold text-gray-500">開始日</label>
-                                                            <input type="date" required value={startDate} onChange={e => setStartDate(e.target.value)} className="w-full p-2 border rounded-lg bg-gray-50 text-sm" />
-                                                        </div>
-                                                        <div>
-                                                            <label className="block text-xs font-bold text-gray-500">終了日</label>
-                                                            <input type="date" required value={endDate} onChange={e => setEndDate(e.target.value)} className="w-full p-2 border rounded-lg bg-gray-50 text-sm" />
-                                                        </div>
-                                                    </div>
-                                                    {(requestType === 'LATE' || requestType === 'EARLY_DEPARTURE') && (
-                                                        <div className="grid grid-cols-2 gap-4">
-                                                            <div>
-                                                                <label className="block text-xs font-bold text-gray-500">開始時間</label>
-                                                                <input type="time" value={startTime} onChange={e => setStartTime(e.target.value)} className="w-full p-2 border rounded-lg bg-gray-50 text-sm" />
-                                                            </div>
-                                                            <div>
-                                                                <label className="block text-xs font-bold text-gray-500">終了時間</label>
-                                                                <input type="time" value={endTime} onChange={e => setEndTime(e.target.value)} className="w-full p-2 border rounded-lg bg-gray-50 text-sm" />
-                                                            </div>
-                                                        </div>
-                                                    )}
-                                                    <div>
-                                                        <label className="block text-xs font-bold text-gray-500">事由</label>
-                                                        <textarea required value={reason} onChange={e => setReason(e.target.value)} className="w-full p-2 border rounded-lg bg-gray-50 text-sm h-24" placeholder="理由を入力..." />
-                                                    </div>
-                                                    {submitError && (
-                                                        <div className="p-2 bg-red-50 border border-red-100 rounded-lg flex items-start gap-2 text-red-600 text-xs font-bold">
-                                                            <AlertCircle size={14} className="shrink-0 mt-0.5" />
-                                                            <span>{submitError}</span>
-                                                        </div>
-                                                    )}
-                                                    <button type="submit" disabled={isSubmitting} className="w-full py-3 bg-emerald-500 text-white rounded-xl font-bold shadow-lg shadow-emerald-500/20">
-                                                        {isSubmitting ? '送信中...' : '申請を送信'}
-                                                    </button>
-                                                </form>
-                                            )}
-                                        </div>
-                                    )}
-                                    {!showLeaveForm && (
-                                        <p className="text-sm text-gray-400">「フォームを表示」ボタンを押して申請を行ってください。</p>
-                                    )}
-                                </div>
-                            </div>
-
-                            {/* History List */}
-                            <div className="lg:col-span-12 xl:col-span-5">
-                                <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 h-full">
-                                    <h3 className="font-bold text-gray-800 mb-4 flex items-center gap-2">
-                                        <Clock className="text-gray-400" size={18} />
-                                        申請履歴
-                                    </h3>
-                                    <div className="space-y-4">
-                                        {leaveRequests.map(req => (
-                                            <div key={req.id} className="p-3 rounded-xl bg-gray-50 border border-gray-100 flex justify-between items-center group hover:bg-white hover:shadow-sm transition-all">
-                                                <div>
-                                                    <div className="flex items-center gap-2 mb-1">
-                                                        <span className="text-[10px] font-bold text-gray-500 bg-white border border-gray-200 px-1.5 py-0.5 rounded">
-                                                            {req.type === 'PAID_LEAVE' ? '有給' : 'その他'}
-                                                        </span>
-                                                        <span className="font-bold text-gray-700 text-sm">{new Date(req.startDate).toLocaleDateString('ja-JP')}</span>
-                                                    </div>
-                                                    <p className="text-xs text-gray-400 truncate max-w-[150px]">{req.reason}</p>
-                                                </div>
-                                                {getLeaveStatusBadge(req.status)}
-                                            </div>
-                                        ))}
-                                        {leaveRequests.length === 0 && (
-                                            <div className="text-center py-12 text-gray-400">
-                                                <p>申請履歴はありません</p>
-                                            </div>
-                                        )}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    )}
 
                     {activeTab === 'NOTICE' && (
                         <div className="animate-in fade-in slide-in-from-top-4 duration-500">
