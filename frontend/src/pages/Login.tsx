@@ -2,7 +2,9 @@ import { useState } from 'react';
 import { api } from '../api';
 import { User } from '../types';
 import { BookOpen, Eye, EyeOff, LogIn, Building2 } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
+import { useAuth } from '../context/AuthContext';
 
 interface LoginProps {
     onLogin: (user: User, token?: string) => void;
@@ -14,6 +16,13 @@ export default function Login({ onLogin }: LoginProps) {
     const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
+    const { logout } = useAuth();
+
+    // マウント時に古いセッション情報を確実にクリアする
+    useEffect(() => {
+        logout();
+    }, [logout]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -24,6 +33,8 @@ export default function Login({ onLogin }: LoginProps) {
             const response = await api.login({ employeeId, password });
             if (response.success && response.user) {
                 onLogin(response.user, response.token);
+                // ログイン成功後に Myダッシュボード へ遷移
+                navigate('/dashboard');
             } else {
                 setError(response.message || 'ログインに失敗しました');
             }
