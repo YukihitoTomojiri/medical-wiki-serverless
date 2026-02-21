@@ -1,7 +1,8 @@
 import { useState, useMemo } from 'react';
 import { User } from '../types';
 import ComplianceDashboard from '../components/ComplianceDashboard';
-import { LayoutDashboard } from 'lucide-react';
+import OrganizationStatsDashboard from '../components/OrganizationStatsDashboard';
+import { LayoutDashboard, BarChart3 } from 'lucide-react';
 import PageHeader from '../components/layout/PageHeader';
 
 export default function AdminDashboard() {
@@ -11,6 +12,7 @@ export default function AdminDashboard() {
     const tabs = useMemo(() => {
         const commonTabs = [
             { id: 'dashboard', label: '学習進捗', icon: LayoutDashboard, color: 'indigo' },
+            { id: 'organization_stats', label: '組織統計', icon: BarChart3, color: 'teal' },
         ];
         return commonTabs;
     }, [isDev]);
@@ -34,7 +36,7 @@ export default function AdminDashboard() {
             />
 
             {/* Folder-style Tab Navigation */}
-            <div className="grid grid-cols-1 gap-2 -mb-2 relative z-10 px-4 md:px-6 mt-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 -mb-2 relative z-10 px-4 md:px-6 mt-6">
                 {tabs.map((tab) => {
                     const Icon = tab.icon;
                     const isActive = activeTab === tab.id;
@@ -64,6 +66,7 @@ export default function AdminDashboard() {
             <div className={`rounded-3xl p-6 transition-colors duration-300 shadow-sm relative z-0 ${tabColors[activeColor]?.contentBg ?? 'bg-indigo-100'}`}>
                 <div className="animate-in fade-in slide-in-from-bottom-4 duration-300">
                     {activeTab === 'dashboard' && <ComplianceDashboard />}
+                    {activeTab === 'organization_stats' && <OrganizationStatsDashboard />}
                 </div>
             </div>
         </div>
