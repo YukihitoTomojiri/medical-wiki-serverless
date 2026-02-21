@@ -1,9 +1,7 @@
 import { useState, useMemo } from 'react';
 import { User } from '../types';
-import PaidLeaveManagement from '../components/PaidLeaveManagement';
 import ComplianceDashboard from '../components/ComplianceDashboard';
-import AdminLeaveMonitoring from '../components/AdminLeaveMonitoring';
-import { LayoutDashboard, Calendar, AlertCircle } from 'lucide-react';
+import { LayoutDashboard } from 'lucide-react';
 import PageHeader from '../components/layout/PageHeader';
 
 export default function AdminDashboard() {
@@ -13,8 +11,6 @@ export default function AdminDashboard() {
     const tabs = useMemo(() => {
         const commonTabs = [
             { id: 'dashboard', label: '学習進捗', icon: LayoutDashboard, color: 'indigo' },
-            { id: 'paid_leaves', label: '労務管理', icon: Calendar, color: 'teal' },
-            { id: 'leave_monitoring', label: '有給モニタリング', icon: AlertCircle, color: 'amber' },
         ];
         return commonTabs;
     }, [isDev]);
@@ -38,7 +34,7 @@ export default function AdminDashboard() {
             />
 
             {/* Folder-style Tab Navigation */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-2 -mb-2 relative z-10 px-4 md:px-6 mt-6">
+            <div className="grid grid-cols-1 gap-2 -mb-2 relative z-10 px-4 md:px-6 mt-6">
                 {tabs.map((tab) => {
                     const Icon = tab.icon;
                     const isActive = activeTab === tab.id;
@@ -68,8 +64,6 @@ export default function AdminDashboard() {
             <div className={`rounded-3xl p-6 transition-colors duration-300 shadow-sm relative z-0 ${tabColors[activeColor]?.contentBg ?? 'bg-indigo-100'}`}>
                 <div className="animate-in fade-in slide-in-from-bottom-4 duration-300">
                     {activeTab === 'dashboard' && <ComplianceDashboard />}
-                    {activeTab === 'paid_leaves' && <PaidLeaveManagement />}
-                    {activeTab === 'leave_monitoring' && <AdminLeaveMonitoring />}
                 </div>
             </div>
         </div>
