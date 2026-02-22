@@ -1,9 +1,9 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
 import { api } from '../api';
 import { User } from '../types';
 import { BookOpen, Eye, EyeOff, LogIn, Building2 } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 interface LoginProps {
     onLogin: (user: User, token?: string) => void;
@@ -16,6 +16,12 @@ export default function Login({ onLogin }: LoginProps) {
     const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+    const { logout } = useAuth();
+
+    // マウント時に古いセッション情報を確実にクリアする
+    useEffect(() => {
+        logout();
+    }, [logout]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();

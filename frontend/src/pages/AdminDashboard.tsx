@@ -1,9 +1,9 @@
 import { useState, useMemo } from 'react';
 import { User } from '../types';
-import PaidLeaveManagement from '../components/PaidLeaveManagement';
 import ComplianceDashboard from '../components/ComplianceDashboard';
-import AdminLeaveMonitoring from '../components/AdminLeaveMonitoring';
-import { LayoutDashboard, Calendar, AlertCircle } from 'lucide-react';
+import OrganizationStatsDashboard from '../components/OrganizationStatsDashboard';
+import FeedbackDashboard from '../components/FeedbackDashboard';
+import { LayoutDashboard, BarChart3, MessageSquareHeart } from 'lucide-react';
 import PageHeader from '../components/layout/PageHeader';
 
 export default function AdminDashboard() {
@@ -13,8 +13,8 @@ export default function AdminDashboard() {
     const tabs = useMemo(() => {
         const commonTabs = [
             { id: 'dashboard', label: '学習進捗', icon: LayoutDashboard, color: 'indigo' },
-            { id: 'paid_leaves', label: '労務管理', icon: Calendar, color: 'teal' },
-            { id: 'leave_monitoring', label: '有給モニタリング', icon: AlertCircle, color: 'amber' },
+            { id: 'organization_stats', label: '組織統計', icon: BarChart3, color: 'teal' },
+            { id: 'feedback', label: '現場の声', icon: MessageSquareHeart, color: 'rose' },
         ];
         return commonTabs;
     }, [isDev]);
@@ -27,6 +27,7 @@ export default function AdminDashboard() {
         indigo: { activeBg: 'bg-indigo-100', activeText: 'text-indigo-900', activeAccent: 'bg-indigo-400/30', hoverIcon: 'group-hover:text-indigo-400', contentBg: 'bg-indigo-100' },
         teal: { activeBg: 'bg-teal-100', activeText: 'text-teal-900', activeAccent: 'bg-teal-400/30', hoverIcon: 'group-hover:text-teal-400', contentBg: 'bg-teal-100' },
         amber: { activeBg: 'bg-amber-100', activeText: 'text-amber-900', activeAccent: 'bg-amber-400/30', hoverIcon: 'group-hover:text-amber-400', contentBg: 'bg-amber-100' },
+        rose: { activeBg: 'bg-rose-100', activeText: 'text-rose-900', activeAccent: 'bg-rose-400/30', hoverIcon: 'group-hover:text-rose-400', contentBg: 'bg-rose-50/50' },
     };
 
     return (
@@ -68,8 +69,8 @@ export default function AdminDashboard() {
             <div className={`rounded-3xl p-6 transition-colors duration-300 shadow-sm relative z-0 ${tabColors[activeColor]?.contentBg ?? 'bg-indigo-100'}`}>
                 <div className="animate-in fade-in slide-in-from-bottom-4 duration-300">
                     {activeTab === 'dashboard' && <ComplianceDashboard />}
-                    {activeTab === 'paid_leaves' && <PaidLeaveManagement />}
-                    {activeTab === 'leave_monitoring' && <AdminLeaveMonitoring />}
+                    {activeTab === 'organization_stats' && <OrganizationStatsDashboard />}
+                    {activeTab === 'feedback' && <FeedbackDashboard />}
                 </div>
             </div>
         </div>
