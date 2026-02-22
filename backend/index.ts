@@ -10,8 +10,10 @@ import upload from './routes/upload'
 import announcements from './routes/announcements'
 import leaves from './routes/leaves'
 import admin from './routes/admin' // I might need to group admin routes
+import professions from './routes/professions'
+import { Bindings } from './types'
 
-const app = new Hono()
+const app = new Hono<{ Bindings: Bindings }>()
 
 // Middleware
 app.use('*', logger())
@@ -27,6 +29,7 @@ app.route('/api/upload', upload) // Generic upload as requested
 app.route('/api/announcements', announcements)
 app.route('/api/leaves', leaves)
 app.route('/api/admin', admin)
+app.route('/api/professions', professions)
 
 // Health Check
 app.get('/', (c) => c.text('Medical Wiki LMS API is running'))

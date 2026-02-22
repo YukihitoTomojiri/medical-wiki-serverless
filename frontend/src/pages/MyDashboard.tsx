@@ -2,22 +2,41 @@ import { useState, useEffect } from 'react';
 import { api } from '../api';
 import PageHeader from '../components/layout/PageHeader';
 import { User, Progress } from '../types';
+import { useAuth } from '../context/AuthContext';
 import {
     BookOpen,
     CheckCircle2,
     LayoutDashboard,
-    AlertCircle
+    AlertCircle,
+    Stethoscope
 } from 'lucide-react';
 import { useSearchParams, Link } from 'react-router-dom';
 import DashboardAnnouncements from '../components/DashboardAnnouncements';
+
+const PROFESSION_TABS = ['リハビリ', '看護師', '介護職', 'その他'] as const;
+const REHAB_PROFESSIONS = ['理学療法士', '作業療法士', '言語聴覚士'];
 
 interface MyDashboardProps {
     user: User;
 }
 
 export default function MyDashboard({ user }: MyDashboardProps) {
+    const { isAdmin, isDeveloper } = useAuth();
     const [searchParams] = useSearchParams();
     const tabParam = searchParams.get('tab');
+    const canSwitchProfession = isAdmin || isDeveloper;
+    const [selectedProfessionTab, setSelectedProfessionTab] = useState<string>(
+        () => {
+            const prof = user?.profession || '';
+            return REHAB_PROFESSIONS.includes(prof) ? 'リハビリ' : (prof || 'リハビリ');
+        }
+    );
+    // The effective profession used for content display
+    // For ADMIN/DEVELOPER: 'リハビリ' tab maps to rehab professions check
+    // For regular users: use their actual profession
+    const isRehabView = canSwitchProfession
+        ? selectedProfessionTab === 'リハビリ'
+        : REHAB_PROFESSIONS.includes(user?.profession || '');
 
     const [progress, setProgress] = useState<Progress[]>([]);
     const [loading, setLoading] = useState(true);
@@ -68,8 +87,6 @@ export default function MyDashboard({ user }: MyDashboardProps) {
         }
     };
 
-
-
     if (loading) return <div className="p-12 text-center text-gray-400">Loading Dashboard...</div>;
 
     const uncompletedCount = trainingEvents.filter(e => !trainingResponses.some(r => r.eventId === e.id)).length;
@@ -83,7 +100,30 @@ export default function MyDashboard({ user }: MyDashboardProps) {
                 icon={LayoutDashboard}
             />
 
-            {/* Summary Cards (Tabs) */}
+            {/* 職種切り替えタブ（ADMIN / DEVELOPER のみ表示） */}
+            {canSwitchProfession && (
+                <div className="px-4 md:px-6">
+                    <div className="flex items-center gap-2 mb-2">
+                        <Stethoscope size={16} className="text-purple-500" />
+                        <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">職種プレビュー</span>
+                    </div>
+                    <div className="flex flex-wrap gap-1.5 bg-white/80 backdrop-blur rounded-xl p-1.5 border border-gray-200 shadow-sm">
+                        {PROFESSION_TABS.map((prof) => (
+                            <button
+                                key={prof}
+                                onClick={() => setSelectedProfessionTab(prof)}
+                                className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-all duration-200 ${selectedProfessionTab === prof
+                                    ? 'bg-purple-600 text-white shadow-md shadow-purple-500/30'
+                                    : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700'
+                                    }`}
+                            >
+                                {prof}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+            )}
+
             {/* Summary Cards (Tabs) */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-2 -mb-2 relative z-10 px-4 md:px-6">
                 {/* Card 1: Study */}
@@ -107,8 +147,7 @@ export default function MyDashboard({ user }: MyDashboardProps) {
                     )}
                 </button>
 
-
-                {/* Card 3: Notices */}
+                {/* Card 2: Notices */}
                 <button
                     onClick={() => setActiveTab('NOTICE')}
                     className={`relative overflow-hidden rounded-t-2xl p-5 text-left transition-all duration-300 group ${activeTab === 'NOTICE'
@@ -145,7 +184,6 @@ export default function MyDashboard({ user }: MyDashboardProps) {
                 </button>
             </div>
 
-            {/* Dynamic Content Area */}
             {/* Dynamic Content Area */}
             <div className={`rounded-3xl p-6 transition-colors duration-300 shadow-sm relative z-0 ${activeTab === 'STUDY' ? 'bg-orange-100' : 'bg-blue-100'}`}>
                 <div className="animate-in fade-in slide-in-from-bottom-4 duration-300">
@@ -203,10 +241,32 @@ export default function MyDashboard({ user }: MyDashboardProps) {
                                     {progress.length === 0 && <p className="text-sm text-gray-400 text-center py-4">履歴はありません</p>}
                                 </div>
                             </div>
+
+                            {/* リハビリ専門セクション */}
+                            {isRehabView && (
+                                <div className="lg:col-span-2 bg-white rounded-2xl border border-purple-100 shadow-sm p-6">
+                                    <h3 className="font-bold text-gray-800 mb-4 flex items-center gap-2">
+                                        <Stethoscope className="text-purple-500" size={18} />
+                                        リハビリ専門リソース
+                                    </h3>
+                                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                        <Link to="/manuals?category=疾患別" className="group p-4 rounded-xl bg-purple-50 border border-purple-100 hover:bg-purple-100 hover:shadow-sm transition-all">
+                                            <p className="font-bold text-purple-800 text-sm group-hover:text-purple-900">📋 疾患別マニュアル</p>
+                                            <p className="text-xs text-purple-600/70 mt-1">脳卒中・骨折・心疾患等の疾患別リハプログラム</p>
+                                        </Link>
+                                        <Link to="/manuals?category=評価" className="group p-4 rounded-xl bg-indigo-50 border border-indigo-100 hover:bg-indigo-100 hover:shadow-sm transition-all">
+                                            <p className="font-bold text-indigo-800 text-sm group-hover:text-indigo-900">📊 評価・アセスメント</p>
+                                            <p className="text-xs text-indigo-600/70 mt-1">FIM・MMT・ROM等の標準化された評価手順</p>
+                                        </Link>
+                                        <Link to="/manuals?category=安全管理" className="group p-4 rounded-xl bg-teal-50 border border-teal-100 hover:bg-teal-100 hover:shadow-sm transition-all">
+                                            <p className="font-bold text-teal-800 text-sm group-hover:text-teal-900">🛡️ リスク管理</p>
+                                            <p className="text-xs text-teal-600/70 mt-1">転倒予防・感染対策・急変時対応</p>
+                                        </Link>
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     )}
-
-
 
                     {activeTab === 'NOTICE' && (
                         <div className="animate-in fade-in slide-in-from-top-4 duration-500">

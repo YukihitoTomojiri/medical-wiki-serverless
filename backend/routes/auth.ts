@@ -3,11 +3,7 @@ import { getPrisma } from '../lib/prisma'
 import { sign } from 'hono/jwt'
 import { env } from 'hono/adapter'
 import { compare } from 'bcryptjs'
-
-type Bindings = {
-    DATABASE_URL: string
-    JWT_SECRET: string
-}
+import { Bindings } from '../types'
 
 const app = new Hono<{ Bindings: Bindings }>()
 
@@ -51,6 +47,35 @@ app.post('/login', async (c) => {
         // Disconnect immediately to prevent Cloudflare Worker generic 'hung' errors due to open TCP sockets from pg adapter
         await prisma.$disconnect();
     }
+})
+
+app.post('/setup', async (c) => {
+    const prisma = getPrisma(c.env.DATABASE_URL as string)
+    const { token, password, profession } = await c.req.json()
+
+    // Find user by invitation token
+    const user = await prisma.user.findFirst({
+        where: { invitationToken: token }
+    })
+
+    if (!user) {
+        return c.json({ success: false, message: 'Invalid or expired token' }, 400)
+    }
+
+    const { hash } = await import('bcryptjs')
+    const hashedPassword = await hash(password, 10)
+
+    await prisma.user.update({
+        where: { id: user.id },
+        data: {
+            password: hashedPassword,
+            profession: profession,
+            invitationToken: null,
+            mustChangePassword: false
+        }
+    })
+
+    return c.json({ success: true, message: 'Account setup successfully' })
 })
 
 export default app

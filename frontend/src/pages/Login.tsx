@@ -1,9 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
 import { api } from '../api';
 import { User } from '../types';
 import { BookOpen, Eye, EyeOff, LogIn, Building2 } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 
 interface LoginProps {
@@ -11,12 +10,12 @@ interface LoginProps {
 }
 
 export default function Login({ onLogin }: LoginProps) {
+    const navigate = useNavigate();
     const [employeeId, setEmployeeId] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
-    const navigate = useNavigate();
     const { logout } = useAuth();
 
     // マウント時に古いセッション情報を確実にクリアする
@@ -33,8 +32,7 @@ export default function Login({ onLogin }: LoginProps) {
             const response = await api.login({ employeeId, password });
             if (response.success && response.user) {
                 onLogin(response.user, response.token);
-                // ログイン成功後に Myダッシュボード へ遷移
-                navigate('/dashboard');
+                navigate('/my-dashboard');
             } else {
                 setError(response.message || 'ログインに失敗しました');
             }
@@ -156,6 +154,20 @@ export default function Login({ onLogin }: LoginProps) {
                                     管理者
                                 </p>
                                 <p className="text-m3-on-surface-variant mt-1 font-mono">admin001 / password123</p>
+                            </div>
+                            <div className="p-3 bg-m3-surface-container rounded-m3-md border border-m3-outline-variant/20">
+                                <p className="font-bold text-m3-on-surface flex items-center gap-1.5">
+                                    <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+                                    佐藤 健太（PT）
+                                </p>
+                                <p className="text-m3-on-surface-variant mt-1 font-mono">user001 / password123</p>
+                            </div>
+                            <div className="p-3 bg-m3-surface-container rounded-m3-md border border-m3-outline-variant/20">
+                                <p className="font-bold text-m3-on-surface flex items-center gap-1.5">
+                                    <span className="w-2 h-2 rounded-full bg-pink-500"></span>
+                                    鈴木 舞（Ns）
+                                </p>
+                                <p className="text-m3-on-surface-variant mt-1 font-mono">user002 / password123</p>
                             </div>
                         </div>
                     </div>

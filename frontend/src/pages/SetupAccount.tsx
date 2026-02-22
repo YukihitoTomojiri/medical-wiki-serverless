@@ -15,8 +15,22 @@ export default function SetupAccount({ onLogin }: Props) {
 
     const [password, setPassword] = useState('');
     const [confirm, setConfirm] = useState('');
+    const [profession, setProfession] = useState('');
+    const [professions, setProfessions] = useState<{ id: number; name: string }[]>([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        const fetchProfessions = async () => {
+            try {
+                const data = await api.getProfessions();
+                setProfessions(data);
+            } catch (err) {
+                console.error('Failed to fetch professions', err);
+            }
+        };
+        fetchProfessions();
+    }, []);
 
     useEffect(() => {
         if (!token) {
@@ -38,12 +52,17 @@ export default function SetupAccount({ onLogin }: Props) {
             return;
         }
 
+        if (!profession) {
+            setError('職種を選択してください');
+            return;
+        }
+
         setLoading(true);
         try {
-            const res = await api.setupAccount(token, password);
+            const res = await api.setupAccount(token, password, profession);
             if (res.user) {
                 onLogin(res.user);
-                navigate('/');
+                navigate('/my-dashboard');
             } else {
                 setError('Setup failed. Please try again.');
             }
@@ -102,6 +121,20 @@ export default function SetupAccount({ onLogin }: Props) {
                     )}
 
                     <div className="space-y-4">
+                        <div>
+                            <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Select Profession</label>
+                            <select
+                                value={profession}
+                                onChange={e => setProfession(e.target.value)}
+                                className="w-full p-4 bg-gray-50 border border-gray-100 rounded-xl font-bold focus:bg-white focus:border-purple-500 focus:ring-4 focus:ring-purple-500/10 outline-none transition-all"
+                                required
+                            >
+                                <option value="">職種を選択してください</option>
+                                {professions.map(p => (
+                                    <option key={p.id} value={p.name}>{p.name}</option>
+                                ))}
+                            </select>
+                        </div>
                         <div>
                             <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Create Password</label>
                             <input

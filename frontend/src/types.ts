@@ -5,6 +5,7 @@ export interface User {
     facility: string;
     department: string;
     role: 'ADMIN' | 'USER' | 'DEVELOPER';
+    profession?: string;
     deletedAt?: string;
     createdAt?: string;
     updatedAt?: string;
@@ -100,4 +101,11 @@ export interface AttendanceRequest {
     status: RequestStatus;
     createdAt: string;
     updatedAt: string;
+}
+
+export interface Profession {
+    id: number;
+    name: string;
+    description?: string;
+    createdAt?: string;
 }

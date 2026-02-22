@@ -8,6 +8,7 @@ import DeveloperDashboard from './pages/DeveloperDashboard';
 import AllUsersAdmin from './pages/AllUsersAdmin';
 import AdminUserManagement from './pages/AdminUserManagement';
 import AdminAnnouncementManagement from './pages/AdminAnnouncementManagement';
+import AdminProfessionManagement from './pages/AdminProfessionManagement';
 import OrganizationManagement from './pages/OrganizationManagement';
 import ManualEdit from './pages/ManualEdit';
 import Layout from './components/Layout';
@@ -55,7 +56,7 @@ function AppRoutes() {
     return (
         <Layout>
             <Routes>
-                <Route path="/" element={<Navigate to="/manuals" replace />} />
+                <Route path="/" element={<Navigate to="/my-dashboard" replace />} />
                 <Route path="/manuals" element={<ManualList user={user} />} />
                 <Route path="/manuals/:id" element={<ManualDetail user={user} />} />
                 <Route path="/my-dashboard" element={<MyDashboard user={user} />} />
@@ -79,6 +80,7 @@ function AppRoutes() {
                         <Route path="/admin/announcements" element={<AdminAnnouncementManagement user={user} />} />
                         <Route path="/admin/training" element={<TrainingAdmin />} />
                         <Route path="/admin/training/responses/:eventId" element={<TrainingResponseAdmin />} />
+                        <Route path="/admin/professions" element={<AdminProfessionManagement />} />
                     </>
                 )}
 
@@ -87,7 +89,7 @@ function AppRoutes() {
                 )}
 
                 <Route path="/submission-success" element={<SubmissionSuccessPage />} />
-                <Route path="*" element={<Navigate to="/manuals" replace />} />
+                <Route path="*" element={<Navigate to="/my-dashboard" replace />} />
             </Routes>
         </Layout>
     );
