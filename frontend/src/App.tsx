@@ -56,7 +56,7 @@ function AppRoutes() {
     return (
         <Layout>
             <Routes>
-                <Route path="/" element={<Navigate to="/manuals" replace />} />
+                <Route path="/" element={<Navigate to="/my-dashboard" replace />} />
                 <Route path="/manuals" element={<ManualList user={user} />} />
                 <Route path="/manuals/:id" element={<ManualDetail user={user} />} />
                 <Route path="/my-dashboard" element={<MyDashboard user={user} />} />
@@ -89,7 +89,7 @@ function AppRoutes() {
                 )}
 
                 <Route path="/submission-success" element={<SubmissionSuccessPage />} />
-                <Route path="*" element={<Navigate to="/manuals" replace />} />
+                <Route path="*" element={<Navigate to="/my-dashboard" replace />} />
             </Routes>
         </Layout>
     );
