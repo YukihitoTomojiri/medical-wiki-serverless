@@ -9,7 +9,8 @@ import {
     Clock,
     XCircle,
     LayoutDashboard,
-    AlertCircle
+    AlertCircle,
+    Stethoscope
 } from 'lucide-react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import PaidLeaveRequestForm from '../components/PaidLeaveRequestForm';
@@ -302,6 +303,31 @@ export default function MyDashboard({ user }: MyDashboardProps) {
                                     {progress.length === 0 && <p className="text-sm text-gray-400 text-center py-4">履歴はありません</p>}
                                 </div>
                             </div>
+
+                            {/* リハビリ専門セクション */}
+                            {user.profession && ['理学療法士', '作業療法士', '言語聴覚士'].includes(user.profession) && (
+                                <div className="lg:col-span-2 bg-white rounded-2xl border border-purple-100 shadow-sm p-6">
+                                    <h3 className="font-bold text-gray-800 mb-4 flex items-center gap-2">
+                                        <Stethoscope className="text-purple-500" size={18} />
+                                        リハビリ専門リソース
+                                        <span className="text-[10px] font-bold text-purple-600 bg-purple-100 px-2 py-0.5 rounded-full">{user.profession}</span>
+                                    </h3>
+                                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                        <Link to="/manuals?category=疾患別" className="group p-4 rounded-xl bg-purple-50 border border-purple-100 hover:bg-purple-100 hover:shadow-sm transition-all">
+                                            <p className="font-bold text-purple-800 text-sm group-hover:text-purple-900">📋 疾患別マニュアル</p>
+                                            <p className="text-xs text-purple-600/70 mt-1">脳卒中・骨折・心疾患等の疾患別リハプログラム</p>
+                                        </Link>
+                                        <Link to="/manuals?category=評価" className="group p-4 rounded-xl bg-indigo-50 border border-indigo-100 hover:bg-indigo-100 hover:shadow-sm transition-all">
+                                            <p className="font-bold text-indigo-800 text-sm group-hover:text-indigo-900">📊 評価・アセスメント</p>
+                                            <p className="text-xs text-indigo-600/70 mt-1">FIM・MMT・ROM等の標準化された評価手順</p>
+                                        </Link>
+                                        <Link to="/manuals?category=安全管理" className="group p-4 rounded-xl bg-teal-50 border border-teal-100 hover:bg-teal-100 hover:shadow-sm transition-all">
+                                            <p className="font-bold text-teal-800 text-sm group-hover:text-teal-900">🛡️ リスク管理</p>
+                                            <p className="text-xs text-teal-600/70 mt-1">転倒予防・感染対策・急変時対応</p>
+                                        </Link>
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     )}
 

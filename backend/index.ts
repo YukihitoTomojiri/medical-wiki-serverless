@@ -10,6 +10,7 @@ import upload from './routes/upload'
 import announcements from './routes/announcements'
 import leaves from './routes/leaves'
 import admin from './routes/admin' // I might need to group admin routes
+import professions from './routes/professions'
 
 const app = new Hono()
 
@@ -27,6 +28,7 @@ app.route('/api/upload', upload) // Generic upload as requested
 app.route('/api/announcements', announcements)
 app.route('/api/leaves', leaves)
 app.route('/api/admin', admin)
+app.route('/api/professions', professions)
 
 // Health Check
 app.get('/', (c) => c.text('Medical Wiki LMS API is running'))

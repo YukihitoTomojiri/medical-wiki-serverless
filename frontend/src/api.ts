@@ -985,5 +985,33 @@ export const api = {
         if (!res.ok) throw new Error('Failed to create committee');
         return res.json();
     },
+
+    // 職種マスタ (Professions)
+    getProfessions: async (): Promise<any[]> => {
+        const res = await fetch(`${API_BASE}/professions`);
+        if (!res.ok) return [];
+        return res.json();
+    },
+
+    createProfession: async (userId: number, name: string, description?: string): Promise<any> => {
+        const res = await fetch(`${API_BASE}/professions`, {
+            method: 'POST',
+            headers: getHeaders(userId),
+            body: JSON.stringify({ name, description }),
+        });
+        if (!res.ok) {
+            const data = await res.json().catch(() => ({}));
+            throw new Error(data.error || '職種の作成に失敗しました');
+        }
+        return res.json();
+    },
+
+    deleteProfession: async (userId: number, id: number): Promise<any> => {
+        const res = await fetch(`${API_BASE}/professions/${id}`, {
+            method: 'DELETE',
+            headers: getHeaders(userId),
+        });
+        return res.json();
+    },
 };
 

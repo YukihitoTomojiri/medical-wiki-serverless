@@ -146,6 +146,20 @@ export default function Login({ onLogin }: LoginProps) {
                                 </p>
                                 <p className="text-m3-on-surface-variant mt-1 font-mono">admin001 / password123</p>
                             </div>
+                            <div className="p-3 bg-m3-surface-container rounded-m3-md border border-m3-outline-variant/20">
+                                <p className="font-bold text-m3-on-surface flex items-center gap-1.5">
+                                    <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+                                    佐藤 健太（PT）
+                                </p>
+                                <p className="text-m3-on-surface-variant mt-1 font-mono">user001 / password123</p>
+                            </div>
+                            <div className="p-3 bg-m3-surface-container rounded-m3-md border border-m3-outline-variant/20">
+                                <p className="font-bold text-m3-on-surface flex items-center gap-1.5">
+                                    <span className="w-2 h-2 rounded-full bg-pink-500"></span>
+                                    鈴木 舞（Ns）
+                                </p>
+                                <p className="text-m3-on-surface-variant mt-1 font-mono">user002 / password123</p>
+                            </div>
                         </div>
                     </div>
                 </div>

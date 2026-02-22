@@ -52,3 +52,18 @@ npm run dev
 - **Database**: Supabase (PostgreSQL) + Prisma
 - **Storage**: Supabase Storage
 - **Frontend**: React + Vite
+
+## テストアカウント
+
+| 職員番号 | パスワード | 名前 | 権限 | 職種 |
+| :--- | :--- | :--- | :--- | :--- |
+| `dev001` | `password123` | Developer User | DEVELOPER | — |
+| `admin001` | `password123` | Admin User | ADMIN | — |
+| `user001` | `password123` | 佐藤 健太 | USER | 理学療法士 |
+| `user002` | `password123` | 鈴木 舞 | USER | 看護師 |
+
+## 職種マスタ管理
+管理者・開発者は `/admin/professions` から職種の一覧・追加・削除が行えます。  
+初期データとして以下の7職種が登録されます：理学療法士、作業療法士、言語聴覚士、看護師、介護職、事務職、その他。
+
+リハビリ職種（理学療法士・作業療法士・言語聴覚士）のユーザーは、Myダッシュボードにリハビリ専門リソースへのショートカットが表示されます。

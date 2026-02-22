@@ -8,6 +8,7 @@ import DeveloperDashboard from './pages/DeveloperDashboard';
 import AllUsersAdmin from './pages/AllUsersAdmin';
 import AdminUserManagement from './pages/AdminUserManagement';
 import AdminAnnouncementManagement from './pages/AdminAnnouncementManagement';
+import AdminProfessionManagement from './pages/AdminProfessionManagement';
 import OrganizationManagement from './pages/OrganizationManagement';
 import ManualEdit from './pages/ManualEdit';
 import Layout from './components/Layout';
@@ -79,6 +80,7 @@ function AppRoutes() {
                         <Route path="/admin/announcements" element={<AdminAnnouncementManagement user={user} />} />
                         <Route path="/admin/training" element={<TrainingAdmin />} />
                         <Route path="/admin/training/responses/:eventId" element={<TrainingResponseAdmin />} />
+                        <Route path="/admin/professions" element={<AdminProfessionManagement />} />
                     </>
                 )}
 

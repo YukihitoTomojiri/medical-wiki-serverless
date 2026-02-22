@@ -6,6 +6,15 @@ datasource db {
   provider = "postgresql"
 }
 
+model Profession {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique
+  description String?
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@map("professions")
+}
+
 model User {
   id                 Int       @id @default(autoincrement())
   employeeId         String    @unique @map("employee_id")
@@ -14,6 +23,7 @@ model User {
   facility           String // Storing as string to match legacy structure
   department         String // Storing as string to match legacy structure
   role               Role
+  profession         String?
   email              String?
   paidLeaveDays      Float     @default(0.0) @map("paid_leave_days")
   joinedDate         DateTime? @map("joined_date")
