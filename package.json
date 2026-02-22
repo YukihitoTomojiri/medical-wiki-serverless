@@ -6,7 +6,8 @@
         "test": "npm --prefix frontend test",
         "dev:backend": "wrangler dev",
         "dev:frontend": "npm run dev --prefix frontend",
-        "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\""
+        "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+        "seed": "ts-node prisma/seed.ts"
     },
     "dependencies": {
         "@prisma/adapter-pg": "^7.4.0",
