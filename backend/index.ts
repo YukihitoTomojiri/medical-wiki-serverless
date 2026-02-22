@@ -11,8 +11,9 @@ import announcements from './routes/announcements'
 import leaves from './routes/leaves'
 import admin from './routes/admin' // I might need to group admin routes
 import professions from './routes/professions'
+import { Bindings } from './types'
 
-const app = new Hono()
+const app = new Hono<{ Bindings: Bindings }>()
 
 // Middleware
 app.use('*', logger())

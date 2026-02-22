@@ -102,11 +102,11 @@ export const api = {
         return res.json();
     },
 
-    setupAccount: async (token: string, password: string): Promise<any> => {
+    setupAccount: async (token: string, password: string, profession: string): Promise<any> => {
         const res = await fetch(`${API_BASE}/auth/setup`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ token, password }),
+            body: JSON.stringify({ token, password, profession }),
         });
         return res.json();
     },

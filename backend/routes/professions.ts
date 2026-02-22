@@ -1,7 +1,8 @@
 import { Hono } from 'hono'
 import { getPrisma } from '../lib/prisma'
+import { Bindings } from '../types'
 
-const app = new Hono()
+const app = new Hono<{ Bindings: Bindings }>()
 
 // 職種一覧取得
 app.get('/', async (c) => {

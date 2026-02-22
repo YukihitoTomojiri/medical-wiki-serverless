@@ -3,11 +3,7 @@ import { getPrisma } from '../lib/prisma'
 import { sign } from 'hono/jwt'
 import { env } from 'hono/adapter'
 import { compare } from 'bcryptjs'
-
-type Bindings = {
-    DATABASE_URL: string
-    JWT_SECRET: string
-}
+import { Bindings } from '../types'
 
 const app = new Hono<{ Bindings: Bindings }>()
 

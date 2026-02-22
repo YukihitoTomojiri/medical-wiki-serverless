@@ -1,7 +1,8 @@
 import { Hono } from 'hono'
 import { getSupabase } from '../lib/supabase'
+import { Bindings } from '../types'
 
-const app = new Hono()
+const app = new Hono<{ Bindings: Bindings }>()
 
 app.post('/', async (c) => {
     const formData = await c.req.parseBody()
