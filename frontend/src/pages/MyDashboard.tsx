@@ -14,7 +14,7 @@ import {
     Stethoscope
 } from 'lucide-react';
 
-const PROFESSION_TABS = ['理学療法士', '作業療法士', '言語聴覚士', '看護師', '介護職', 'その他'] as const;
+const PROFESSION_TABS = ['リハビリ', '看護師', '介護職', 'その他'] as const;
 const REHAB_PROFESSIONS = ['理学療法士', '作業療法士', '言語聴覚士'];
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import PaidLeaveRequestForm from '../components/PaidLeaveRequestForm';
@@ -31,10 +31,17 @@ export default function MyDashboard({ user }: MyDashboardProps) {
     const tabParam = searchParams.get('tab');
     const canSwitchProfession = isAdmin || isDeveloper;
     const [selectedProfessionTab, setSelectedProfessionTab] = useState<string>(
-        () => user?.profession || '理学療法士'
+        () => {
+            const prof = user?.profession || '';
+            return REHAB_PROFESSIONS.includes(prof) ? 'リハビリ' : (prof || 'リハビリ');
+        }
     );
     // The effective profession used for content display
-    const effectiveProfession = canSwitchProfession ? selectedProfessionTab : (user?.profession || null);
+    // For ADMIN/DEVELOPER: 'リハビリ' tab maps to rehab professions check
+    // For regular users: use their actual profession
+    const isRehabView = canSwitchProfession
+        ? selectedProfessionTab === 'リハビリ'
+        : REHAB_PROFESSIONS.includes(user?.profession || '');
 
     const [dashboardData, setDashboardData] = useState<any>(null);
     const [progress, setProgress] = useState<Progress[]>([]);
@@ -184,8 +191,8 @@ export default function MyDashboard({ user }: MyDashboardProps) {
                                 key={prof}
                                 onClick={() => setSelectedProfessionTab(prof)}
                                 className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-all duration-200 ${selectedProfessionTab === prof
-                                        ? 'bg-purple-600 text-white shadow-md shadow-purple-500/30'
-                                        : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700'
+                                    ? 'bg-purple-600 text-white shadow-md shadow-purple-500/30'
+                                    : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700'
                                     }`}
                             >
                                 {prof}
@@ -340,12 +347,11 @@ export default function MyDashboard({ user }: MyDashboardProps) {
                             </div>
 
                             {/* リハビリ専門セクション */}
-                            {effectiveProfession && REHAB_PROFESSIONS.includes(effectiveProfession) && (
+                            {isRehabView && (
                                 <div className="lg:col-span-2 bg-white rounded-2xl border border-purple-100 shadow-sm p-6">
                                     <h3 className="font-bold text-gray-800 mb-4 flex items-center gap-2">
                                         <Stethoscope className="text-purple-500" size={18} />
                                         リハビリ専門リソース
-                                        <span className="text-[10px] font-bold text-purple-600 bg-purple-100 px-2 py-0.5 rounded-full">{effectiveProfession}</span>
                                     </h3>
                                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                                         <Link to="/manuals?category=疾患別" className="group p-4 rounded-xl bg-purple-50 border border-purple-100 hover:bg-purple-100 hover:shadow-sm transition-all">
