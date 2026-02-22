@@ -62,7 +62,7 @@ export default function SetupAccount({ onLogin }: Props) {
             const res = await api.setupAccount(token, password, profession);
             if (res.user) {
                 onLogin(res.user);
-                navigate('/');
+                navigate('/my-dashboard');
             } else {
                 setError('Setup failed. Please try again.');
             }

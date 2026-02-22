@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { api } from '../api';
 import { User } from '../types';
 import { BookOpen, Eye, EyeOff, LogIn, Building2 } from 'lucide-react';
@@ -9,6 +10,7 @@ interface LoginProps {
 }
 
 export default function Login({ onLogin }: LoginProps) {
+    const navigate = useNavigate();
     const [employeeId, setEmployeeId] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
@@ -24,6 +26,7 @@ export default function Login({ onLogin }: LoginProps) {
             const response = await api.login({ employeeId, password });
             if (response.success && response.user) {
                 onLogin(response.user, response.token);
+                navigate('/my-dashboard');
             } else {
                 setError(response.message || 'ログインに失敗しました');
             }
