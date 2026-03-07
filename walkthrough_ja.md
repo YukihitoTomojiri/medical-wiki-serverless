@@ -437,3 +437,14 @@ Java (Spring Boot) バックエンドから、Cloudflare Workers (Hono) + Supaba
 - **Frontend (`App.tsx`, `Sidebar.tsx`)**:
   - `/admin/organization` へのルーティングを `isDeveloper` 限定から `(isAdmin || isDeveloper)` に変更し、Admin 権限でもアクセスできるようにしました。
   - 管理者メニューのサイドバーに「組織管理」の項目を復活させました。
+
+### 🧪 自動テストの実装
+新たにPlaywrightを用いたE2Eテスト（`organization.spec.ts`）を実装しました。
+
+- **新規テスト環境の構築**:
+  - `@playwright/test` を導入し、フロントエンド環境に `playwright.config.ts` を設定。
+  - `package.json` に `test:e2e` コマンドを追加。
+- **組織管理機能の検証**:
+  1. `admin001` でのアクセス時、本部病院など4施設が正しく表示されること。
+  2. 施設名をクリックすると展開され、紐付く部署（理学療法課など）が表示されること。
+  3. 一般ユーザー（`user001`）でのアクセス時はメニューが表示されず、直接URLを開いてもリダイレクトされること。

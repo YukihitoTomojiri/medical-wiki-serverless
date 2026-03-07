@@ -21,7 +21,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setUser(null);
         localStorage.removeItem('user');
         localStorage.removeItem('token');
-        window.location.href = '/login'; // Force redirect using window location for safety
+        if (window.location.pathname !== '/login') {
+            window.location.href = '/login'; // Force redirect using window location for safety
+        }
     }, []);
 
     const checkTokenExpiration = useCallback(() => {
