@@ -233,14 +233,4 @@ medical-wiki-lms-serverless/
 管理者（ADMIN）および開発者（DEVELOPER）は、Myダッシュボード上部に表示される「職種プレビュー」タブを使用して、各職種のダッシュボードビューをプレビューできます。  
 対応タブ: リハビリ（理学療法士・作業療法士・言語聴覚士を統合）、看護師、介護職、その他。  
 一般ユーザー（USER）にはタブは表示されず、自身の職種に応じたコンテンツのみが表示されます。
-=======
-- Frontend: `http://localhost:3000`
-- Backend: `http://localhost:8787`
 
----
-
-## 📂 プロジェクト構成
-- `backend/`: Hono (Cloudflare Workers) による API サーバー
-- `frontend/`: React + Vite による SPA
-- `prisma/`: データベース定義とマイグレーション
->>>>>>> main

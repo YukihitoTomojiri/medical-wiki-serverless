@@ -76,6 +76,7 @@ function AppRoutes() {
                         <Route path="/admin/master" element={<AdminMasterPage />} />
                         <Route path="/admin/operations" element={<AdminOperationPage />} />
                         <Route path="/admin/training/responses/:eventId" element={<TrainingResponseAdmin />} />
+
                     </>
                 )}
 
