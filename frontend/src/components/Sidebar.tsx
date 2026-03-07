@@ -1,5 +1,5 @@
 import {
-    Users, BookOpen, LayoutDashboard, Bell, Building2, Briefcase, Database
+    BookOpen, LayoutDashboard, Database, ClipboardList
 } from 'lucide-react';
 import { useMemo } from 'react';
 import { NavigationDrawer } from './ui/NavigationDrawer';
@@ -23,11 +23,8 @@ export default function Sidebar({ onClose }: SidebarProps) {
 
     const adminItems = useMemo(() => [
         { path: '/admin', label: '管理者ダッシュボード', icon: LayoutDashboard, roles: ['ADMIN', 'DEVELOPER'], end: true },
-        { path: '/admin/users', label: 'ユーザー管理', icon: Users, roles: ['ADMIN', 'DEVELOPER'] },
-        { path: '/admin/announcements', label: 'お知らせ管理', icon: Bell, roles: ['ADMIN', 'DEVELOPER'] },
-        { path: '/admin/training', label: '研修管理', icon: BookOpen, roles: ['ADMIN', 'DEVELOPER'] },
-        { path: '/admin/professions', label: '職種管理', icon: Briefcase, roles: ['ADMIN', 'DEVELOPER'] },
-        { path: '/admin/organization', label: '組織管理', icon: Building2, roles: ['ADMIN', 'DEVELOPER'] },
+        { path: '/admin/master', label: 'マスタ管理', icon: Database, roles: ['ADMIN', 'DEVELOPER'] },
+        { path: '/admin/operations', label: '運用管理', icon: ClipboardList, roles: ['ADMIN', 'DEVELOPER'] },
     ], []);
 
     const devItems = useMemo(() => [

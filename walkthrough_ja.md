@@ -463,3 +463,21 @@ Java (Spring Boot) バックエンドから、Cloudflare Workers (Hono) + Supaba
   - 職種マスターの管理は `AdminProfessionManagement.tsx` として分離し、独立してアクセスできるように整理しました。
 - **自動テスト・品質担保**:
   - Vitest + React Testing Library を使用して、施設と部署の展開UIが正しく動作することを担保する Integration Test を追加しました。
+
+## 29. 管理機能の再編（マスタ管理・運用管理のタブ統合） (2026-03-08)
+
+### 🗂️ サイドバー集約とタブUI統合
+サイドバーに散在していた6つの管理メニューを「マスタ管理」「運用管理」の2つの親ページに集約し、タブで切り替えるUIに刷新しました。
+
+#### 変更内容
+- **マスタ管理 (`/admin/master`)**:
+  - 「組織管理」タブ: 施設・部署の階層管理（既存 `OrganizationManagement` を統合）
+  - 「職種管理」タブ: 職種マスターの一覧・追加・削除（既存 `AdminProfessionManagement` を統合）
+- **運用管理 (`/admin/operations`)**:
+  - 「ユーザー管理」タブ: ユーザーの一覧・CRUD操作（既存 `AdminUserManagement` を統合）
+  - 「お知らせ管理」タブ: お知らせの作成・編集（既存 `AdminAnnouncementManagement` を統合）
+  - 「研修管理」タブ: 研修イベントの管理（既存 `TrainingAdmin` を統合）
+- **サイドバー (`Sidebar.tsx`)**:
+  - 管理者メニューを3項目（管理者ダッシュボード、マスタ管理、運用管理）に集約
+- **ルーティング (`App.tsx`)**:
+  - 旧個別ルートを削除し、統合ルート (`/admin/master`, `/admin/operations`) に置き換え
