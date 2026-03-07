@@ -109,3 +109,17 @@ export interface Profession {
     description?: string;
     createdAt?: string;
 }
+
+export interface Facility {
+    id: number;
+    name: string;
+    createdAt?: string;
+}
+
+export interface Department {
+    id: number;
+    name: string;
+    facilityId: number;
+    facilityName?: string;
+    createdAt?: string;
+}
