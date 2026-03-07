@@ -14,16 +14,75 @@ const prisma = new PrismaClient({ adapter })
 async function main() {
     const password = await hash('password123', 10)
 
+    // マスターデータ (施設と部署)
+    const facilitiesData = [
+        {
+            name: '本部病院',
+            departments: ['理学療法課', '看護部', '事務局'],
+        },
+        {
+            name: '本部病院介護医療院',
+            departments: ['介護課', '看護部'],
+        },
+        {
+            name: '後光病院',
+            departments: ['リハビリテーション科', '薬剤科'],
+        },
+        {
+            name: '玉診療所',
+            departments: ['外来', '事務'],
+        },
+    ];
+
+    for (const facData of facilitiesData) {
+        const facility = await prisma.facility.upsert({
+            where: { name: facData.name },
+            update: {},
+            create: { name: facData.name },
+        });
+
+        for (const depName of facData.departments) {
+            // Unique constraint is typically on ID, so we need to find first or use an alternative if we don't know the ID
+            const existingDept = await prisma.department.findFirst({
+                where: {
+                    name: depName,
+                    facilityId: facility.id,
+                }
+            });
+
+            if (existingDept) {
+                await prisma.department.update({
+                    where: { id: existingDept.id },
+                    data: {
+                        name: depName,
+                        facilityId: facility.id,
+                    },
+                });
+            } else {
+                await prisma.department.create({
+                    data: {
+                        name: depName,
+                        facilityId: facility.id,
+                    },
+                });
+            }
+        }
+    }
+    console.log('施設・部署マスタデータを投入しました');
+
     // Developer User
     const devUser = await prisma.user.upsert({
         where: { employeeId: 'dev001' },
-        update: {},
+        update: {
+            facility: '本部病院',
+            department: '事務局',
+        },
         create: {
             employeeId: 'dev001',
             password,
             name: 'Developer User',
-            facility: 'Headquarters',
-            department: 'IT',
+            facility: '本部病院',
+            department: '事務局',
             role: 'DEVELOPER',
             email: 'dev@example.com',
         },
@@ -33,13 +92,16 @@ async function main() {
     // Admin User
     const adminUser = await prisma.user.upsert({
         where: { employeeId: 'admin001' },
-        update: {},
+        update: {
+            facility: '本部病院',
+            department: '理学療法課',
+        },
         create: {
             employeeId: 'admin001',
             password,
             name: 'Admin User',
-            facility: 'Headquarters',
-            department: 'Management',
+            facility: '本部病院',
+            department: '理学療法課',
             role: 'ADMIN',
             email: 'admin@example.com',
         },
@@ -49,13 +111,16 @@ async function main() {
     // テストユーザー: 佐藤 健太（理学療法士）
     const satoUser = await prisma.user.upsert({
         where: { employeeId: 'user001' },
-        update: {},
+        update: {
+            facility: '本部病院',
+            department: '理学療法課',
+        },
         create: {
             employeeId: 'user001',
             password,
             name: '佐藤 健太',
-            facility: 'Headquarters',
-            department: 'リハビリテーション科',
+            facility: '本部病院',
+            department: '理学療法課',
             role: 'USER',
             email: 'kenta.sato@example.com',
             profession: '理学療法士',
@@ -66,12 +131,15 @@ async function main() {
     // テストユーザー: 鈴木 舞（看護師）
     const suzukiUser = await prisma.user.upsert({
         where: { employeeId: 'user002' },
-        update: {},
+        update: {
+            facility: '本部病院',
+            department: '看護部',
+        },
         create: {
             employeeId: 'user002',
             password,
             name: '鈴木 舞',
-            facility: 'Headquarters',
+            facility: '本部病院',
             department: '看護部',
             role: 'USER',
             email: 'mai.suzuki@example.com',

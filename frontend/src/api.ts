@@ -1013,5 +1013,18 @@ export const api = {
         });
         return res.json();
     },
+
+    updateProfession: async (userId: number, id: number, name: string, description?: string): Promise<any> => {
+        const res = await fetch(`${API_BASE}/professions/${id}`, {
+            method: 'PUT',
+            headers: getHeaders(userId),
+            body: JSON.stringify({ name, description }),
+        });
+        if (!res.ok) {
+            const data = await res.json().catch(() => ({}));
+            throw new Error(data.error || '職種の更新に失敗しました');
+        }
+        return res.json();
+    },
 };
 

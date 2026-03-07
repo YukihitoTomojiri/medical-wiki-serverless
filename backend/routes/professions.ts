@@ -33,6 +33,28 @@ app.post('/', async (c) => {
     }
 })
 
+// 職種編集
+app.put('/:id', async (c) => {
+    const prisma = getPrisma(c.env.DATABASE_URL as string)
+    const id = Number(c.req.param('id'))
+    const { name, description } = await c.req.json()
+    if (!name || typeof name !== 'string' || name.trim().length === 0) {
+        return c.json({ error: '職種名は必須です' }, 400)
+    }
+    try {
+        const profession = await prisma.profession.update({
+            where: { id },
+            data: { name: name.trim(), description: description || null }
+        })
+        return c.json(profession)
+    } catch (e: any) {
+        if (e.code === 'P2002') {
+            return c.json({ error: 'この職種名は既に登録されています' }, 409)
+        }
+        throw e
+    }
+})
+
 // 職種削除
 app.delete('/:id', async (c) => {
     const prisma = getPrisma(c.env.DATABASE_URL as string)
