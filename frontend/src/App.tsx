@@ -6,10 +6,8 @@ import MyDashboard from './pages/MyDashboard';
 import AdminDashboard from './pages/AdminDashboard';
 import DeveloperDashboard from './pages/DeveloperDashboard';
 import AllUsersAdmin from './pages/AllUsersAdmin';
-import AdminUserManagement from './pages/AdminUserManagement';
-import AdminAnnouncementManagement from './pages/AdminAnnouncementManagement';
-import MasterManagement from './pages/MasterManagement';
-import OrganizationManagement from './pages/OrganizationManagement';
+import AdminMasterPage from './pages/AdminMasterPage';
+import AdminOperationPage from './pages/AdminOperationPage';
 import ManualEdit from './pages/ManualEdit';
 import Layout from './components/Layout';
 import ChangePassword from './pages/ChangePassword';
@@ -20,7 +18,6 @@ import DevConsole from './pages/DevConsole';
 import SubmissionSuccessPage from './pages/SubmissionSuccessPage';
 import TrainingList from './pages/TrainingList';
 import TrainingDetail from './pages/TrainingDetail';
-import TrainingAdmin from './pages/TrainingAdmin';
 import TrainingResponseAdmin from './pages/TrainingResponseAdmin';
 import { AuthProvider, useAuth } from './context/AuthContext';
 
@@ -72,16 +69,13 @@ function AppRoutes() {
                 {(isAdmin || isDeveloper) && (
                     <>
                         <Route path="/admin" element={<AdminDashboard />} />
-                        <Route path="/admin/users" element={<AdminUserManagement user={user} />} />
                         <Route path="/dev/console" element={<DevConsole />} />
                         <Route path="/admin/manuals/new" element={<ManualEdit user={user} />} />
                         <Route path="/admin/manuals/edit/:id" element={<ManualEdit user={user} />} />
                         <Route path="/admin/all-users" element={<AllUsersAdmin />} />
-                        <Route path="/admin/announcements" element={<AdminAnnouncementManagement user={user} />} />
-                        <Route path="/admin/training" element={<TrainingAdmin />} />
+                        <Route path="/admin/master" element={<AdminMasterPage />} />
+                        <Route path="/admin/operations" element={<AdminOperationPage />} />
                         <Route path="/admin/training/responses/:eventId" element={<TrainingResponseAdmin />} />
-                        <Route path="/admin/masters" element={<MasterManagement />} />
-                        <Route path="/admin/organization" element={<OrganizationManagement />} />
                     </>
                 )}
 

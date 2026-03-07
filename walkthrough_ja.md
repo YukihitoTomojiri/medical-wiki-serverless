@@ -448,3 +448,23 @@ Java (Spring Boot) バックエンドから、Cloudflare Workers (Hono) + Supaba
   1. `admin001` でのアクセス時、本部病院など4施設が正しく表示されること。
   2. 施設名をクリックすると展開され、紐付く部署（理学療法課など）が表示されること。
   3. 一般ユーザー（`user001`）でのアクセス時はメニューが表示されず、直接URLを開いてもリダイレクトされること。
+
+## 28. 管理機能の再編（マスタ管理・運用管理のタブ統合） (2026-03-08)
+
+### 🗂️ サイドバー集約とタブUI統合
+サイドバーに散在していた6つの管理メニューを「マスタ管理」「運用管理」の2つの親ページに集約し、タブで切り替えるUIに刷新しました。
+
+#### 変更内容
+- **マスタ管理 (`/admin/master`)**:
+  - 「組織管理」タブ: 施設・部署の階層管理（既存 `OrganizationManagement` を統合）
+  - 「職種管理」タブ: 職種マスターの一覧・追加・削除（既存 `AdminProfessionManagement` を統合）
+- **運用管理 (`/admin/operations`)**:
+  - 「ユーザー管理」タブ: ユーザーの一覧・CRUD操作（既存 `AdminUserManagement` を統合）
+  - 「お知らせ管理」タブ: お知らせの作成・編集（既存 `AdminAnnouncementManagement` を統合）
+  - 「研修管理」タブ: 研修イベントの管理（既存 `TrainingAdmin` を統合）
+- **サイドバー (`Sidebar.tsx`)**:
+  - 管理者メニューを3項目（管理者ダッシュボード、マスタ管理、運用管理）に集約
+  - 不要だったアイコンインポート (`Users`, `Bell`, `Settings` 等) を削除
+- **ルーティング (`App.tsx`)**:
+  - 旧個別ルート (`/admin/users`, `/admin/announcements` 等) を削除し、統合ルート (`/admin/master`, `/admin/operations`) に置き換え
+
