@@ -27,6 +27,7 @@ export default function Sidebar({ onClose }: SidebarProps) {
         { path: '/admin/announcements', label: 'お知らせ管理', icon: Bell, roles: ['ADMIN', 'DEVELOPER'] },
         { path: '/admin/training', label: '研修管理', icon: BookOpen, roles: ['ADMIN', 'DEVELOPER'] },
         { path: '/admin/masters', label: 'マスター管理', icon: Settings, roles: ['ADMIN', 'DEVELOPER'] },
+        { path: '/admin/organization', label: '組織管理', icon: Database, roles: ['ADMIN', 'DEVELOPER'] },
     ], []);
 
     const devItems = useMemo(() => [

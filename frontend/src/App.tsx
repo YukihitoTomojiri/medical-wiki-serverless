@@ -9,6 +9,7 @@ import AllUsersAdmin from './pages/AllUsersAdmin';
 import AdminUserManagement from './pages/AdminUserManagement';
 import AdminAnnouncementManagement from './pages/AdminAnnouncementManagement';
 import MasterManagement from './pages/MasterManagement';
+import OrganizationManagement from './pages/OrganizationManagement';
 import ManualEdit from './pages/ManualEdit';
 import Layout from './components/Layout';
 import ChangePassword from './pages/ChangePassword';
@@ -80,6 +81,7 @@ function AppRoutes() {
                         <Route path="/admin/training" element={<TrainingAdmin />} />
                         <Route path="/admin/training/responses/:eventId" element={<TrainingResponseAdmin />} />
                         <Route path="/admin/masters" element={<MasterManagement />} />
+                        <Route path="/admin/organization" element={<OrganizationManagement />} />
                     </>
                 )}
 
