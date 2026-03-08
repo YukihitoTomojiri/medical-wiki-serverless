@@ -6,9 +6,27 @@ interface PageHeaderProps {
     subtitle?: React.ReactNode;
     icon?: LucideIcon;
     children?: React.ReactNode;
+    variant?: 'hero' | 'compact';
 }
 
-const PageHeader = ({ title, subtitle, icon: Icon, children }: PageHeaderProps) => {
+const PageHeader = ({ title, subtitle, icon: Icon, children, variant = 'hero' }: PageHeaderProps) => {
+    if (variant === 'compact') {
+        return (
+            <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-3">
+                    {Icon && <Icon className="w-5 h-5 text-stone-500" />}
+                    <div>
+                        <h2 className="text-lg font-bold text-stone-800 tracking-tight">{title}</h2>
+                        {subtitle && (
+                            <p className="text-xs text-stone-500 mt-0.5">{subtitle}</p>
+                        )}
+                    </div>
+                </div>
+                {children && <div>{children}</div>}
+            </div>
+        );
+    }
+
     return (
         <div className="relative overflow-hidden mb-8">
             {/* M3スタイルの帯（Hero Section） */}

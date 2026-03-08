@@ -28,7 +28,7 @@ export default function AdminOperationPage() {
             activeTab={activeTab}
             onTabChange={(id) => setActiveTab(id as TabId)}
         >
-            {activeTab === 'users' && <AdminUserManagement user={user} />}
+            {activeTab === 'users' && <AdminUserManagement />}
             {activeTab === 'announcements' && <AdminAnnouncementManagement user={user} />}
             {activeTab === 'training' && <TrainingAdmin />}
         </AdminPageLayout>
