@@ -9,9 +9,10 @@ import manuals from './routes/manuals'
 import upload from './routes/upload'
 import announcements from './routes/announcements'
 import leaves from './routes/leaves'
-import admin from './routes/admin' // I might need to group admin routes
+import admin from './routes/admin'
 import professions from './routes/professions'
 import masters from './routes/masters'
+import training from './routes/training'
 import { Bindings } from './types'
 
 const app = new Hono<{ Bindings: Bindings }>()
@@ -32,6 +33,7 @@ app.route('/api/leaves', leaves)
 app.route('/api/admin', admin)
 app.route('/api/professions', professions)
 app.route('/api/masters', masters)
+app.route('/api/training', training)
 
 // Health Check
 app.get('/', (c) => c.text('Medical Wiki LMS API is running'))
