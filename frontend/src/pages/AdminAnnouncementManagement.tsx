@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { Plus, Edit2, Trash2, AlertCircle, X, Save, Bell, BookOpen } from 'lucide-react';
 import { api, Announcement } from '../api';
 import { Manual } from '../types';
-import PageHeader from '../components/layout/PageHeader';
 import { Button } from '../components/ui/Button';
 import { User } from '../types';
 
@@ -136,12 +135,9 @@ export default function AdminAnnouncementManagement({ user }: props) {
     if (loading) return <div className="p-12 text-center text-gray-500">Loading...</div>;
 
     return (
-        <div className="max-w-7xl mx-auto px-4 py-6 space-y-6 animate-in fade-in duration-500">
-            <PageHeader
-                title="お知らせ管理"
-                subtitle="全施設または特定施設へのお知らせを配信・管理します"
-                icon={Bell}
-            >
+        <div className="space-y-6 animate-in fade-in duration-300">
+            {/* Actions */}
+            <div className="flex justify-end">
                 <Button
                     variant="filled"
                     onClick={() => handleOpenModal()}
@@ -149,30 +145,30 @@ export default function AdminAnnouncementManagement({ user }: props) {
                 >
                     新規作成
                 </Button>
-            </PageHeader>
+            </div>
 
             {error && (
-                <div className="bg-red-50 text-red-600 p-4 rounded-xl mb-6 flex items-center gap-2 border border-red-100">
+                <div className="bg-red-50 text-red-600 p-4 rounded-xl flex items-center gap-2 border border-red-100">
                     <AlertCircle size={20} />
                     {error}
                 </div>
             )}
 
-            <div className="bg-white rounded-[28px] border border-gray-100 shadow-sm overflow-hidden">
+            <div className="overflow-hidden rounded-xl ring-1 ring-stone-200">
                 <table className="w-full">
-                    <thead className="bg-gray-50/50 border-b border-gray-100">
+                    <thead className="bg-stone-50 border-b border-stone-200">
                         <tr>
-                            <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">優先度</th>
-                            <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">タイトル</th>
-                            <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">連携研修</th>
-                            <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">掲載期限</th>
-                            <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">作成日</th>
-                            <th className="px-6 py-4 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">操作</th>
+                            <th className="px-6 py-4 text-left text-xs font-bold text-gray-500">優先度</th>
+                            <th className="px-6 py-4 text-left text-xs font-bold text-gray-500">タイトル</th>
+                            <th className="px-6 py-4 text-left text-xs font-bold text-gray-500">連携研修</th>
+                            <th className="px-6 py-4 text-left text-xs font-bold text-gray-500">掲載期限</th>
+                            <th className="px-6 py-4 text-left text-xs font-bold text-gray-500">作成日</th>
+                            <th className="px-6 py-4 text-right text-xs font-bold text-gray-500">操作</th>
                         </tr>
                     </thead>
-                    <tbody className="divide-y divide-gray-100">
+                    <tbody className="divide-y divide-stone-100">
                         {announcements.map((a) => (
-                            <tr key={a.id} className="hover:bg-gray-50/50 transition-colors">
+                            <tr key={a.id} className="hover:bg-stone-50/50 transition-colors">
                                 <td className="px-6 py-4 whitespace-nowrap">
                                     <span className={`px-2.5 py-1 rounded-full text-xs font-bold ${a.priority === 'HIGH' ? 'bg-red-100 text-red-700' :
                                         a.priority === 'LOW' ? 'bg-gray-100 text-gray-600' :
@@ -209,13 +205,13 @@ export default function AdminAnnouncementManagement({ user }: props) {
                                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                     <button
                                         onClick={() => handleOpenModal(a)}
-                                        className="text-indigo-600 hover:text-indigo-900 mr-4 p-1 hover:bg-indigo-50 rounded transition-colors"
+                                        className="text-gray-400 hover:text-orange-600 mr-3 p-1 hover:bg-orange-50 rounded transition-colors"
                                     >
                                         <Edit2 size={16} />
                                     </button>
                                     <button
                                         onClick={() => handleDelete(a.id)}
-                                        className="text-red-500 hover:text-red-700 p-1 hover:bg-red-50 rounded transition-colors"
+                                        className="text-gray-400 hover:text-red-600 p-1 hover:bg-red-50 rounded transition-colors"
                                     >
                                         <Trash2 size={16} />
                                     </button>
@@ -237,7 +233,7 @@ export default function AdminAnnouncementManagement({ user }: props) {
             {isModalOpen && (
                 <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
                     <div className="bg-white rounded-[28px] w-full max-w-lg shadow-xl animate-in fade-in zoom-in-95 duration-200 overflow-hidden max-h-[85vh] flex flex-col">
-                        <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
+                        <div className="p-6 border-b border-stone-100 flex justify-between items-center bg-stone-50/50">
                             <h2 className="text-lg font-bold text-gray-800">
                                 {editingId ? 'お知らせを編集' : '新規お知らせ作成'}
                             </h2>
@@ -254,7 +250,7 @@ export default function AdminAnnouncementManagement({ user }: props) {
                                         required
                                         value={title}
                                         onChange={(e) => setTitle(e.target.value)}
-                                        className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all bg-gray-50/30"
+                                        className="w-full px-4 py-3 border border-stone-200 rounded-xl focus:ring-2 focus:ring-orange-300 focus:border-orange-400 outline-none transition-all bg-stone-50/30"
                                         placeholder="お知らせのタイトルを入力"
                                     />
                                 </div>
@@ -297,7 +293,7 @@ export default function AdminAnnouncementManagement({ user }: props) {
                                         <select
                                             value={priority}
                                             onChange={(e) => setPriority(e.target.value as any)}
-                                            className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all bg-gray-50/30 appearance-none"
+                                            className="w-full px-4 py-3 border border-stone-200 rounded-xl focus:ring-2 focus:ring-orange-300 focus:border-orange-400 outline-none transition-all bg-stone-50/30 appearance-none"
                                         >
                                             <option value="HIGH">重要 (HIGH)</option>
                                             <option value="NORMAL">通常 (NORMAL)</option>
@@ -311,7 +307,7 @@ export default function AdminAnnouncementManagement({ user }: props) {
                                             required
                                             value={displayUntil}
                                             onChange={(e) => setDisplayUntil(e.target.value)}
-                                            className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all bg-gray-50/30"
+                                            className="w-full px-4 py-3 border border-stone-200 rounded-xl focus:ring-2 focus:ring-orange-300 focus:border-orange-400 outline-none transition-all bg-stone-50/30"
                                         />
                                     </div>
                                 </div>
@@ -324,12 +320,12 @@ export default function AdminAnnouncementManagement({ user }: props) {
                                         onChange={(e) => setContent(e.target.value)}
                                         rows={6}
                                         placeholder="お知らせの内容を入力してください"
-                                        className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none resize-none bg-gray-50/30"
+                                        className="w-full px-4 py-3 border border-stone-200 rounded-xl focus:ring-2 focus:ring-orange-300 focus:border-orange-400 outline-none resize-none bg-stone-50/30"
                                     />
                                 </div>
 
                                 {/* 関連コンテンツ連携 */}
-                                <div className="p-4 bg-gray-50 rounded-xl border border-gray-100">
+                                <div className="p-4 bg-stone-50 rounded-xl border border-stone-100">
                                     <label className="block text-sm font-bold text-gray-700 mb-3">関連コンテンツ連携（任意）</label>
 
                                     <div className="flex gap-4 mb-4">
@@ -338,7 +334,7 @@ export default function AdminAnnouncementManagement({ user }: props) {
                                             onClick={() => setRelatedType(relatedType === 'WIKI' ? null : 'WIKI')}
                                             className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-lg border transition-all text-xs font-bold ${relatedType === 'WIKI'
                                                 ? 'bg-purple-100 border-purple-200 text-purple-700'
-                                                : 'bg-white border-gray-200 text-gray-600 hover:border-purple-200'
+                                                : 'bg-white border-stone-200 text-gray-600 hover:border-purple-200'
                                                 }`}
                                         >
                                             <BookOpen size={14} /> Wiki連携
@@ -347,8 +343,8 @@ export default function AdminAnnouncementManagement({ user }: props) {
                                             type="button"
                                             onClick={() => setRelatedType(relatedType === 'TRAINING_EVENT' ? null : 'TRAINING_EVENT')}
                                             className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-lg border transition-all text-xs font-bold ${relatedType === 'TRAINING_EVENT'
-                                                    ? 'bg-blue-100 border-blue-200 text-blue-700'
-                                                    : 'bg-white border-gray-200 text-gray-600 hover:border-blue-200'
+                                                ? 'bg-blue-100 border-blue-200 text-blue-700'
+                                                : 'bg-white border-stone-200 text-gray-600 hover:border-blue-200'
                                                 }`}
                                         >
                                             <Bell size={14} /> 研修イベント連携
@@ -395,7 +391,7 @@ export default function AdminAnnouncementManagement({ user }: props) {
                                 </div>
                             </div>
 
-                            <div className="p-6 border-t border-gray-100 flex justify-end gap-3 bg-gray-50/50">
+                            <div className="p-6 border-t border-stone-100 flex justify-end gap-3 bg-stone-50/50">
                                 <Button
                                     variant="text"
                                     onClick={() => setIsModalOpen(false)}

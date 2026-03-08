@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { api, TrainingEvent, Committee } from '../api';
 import { useAuth } from '../context/AuthContext';
-import { Plus, QrCode as QrIcon, Users, FileText, Edit2, Trash2, Youtube } from 'lucide-react';
+import { Plus, QrCode as QrIcon, Users, FileText, Edit2, Trash2, Youtube, X } from 'lucide-react';
 import { Button } from '../components/ui/Button';
 import { useNavigate } from 'react-router-dom';
 
@@ -108,14 +108,12 @@ export default function TrainingAdmin() {
 
         try {
             await api.deleteTrainingEvent(user!.id, id);
-            // Delete from state immediately without calling loadData()
             setEvents(prev => prev.filter(e => e.id !== id));
         } catch (error) {
             console.error(error);
             alert('削除に失敗しました');
         }
     };
-
 
     const openQr = async (eventId: number) => {
         try {
@@ -146,12 +144,12 @@ export default function TrainingAdmin() {
         }
     };
 
-    if (loading) return <div>Loading...</div>;
+    if (loading) return <div className="p-12 text-center text-gray-400 text-sm">データを読み込み中...</div>;
 
     return (
-        <div className="space-y-6">
-            <div className="flex justify-between items-center">
-                <h1 className="text-2xl font-bold text-m3-on-surface">研修会管理</h1>
+        <div className="space-y-6 animate-in fade-in duration-300">
+            {/* Actions */}
+            <div className="flex justify-end">
                 <Button variant="filled" onClick={() => {
                     setEditingEvent(null);
                     resetForm();
@@ -161,130 +159,146 @@ export default function TrainingAdmin() {
                 </Button>
             </div>
 
-            <div className="bg-white rounded-xl shadow border border-m3-outline-variant/20 overflow-hidden">
-                <table className="w-full text-left text-sm text-m3-on-surface">
-                    <thead className="bg-m3-surface-container text-m3-on-surface-variant">
+            {/* Data Table — stone-* 統一デザイン */}
+            <div className="overflow-hidden rounded-xl ring-1 ring-stone-200">
+                <table className="w-full text-left">
+                    <thead className="bg-stone-50 border-b border-stone-200">
                         <tr>
-                            <th className="p-4">タイトル</th>
-                            <th className="p-4">対象委員会/職種</th>
-                            <th className="p-4">期間</th>
-                            <th className="p-4">アクション</th>
+                            <th className="px-6 py-4 text-xs font-bold text-gray-500">タイトル</th>
+                            <th className="px-6 py-4 text-xs font-bold text-gray-500">対象委員会/職種</th>
+                            <th className="px-6 py-4 text-xs font-bold text-gray-500">期間</th>
+                            <th className="px-6 py-4 text-xs font-bold text-gray-500">アクション</th>
                         </tr>
                     </thead>
-                    <tbody className="divide-y divide-m3-outline-variant/10">
-                        {events.map(event => (
-                            <tr key={event.id} className="hover:bg-m3-surface-container-low">
-                                <td className="p-4 font-medium">{event.title}</td>
-                                <td className="p-4">
-                                    {event.targetCommitteeId ? committees.find(c => c.id === event.targetCommitteeId)?.name : '全対象'}
-                                    {event.targetJobType && ` / ${event.targetJobType}`}
-                                </td>
-                                <td className="px-6 py-4 text-sm text-m3-on-surface-variant">
-                                    {new Date(event.startTime).toLocaleDateString('ja-JP')} 〜 {new Date(event.endTime).toLocaleDateString('ja-JP')}
-                                </td>
-                                <td className="p-4 flex gap-2">
-                                    <Button variant="text" onClick={() => openQr(event.id)} title="QRコード">
-                                        <QrIcon size={18} />
-                                    </Button>
-                                    <Button variant="text" onClick={() => navigate(`/admin/training/responses/${event.id}`)} title="回答確認">
-                                        <Users size={18} />
-                                    </Button>
-                                    <Button variant="text" onClick={() => navigate(`/training/${event.id}`)} title="プレビュー">
-                                        <FileText size={18} />
-                                    </Button>
-                                    <Button variant="text" onClick={() => handleEdit(event)} title="編集">
-                                        <Edit2 size={18} className="text-m3-primary" />
-                                    </Button>
-                                    <Button variant="text" onClick={(e) => handleDeleteClick(e, event.id!)} title="削除">
-                                        <Trash2 size={18} className="text-m3-error" />
-                                    </Button>
+                    <tbody className="divide-y divide-stone-100">
+                        {events.length === 0 ? (
+                            <tr>
+                                <td colSpan={4} className="px-6 py-12 text-center text-gray-400 text-sm">
+                                    研修会はまだ登録されていません
                                 </td>
                             </tr>
-                        ))}
+                        ) : (
+                            events.map(event => (
+                                <tr key={event.id} className="hover:bg-stone-50/50 transition-colors">
+                                    <td className="px-6 py-4 font-medium text-sm text-gray-800">{event.title}</td>
+                                    <td className="px-6 py-4 text-sm text-gray-600">
+                                        {event.targetCommitteeId ? committees.find(c => c.id === event.targetCommitteeId)?.name : '全対象'}
+                                        {event.targetJobType && ` / ${event.targetJobType}`}
+                                    </td>
+                                    <td className="px-6 py-4 text-sm text-gray-500">
+                                        {new Date(event.startTime).toLocaleDateString('ja-JP')} 〜 {new Date(event.endTime).toLocaleDateString('ja-JP')}
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        <div className="flex gap-1">
+                                            <button onClick={() => openQr(event.id)} title="QRコード" className="p-1.5 text-gray-400 hover:text-orange-600 hover:bg-orange-50 rounded transition-colors">
+                                                <QrIcon size={16} />
+                                            </button>
+                                            <button onClick={() => navigate(`/admin/training/responses/${event.id}`)} title="回答確認" className="p-1.5 text-gray-400 hover:text-orange-600 hover:bg-orange-50 rounded transition-colors">
+                                                <Users size={16} />
+                                            </button>
+                                            <button onClick={() => navigate(`/training/${event.id}`)} title="プレビュー" className="p-1.5 text-gray-400 hover:text-orange-600 hover:bg-orange-50 rounded transition-colors">
+                                                <FileText size={16} />
+                                            </button>
+                                            <button onClick={() => handleEdit(event)} title="編集" className="p-1.5 text-gray-400 hover:text-orange-600 hover:bg-orange-50 rounded transition-colors">
+                                                <Edit2 size={16} />
+                                            </button>
+                                            <button onClick={(e) => handleDeleteClick(e, event.id!)} title="削除" className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors">
+                                                <Trash2 size={16} />
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))
+                        )}
                     </tbody>
                 </table>
             </div>
 
-            {/* Create/Edit Modal */}
+            {/* Create/Edit Modal — 統一デザイン */}
             {showCreateModal && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-                    <div className="bg-white rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6 shadow-xl">
-                        <h2 className="text-xl font-bold mb-4">{editingEvent ? '研修会の編集' : '新規研修会作成'}</h2>
-                        <form onSubmit={handleCreate} className="space-y-6">
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+                    <div className="bg-white rounded-[28px] w-full max-w-2xl max-h-[85vh] overflow-hidden shadow-xl animate-in fade-in zoom-in-95 duration-200 flex flex-col">
+                        <div className="p-6 border-b border-stone-100 flex justify-between items-center bg-stone-50/50">
+                            <h2 className="text-lg font-bold text-gray-800">{editingEvent ? '研修会の編集' : '新規研修会作成'}</h2>
+                            <button onClick={() => { setShowCreateModal(false); setEditingEvent(null); resetForm(); }} className="text-gray-400 hover:text-gray-600 hover:bg-gray-200/50 p-2 rounded-full transition-colors">
+                                <X size={20} />
+                            </button>
+                        </div>
+                        <form onSubmit={handleCreate} className="flex-1 overflow-y-auto p-6 space-y-6">
                             <div className="space-y-4">
-                                <h3 className="text-sm font-bold text-m3-on-surface-variant flex items-center gap-2">
-                                    <FileText size={18} className="text-m3-primary" /> 基本情報
+                                <h3 className="text-sm font-bold text-gray-500 flex items-center gap-2">
+                                    <FileText size={16} className="text-orange-500" /> 基本情報
                                 </h3>
                                 <input
                                     placeholder="タイトル"
-                                    className="w-full p-2 border rounded"
+                                    className="w-full px-4 py-3 border border-stone-200 rounded-xl focus:ring-2 focus:ring-orange-300 focus:border-orange-400 outline-none transition-all bg-stone-50/30 text-sm"
                                     value={title} onChange={e => setTitle(e.target.value)} required
                                 />
                                 <textarea
                                     placeholder="説明"
-                                    className="w-full p-2 border rounded h-24"
+                                    className="w-full px-4 py-3 border border-stone-200 rounded-xl focus:ring-2 focus:ring-orange-300 focus:border-orange-400 outline-none resize-none bg-stone-50/30 h-24 text-sm"
                                     value={description} onChange={e => setDescription(e.target.value)} required
                                 />
                             </div>
 
-                            <div className="h-px bg-m3-outline-variant/10" />
+                            <div className="h-px bg-stone-100" />
 
                             <div className="space-y-4">
-                                <h3 className="text-sm font-bold text-m3-on-surface-variant flex items-center gap-2">
-                                    <Youtube size={18} className="text-red-500" /> 動画学習設定
+                                <h3 className="text-sm font-bold text-gray-500 flex items-center gap-2">
+                                    <Youtube size={16} className="text-red-500" /> 動画学習設定
                                 </h3>
                                 <div className="space-y-4">
                                     <div className="space-y-1">
-                                        <label className="text-xs font-bold text-m3-on-surface-variant flex items-center gap-1.5 ml-1">
+                                        <label className="text-xs font-bold text-gray-500 flex items-center gap-1.5 ml-1">
                                             <Youtube size={14} className="text-red-500" /> 動画1 (メイン)
                                         </label>
                                         <input
                                             placeholder="YouTube URLを入力 (例: https://www.youtube.com/watch?v=...)"
-                                            className="w-full p-2 border rounded focus:ring-2 ring-m3-primary/20 outline-none"
+                                            className="w-full px-4 py-3 border border-stone-200 rounded-xl focus:ring-2 focus:ring-orange-300 outline-none text-sm bg-stone-50/30"
                                             value={videoUrl} onChange={e => setVideoUrl(e.target.value)}
                                         />
                                     </div>
                                     <div className="space-y-1">
-                                        <label className="text-xs font-bold text-m3-on-surface-variant flex items-center gap-1.5 ml-1">
+                                        <label className="text-xs font-bold text-gray-400 flex items-center gap-1.5 ml-1">
                                             <Youtube size={14} className="text-gray-400" /> 動画2 (任意)
                                         </label>
                                         <input
                                             placeholder="YouTube URLを入力 (任意)"
-                                            className="w-full p-2 border rounded focus:ring-2 ring-m3-primary/20 outline-none"
+                                            className="w-full px-4 py-3 border border-stone-200 rounded-xl focus:ring-2 focus:ring-orange-300 outline-none text-sm bg-stone-50/30"
                                             value={videoUrl2} onChange={e => setVideoUrl2(e.target.value)}
                                         />
                                     </div>
                                     <div className="space-y-1">
-                                        <label className="text-xs font-bold text-m3-on-surface-variant flex items-center gap-1.5 ml-1">
+                                        <label className="text-xs font-bold text-gray-400 flex items-center gap-1.5 ml-1">
                                             <Youtube size={14} className="text-gray-400" /> 動画3 (任意)
                                         </label>
                                         <input
                                             placeholder="YouTube URLを入力 (任意)"
-                                            className="w-full p-2 border rounded focus:ring-2 ring-m3-primary/20 outline-none"
+                                            className="w-full px-4 py-3 border border-stone-200 rounded-xl focus:ring-2 focus:ring-orange-300 outline-none text-sm bg-stone-50/30"
                                             value={videoUrl3} onChange={e => setVideoUrl3(e.target.value)}
                                         />
                                     </div>
                                 </div>
                             </div>
 
-                            <div className="h-px bg-m3-outline-variant/10" />
+                            <div className="h-px bg-stone-100" />
 
                             <div className="space-y-4">
-                                <h3 className="text-sm font-bold text-m3-on-surface-variant flex items-center gap-2">
-                                    <FileText size={18} className="text-blue-500" /> 配布資料設定
+                                <h3 className="text-sm font-bold text-gray-500 flex items-center gap-2">
+                                    <FileText size={16} className="text-blue-500" /> 配布資料設定
                                 </h3>
                                 <input
                                     placeholder="資料URL (PDFなど)"
-                                    className="w-full p-2 border rounded"
+                                    className="w-full px-4 py-3 border border-stone-200 rounded-xl focus:ring-2 focus:ring-orange-300 outline-none text-sm bg-stone-50/30"
                                     value={materialsUrl} onChange={e => setMaterialsUrl(e.target.value)}
                                 />
                             </div>
 
-                            <div className="h-px bg-m3-outline-variant/10" />
+                            <div className="h-px bg-stone-100" />
 
                             <div className="grid grid-cols-2 gap-4">
                                 <select
-                                    className="p-2 border rounded"
+                                    className="px-4 py-3 border border-stone-200 rounded-xl text-sm bg-stone-50/30 outline-none focus:ring-2 focus:ring-orange-300"
                                     value={targetCommitteeId || ''}
                                     onChange={e => setTargetCommitteeId(e.target.value ? Number(e.target.value) : null)}
                                 >
@@ -295,35 +309,35 @@ export default function TrainingAdmin() {
                                 </select>
                                 <input
                                     placeholder="職種 (任意)"
-                                    className="p-2 border rounded"
+                                    className="px-4 py-3 border border-stone-200 rounded-xl text-sm bg-stone-50/30 outline-none focus:ring-2 focus:ring-orange-300"
                                     value={targetJobType} onChange={e => setTargetJobType(e.target.value)}
                                 />
                             </div>
 
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-1">
-                                    <label className="text-sm font-bold text-m3-on-surface-variant ml-1">開始日時</label>
+                                    <label className="text-sm font-bold text-gray-500 ml-1">開始日時</label>
                                     <input
                                         type="date"
                                         value={startTime}
                                         onChange={(e) => setStartTime(e.target.value)}
-                                        className="w-full px-4 py-3 bg-m3-surface border border-m3-outline rounded-xl focus:ring-2 ring-m3-primary outline-none"
+                                        className="w-full px-4 py-3 border border-stone-200 rounded-xl focus:ring-2 focus:ring-orange-300 outline-none text-sm bg-stone-50/30"
                                         required
                                     />
                                 </div>
                                 <div className="space-y-1">
-                                    <label className="text-sm font-bold text-m3-on-surface-variant ml-1">終了日時</label>
+                                    <label className="text-sm font-bold text-gray-500 ml-1">終了日時</label>
                                     <input
                                         type="date"
                                         value={endTime}
                                         onChange={(e) => setEndTime(e.target.value)}
-                                        className="w-full px-4 py-3 bg-m3-surface border border-m3-outline rounded-xl focus:ring-2 ring-m3-primary outline-none"
+                                        className="w-full px-4 py-3 border border-stone-200 rounded-xl focus:ring-2 focus:ring-orange-300 outline-none text-sm bg-stone-50/30"
                                         required
                                     />
                                 </div>
                             </div>
 
-                            <div className="flex justify-end gap-3 mt-6">
+                            <div className="flex justify-end gap-3 pt-2 pb-2">
                                 <Button variant="text" type="button" onClick={() => {
                                     setShowCreateModal(false);
                                     setEditingEvent(null);
@@ -335,8 +349,6 @@ export default function TrainingAdmin() {
                     </div>
                 </div>
             )}
-
-
         </div>
     );
 }
