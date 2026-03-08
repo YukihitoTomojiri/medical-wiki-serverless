@@ -156,7 +156,7 @@ async function main() {
         { name: '看護師', description: '患者の看護ケアを担当' },
         { name: '介護職', description: '介護サービスの提供を担当' },
         { name: '事務職', description: '事務・管理業務を担当' },
-        { name: 'その他', description: 'その他の職種' },
+        { name: '医師', description: '診察・治療を担当' },
     ]
 
     for (const prof of professionNames) {
@@ -167,6 +167,55 @@ async function main() {
         })
     }
     console.log('職種マスタデータを投入しました')
+
+    // 運用データ：お知らせ
+    const nextMonth = new Date();
+    nextMonth.setMonth(nextMonth.getMonth() + 1);
+
+    await prisma.announcement.upsert({
+        where: { id: 1 }, // 仮で固定ID、存在しなければ作成
+        update: {
+            title: '全職員対象：今月の感染対策強化について',
+            content: 'インフルエンザの流行シーズンに伴い、全施設において標準的な感染対策を再度徹底してください。\n1. 手指衛生の実践\n2. 適切なマスク着用\n3. 備品の消毒',
+            priority: 'HIGH',
+            displayUntil: nextMonth,
+        },
+        create: {
+            id: 1,
+            createdBy: devUser.id,
+            title: '全職員対象：今月の感染対策強化について',
+            content: 'インフルエンザの流行シーズンに伴い、全施設において標準的な感染対策を再度徹底してください。\n1. 手指衛生の実践\n2. 適切なマスク着用\n3. 備品の消毒',
+            priority: 'HIGH',
+            displayUntil: nextMonth,
+        }
+    })
+    console.log('お知らせの運用データを投入しました');
+
+    // 運用データ：研修
+    const eventStartTime = new Date();
+    eventStartTime.setDate(eventStartTime.getDate() + 7); // 7日後
+    const eventEndTime = new Date(eventStartTime);
+    eventEndTime.setHours(eventEndTime.getHours() + 2); // 2時間の研修
+
+    await prisma.trainingEvent.upsert({
+        where: { id: 1 }, // 仮で固定ID、存在しなければ作成
+        update: {
+            title: '2024年度 第1回 医療安全講習会',
+            description: '医療安全に関する最新のガイドラインと、当院でのヒヤリハット事例に基づく予防策についての講習会です。全職員の受講が必須となります。',
+            videoUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', // サンプルURL
+            startTime: eventStartTime,
+            endTime: eventEndTime,
+        },
+        create: {
+            id: 1,
+            title: '2024年度 第1回 医療安全講習会',
+            description: '医療安全に関する最新のガイドラインと、当院でのヒヤリハット事例に基づく予防策についての講習会です。全職員の受講が必須となります。',
+            videoUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+            startTime: eventStartTime,
+            endTime: eventEndTime,
+        }
+    })
+    console.log('研修の運用データを投入しました');
 }
 
 main()

@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { api } from '../api';
 import { useAuth } from '../context/AuthContext';
-import PageHeader from '../components/layout/PageHeader';
 import { Briefcase, Plus, Trash2, AlertCircle } from 'lucide-react';
 
 interface Profession {
@@ -66,12 +65,7 @@ export default function AdminProfessionManagement() {
     if (loading) return <div className="p-12 text-center text-gray-400">読み込み中...</div>;
 
     return (
-        <div className="space-y-6 max-w-4xl mx-auto">
-            <PageHeader
-                title="職種マスタ管理"
-                subtitle="システムで使用する職種の一覧を管理します"
-                icon={Briefcase}
-            />
+        <div className="space-y-6 max-w-4xl mx-auto animate-in fade-in duration-300">
 
             {error && (
                 <div className="mx-4 p-4 bg-red-50 border border-red-200 rounded-xl text-sm text-red-700 font-bold flex items-center gap-2">

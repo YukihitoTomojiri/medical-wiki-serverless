@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { api } from '../api';
 import { Building2, Plus, Edit2, Trash2, ChevronDown, ChevronRight, Check, X, Save } from 'lucide-react';
-import PageHeader from '../components/layout/PageHeader';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
@@ -129,21 +128,17 @@ export default function OrganizationManagement() {
     }
 
     return (
-        <div className="max-w-7xl mx-auto px-4 py-6 space-y-6 animate-in fade-in duration-500">
-            {/* Header */}
-            <PageHeader
-                title="組織管理"
-                subtitle="施設内の部署・病棟の構成を管理します"
-                icon={Building2}
-            >
+        <div className="space-y-6 animate-in fade-in duration-300">
+            {/* Actions */}
+            <div className="flex justify-end">
                 <Button
                     variant="filled"
                     onClick={() => setShowAddFacility(true)}
-                    icon={<Plus size={18} />}
+                    className="flex items-center gap-2"
                 >
-                    施設を追加
+                    <Plus size={18} /> 施設を追加
                 </Button>
-            </PageHeader>
+            </div>
 
             <div className="bg-white rounded-[28px] border border-stone-200 p-6 shadow-sm">
                 {error && (
