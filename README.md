@@ -201,8 +201,30 @@ medical-wiki-lms-serverless/
 ├── frontend/           # React + Vite 構成
 │   ├── public/         # 静的アセット (ロゴ等)
 │   └── src/
-│       ├── api.ts      # バックエンド通信用APIクライアント
-│       ├── components/ # 共通UI部品・ウィジェット
+│       ├── api/           # バックエンド通信用APIクライアント (機能別に分割)
+│       │   ├── index.ts   # 統合ハブ (後方互換のため `api` オブジェクトを再エクスポート)
+│       │   ├── helpers.ts # 共通ヘルパー (API_BASE, getHeaders)
+│       │   ├── auth.ts    # 認証系
+│       │   ├── users.ts   # ユーザー管理系
+│       │   ├── org.ts     # 組織管理系 (施設・部署・職種)
+│       │   ├── manuals.ts # マニュアル・進捗系
+│       │   ├── training.ts # 研修管理系
+│       │   ├── admin.ts   # システム管理・セキュリティ系
+│       │   ├── announcements.ts # お知らせ系
+│       │   └── leaves.ts  # 有給・勤怠管理系
+│       ├── hooks/         # カスタムHooks (ページロジックの抽出)
+│       │   ├── useOrganization.ts      # 組織管理CRUD
+│       │   ├── useUserManagement.ts    # ユーザー管理CRUD
+│       │   └── useTrainingManagement.ts # 研修管理CRUD
+│       ├── components/
+│       │   ├── admin/     # 管理画面用UIコンポーネント
+│       │   │   ├── FacilityList.tsx          # 施設・部署ツリー表示
+│       │   │   ├── UserTable.tsx             # ユーザー一覧テーブル
+│       │   │   ├── UserFormModal.tsx         # ユーザー追加/編集モーダル
+│       │   │   ├── TrainingEventTable.tsx    # 研修テーブル
+│       │   │   └── TrainingEventFormModal.tsx # 研修フォームモーダル
+│       │   ├── layout/   # レイアウト部品 (PageHeader, AdminPageLayout等)
+│       │   └── ui/       # 汎用UI部品 (Button, Card, Input, Badge, Modal等)
 │       ├── pages/      # ページコンポーネント (Dashboard, Manuals等)
 │       └── types.ts    # フロントエンド用の型定義
 │

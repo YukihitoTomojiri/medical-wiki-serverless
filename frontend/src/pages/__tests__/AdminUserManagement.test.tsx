@@ -29,6 +29,11 @@ const mockUser: User = {
     paidLeaveDays: 20
 };
 
+// Mock useAuth to return mockUser
+vi.mock('../../context/AuthContext', () => ({
+    useAuth: () => ({ user: mockUser }),
+}));
+
 const mockUsers: User[] = [
     mockUser,
     {
@@ -54,7 +59,7 @@ describe('AdminUserManagement Component', () => {
     it('renders user list correctly', async () => {
         render(
             <BrowserRouter>
-                <AdminUserManagement user={mockUser} />
+                <AdminUserManagement />
             </BrowserRouter>
         );
 
@@ -67,12 +72,12 @@ describe('AdminUserManagement Component', () => {
     it('validates required fields in registration form', async () => {
         render(
             <BrowserRouter>
-                <AdminUserManagement user={mockUser} />
+                <AdminUserManagement />
             </BrowserRouter>
         );
 
         // Open Add Modal
-        const addButton = screen.getByText('新規ユーザー登録');
+        const addButton = screen.getByText('新規登録');
         fireEvent.click(addButton);
 
         // Submit empty form
@@ -80,8 +85,6 @@ describe('AdminUserManagement Component', () => {
         fireEvent.click(submitButton);
 
         // Check for HTML5 validation or error messages if custom validation exists.
-        // Since the inputs have `required` attribute, browser validation handles it.
-        // We can check if the inputs are invalid.
         const employeeIdInput = screen.getByPlaceholderText('例: 1001');
         expect(employeeIdInput).toBeInvalid();
 
@@ -95,12 +98,12 @@ describe('AdminUserManagement Component', () => {
 
         render(
             <BrowserRouter>
-                <AdminUserManagement user={mockUser} />
+                <AdminUserManagement />
             </BrowserRouter>
         );
 
         // Open Add Modal
-        await user.click(screen.getByText('新規ユーザー登録'));
+        await user.click(screen.getByText('新規登録'));
 
         // Fill form
         await user.type(screen.getByPlaceholderText('例: 1001'), '2001');
