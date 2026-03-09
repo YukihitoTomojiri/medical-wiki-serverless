@@ -46,7 +46,8 @@ const AdminUserManagement = () => {
                     onFormChange={mgmt.setFormData}
                     onSubmit={mgmt.handleSubmit}
                     onClose={() => mgmt.setShowAddModal(false)}
-                    facilities={mgmt.facilities}
+                    allFacilities={mgmt.allFacilities}
+                    allDepartments={mgmt.allDepartments}
                     currentUserRole={user.role}
                     submitting={mgmt.submitting}
                     error={mgmt.error}
@@ -60,7 +61,8 @@ const AdminUserManagement = () => {
                     onSubmit={mgmt.handleSubmit}
                     onClose={() => mgmt.setShowEditModal(false)}
                     onDelete={mgmt.handleDelete}
-                    facilities={mgmt.facilities}
+                    allFacilities={mgmt.allFacilities}
+                    allDepartments={mgmt.allDepartments}
                     currentUserRole={user.role}
                     submitting={mgmt.submitting}
                     error={mgmt.error}

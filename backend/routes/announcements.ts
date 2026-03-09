@@ -12,21 +12,7 @@ app.get('/', async (c) => {
     const user = await prisma.user.findUnique({ where: { id: userId } })
     if (!user) return c.json([]) // Should probably 401
 
-    // Logic: fetch 'ALL' + 'FACILITY' matching user.facility
-    // Prsim Requirement: facilityId match OR null
-    // But `user.facility` is string.
-    // Announcement `facilityId` is Int.
-    // If we map User.facility string to Facility.id, we need to lookup.
-
-    // We fetch user's facility ID if possible.
-    // Or if User has facility name stored, we assume announcements use IDs.
-    // We might need to find Facility by name.
-
-    let facilityId = null;
-    if (user.facility) {
-        const fac = await prisma.facility.findUnique({ where: { name: user.facility } })
-        if (fac) facilityId = fac.id
-    }
+    const facilityId = user.facilityId;
 
     const now = new Date()
 
