@@ -1,18 +1,11 @@
 import { Hono } from 'hono'
-import { getPrisma } from '../lib/prisma'
+import { OrgService } from '../services/orgService'
 import { Bindings } from '../types'
 
 const app = new Hono<{ Bindings: Bindings }>()
 
 app.get('/', async (c) => {
-    const prisma = getPrisma(c.env.DATABASE_URL as string)
-    const departments = await prisma.department.findMany({
-        include: { facility: true },
-        orderBy: { id: 'asc' }
-    })
-    // Legacy API might expect flat structure or nested
-    // Frontend `api.ts` seems to expect array.
-    // `OrganizationManagement` uses `facilityId` and `facilityName`.
+    const departments = await OrgService.getDepartments(c.env.DATABASE_URL as string)
     return c.json(departments.map(d => ({
         ...d,
         facilityName: d.facility.name
@@ -20,44 +13,27 @@ app.get('/', async (c) => {
 })
 
 app.get('/by-facility/:facilityId', async (c) => {
-    const prisma = getPrisma(c.env.DATABASE_URL as string)
     const facilityId = Number(c.req.param('facilityId'))
-    const departments = await prisma.department.findMany({
-        where: { facilityId },
-        orderBy: { id: 'asc' }
-    })
+    const departments = await OrgService.getDepartmentsByFacility(c.env.DATABASE_URL as string, facilityId)
     return c.json(departments)
 })
 
 app.post('/', async (c) => {
-    const prisma = getPrisma(c.env.DATABASE_URL as string)
     const { name, facilityId } = await c.req.json()
-    const department = await prisma.department.create({
-        data: { name, facilityId: Number(facilityId) },
-        include: { facility: true }
-    })
+    const department = await OrgService.createDepartment(c.env.DATABASE_URL as string, name, Number(facilityId))
     return c.json({ ...department, facilityName: department.facility.name })
 })
 
 app.put('/:id', async (c) => {
-    const prisma = getPrisma(c.env.DATABASE_URL as string)
     const id = Number(c.req.param('id'))
     const { name } = await c.req.json()
-    const department = await prisma.department.update({
-        where: { id },
-        data: { name },
-        include: { facility: true }
-    })
+    const department = await OrgService.updateDepartment(c.env.DATABASE_URL as string, id, name)
     return c.json({ ...department, facilityName: department.facility.name })
 })
 
 app.delete('/:id', async (c) => {
-    const prisma = getPrisma(c.env.DATABASE_URL as string)
     const id = Number(c.req.param('id'))
-    await prisma.department.update({
-        where: { id },
-        data: { deletedAt: new Date() }
-    })
+    await OrgService.deleteDepartment(c.env.DATABASE_URL as string, id)
     return c.json({ success: true })
 })
 

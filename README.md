@@ -83,12 +83,27 @@ erDiagram
     
     Feedback ||--o{ User : "投稿 (開発中概念)"
     
+    User }o--|| Facility : "所属"
+    User }o--|| Department : "配属"
+    
     User {
         Int id PK
         String employeeId "社員番号"
         String name "氏名"
         Role role "権限(ADMIN/USER/DEV)"
-        String facility "所属施設"
+        Int facilityId FK
+        Int departmentId FK
+    }
+
+    Facility {
+        Int id PK
+        String name "施設名"
+    }
+
+    Department {
+        Int id PK
+        String name "部署名"
+        Int facilityId FK
     }
     
     Manual {

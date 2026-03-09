@@ -1,15 +1,21 @@
 import { useState, useEffect, useCallback } from 'react';
 import { api } from '../api';
-import { User, UserCreateRequest, UserUpdateRequest } from '../types';
+import { User, UserCreateRequest, UserUpdateRequest, Facility, Department } from '../types';
 
 export function useUserManagement(currentUser: User) {
     const [users, setUsers] = useState<User[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
+
+    // For Filtering Data
     const [facilities, setFacilities] = useState<string[]>([]);
     const [selectedFacility, setSelectedFacility] = useState(
         currentUser.role === 'ADMIN' ? currentUser.facility : ''
     );
+
+    // For Select Options in Form
+    const [allFacilities, setAllFacilities] = useState<Facility[]>([]);
+    const [allDepartments, setAllDepartments] = useState<Department[]>([]);
 
     // Modal States
     const [showAddModal, setShowAddModal] = useState(false);
@@ -20,8 +26,8 @@ export function useUserManagement(currentUser: User) {
     // Form States
     const [formData, setFormData] = useState<UserCreateRequest>({
         employeeId: '', name: '',
-        facility: currentUser.role === 'ADMIN' ? currentUser.facility : '本館',
-        department: '', role: 'USER', email: '',
+        facilityId: 0,
+        departmentId: 0, role: 'USER', email: '',
         paidLeaveDays: 0, joinedDate: '', password: ''
     });
 
@@ -44,6 +50,14 @@ export function useUserManagement(currentUser: User) {
         (async () => {
             const fetchedFacilities = await api.getDistinctFacilities();
             setFacilities(fetchedFacilities);
+
+            const [facs, deps] = await Promise.all([
+                api.getFacilities(currentUser.id),
+                api.getDepartments(currentUser.id)
+            ]);
+            setAllFacilities(facs);
+            setAllDepartments(deps);
+
             await fetchUsers();
         })();
     }, []);
@@ -51,28 +65,35 @@ export function useUserManagement(currentUser: User) {
     useEffect(() => { fetchUsers(); }, [selectedFacility]);
 
     const handleAddClick = useCallback(() => {
+        const defaultFac = allFacilities.length > 0 ? allFacilities[0].id : 0;
+        const defaultDep = allDepartments.length > 0 ? allDepartments[0].id : 0;
+
         setFormData({
             employeeId: '', name: '',
-            facility: currentUser.role === 'ADMIN' ? currentUser.facility : '本館',
-            department: '', role: 'USER', email: '',
+            facilityId: defaultFac,
+            departmentId: defaultDep, role: 'USER', email: '',
             paidLeaveDays: 0, joinedDate: new Date().toISOString().split('T')[0], password: ''
         });
         setError(null);
         setShowAddModal(true);
-    }, [currentUser]);
+    }, [currentUser, allFacilities, allDepartments]);
 
     const handleEditClick = useCallback((targetUser: User) => {
         setSelectedUser(targetUser);
+
+        const facId = allFacilities.find(f => f.name === targetUser.facility)?.id || 0;
+        const depId = allDepartments.find(d => d.name === targetUser.department)?.id || 0;
+
         setFormData({
             employeeId: targetUser.employeeId, name: targetUser.name,
-            facility: targetUser.facility, department: targetUser.department,
+            facilityId: facId, departmentId: depId,
             role: targetUser.role, email: targetUser.email || '',
             paidLeaveDays: targetUser.paidLeaveDays || 0,
             joinedDate: targetUser.joinedDate || '', password: ''
         });
         setError(null);
         setShowEditModal(true);
-    }, []);
+    }, [allFacilities, allDepartments]);
 
     const handleDelete = useCallback(async () => {
         if (!selectedUser || !confirm(`${selectedUser.name} を削除してもよろしいですか？\nこの操作は取り消せません（論理削除されます）。`)) return;
@@ -97,8 +118,8 @@ export function useUserManagement(currentUser: User) {
                 setShowAddModal(false);
             } else if (showEditModal && selectedUser) {
                 const updateData: UserUpdateRequest = {
-                    role: formData.role, facility: formData.facility,
-                    department: formData.department, email: formData.email,
+                    role: formData.role, facilityId: formData.facilityId,
+                    departmentId: formData.departmentId, email: formData.email,
                     paidLeaveDays: formData.paidLeaveDays, joinedDate: formData.joinedDate
                 };
                 await api.updateUser(currentUser.id, selectedUser.id, updateData);
@@ -120,6 +141,7 @@ export function useUserManagement(currentUser: User) {
         users: filteredUsers, loading, error, successMessage, setSuccessMessage,
         searchTerm, setSearchTerm,
         facilities, selectedFacility, setSelectedFacility,
+        allFacilities, allDepartments, // Export added
         showAddModal, setShowAddModal, showEditModal, setShowEditModal,
         selectedUser, submitting,
         formData, setFormData,
