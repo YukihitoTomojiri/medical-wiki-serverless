@@ -1,5 +1,5 @@
 import { TrainingEvent, Committee } from '../../api';
-import { Plus, QrCode as QrIcon, Users, FileText, Edit2, Trash2 } from 'lucide-react';
+import { Plus, QrCode as QrIcon, Users, FileText, Edit2, Trash2, Calendar } from 'lucide-react';
 import { Button } from '../ui/Button';
 
 interface TrainingEventTableProps {
@@ -17,10 +17,16 @@ export default function TrainingEventTable({
     events, committees, onEdit, onDelete, onQr, onViewResponses, onPreview, onCreateNew,
 }: TrainingEventTableProps) {
     return (
-        <div className="space-y-6 animate-in fade-in duration-300">
-            <div className="flex justify-end">
-                <Button variant="filled" onClick={onCreateNew} className="flex items-center gap-2">
-                    <Plus size={18} /> 新規作成
+        <div className="space-y-4 md:space-y-6 animate-in fade-in duration-300">
+            <div className="flex flex-row items-center justify-between px-1 md:px-2">
+                <h3 className="text-base md:text-lg font-bold text-gray-800 flex items-center gap-2">
+                    <Calendar className="text-blue-500 w-4 h-4 md:w-5 md:h-5" />
+                    研修会一覧
+                </h3>
+                <Button variant="filled" onClick={onCreateNew} className="flex items-center gap-2 shrink-0">
+                    <Plus size={16} className="md:w-4 md:h-4" />
+                    <span className="hidden sm:inline">新規作成</span>
+                    <span className="sm:hidden">作成</span>
                 </Button>
             </div>
 

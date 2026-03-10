@@ -135,15 +135,21 @@ export default function AdminAnnouncementManagement({ user }: props) {
     if (loading) return <div className="p-12 text-center text-gray-500">Loading...</div>;
 
     return (
-        <div className="space-y-6 animate-in fade-in duration-300">
-            {/* Actions */}
-            <div className="flex justify-end">
+        <div className="space-y-4 md:space-y-6 animate-in fade-in duration-300">
+            {/* Header / Actions */}
+            <div className="flex flex-row items-center justify-between px-1 md:px-2">
+                <h3 className="text-base md:text-lg font-bold text-gray-800 flex items-center gap-2">
+                    <Bell className="text-blue-500 w-4 h-4 md:w-5 md:h-5 shrink-0" />
+                    お知らせ管理
+                </h3>
                 <Button
                     variant="filled"
                     onClick={() => handleOpenModal()}
-                    icon={<Plus size={18} />}
+                    className="flex items-center gap-2 shrink-0"
                 >
-                    新規作成
+                    <Plus size={16} className="md:w-4 md:h-4" />
+                    <span className="hidden sm:inline">新規作成</span>
+                    <span className="sm:hidden">作成</span>
                 </Button>
             </div>
 

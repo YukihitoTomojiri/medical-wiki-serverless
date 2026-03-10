@@ -1,5 +1,5 @@
 import { User } from '../../types';
-import { Search, Edit2, RefreshCw, UserPlus, UserCircle, Building2, Calendar } from 'lucide-react';
+import { Search, Edit2, RefreshCw, UserPlus, UserCircle, Building2, Calendar, Users } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { Badge } from '../ui/Badge';
 import { Card } from '../ui/Card';
@@ -24,9 +24,28 @@ export default function UserTable({
     currentUserRole, onRefresh, onAdd, onEdit,
 }: UserTableProps) {
     return (
-        <div className="space-y-6 animate-in fade-in duration-300">
-            {/* Filters & Actions */}
-            <div className="flex flex-wrap gap-4 items-center">
+        <div className="space-y-4 md:space-y-6 animate-in fade-in duration-300">
+            {/* Header & Main Actions */}
+            <div className="flex flex-row items-center justify-between px-1 md:px-2">
+                <h3 className="text-base md:text-lg font-bold text-gray-800 flex items-center gap-2">
+                    <Users className="text-blue-500 w-4 h-4 md:w-5 md:h-5 shrink-0" />
+                    ユーザー管理
+                </h3>
+                <div className="flex items-center gap-2">
+                    <Button variant="outlined" onClick={onRefresh} size="md" className="rounded-full px-3 md:px-4">
+                        <RefreshCw size={16} className={`md:w-4 md:h-4 ${loading ? "animate-spin" : ""}`} />
+                        <span className="hidden sm:inline ml-1 font-bold text-xs">更新</span>
+                    </Button>
+                    <Button variant="filled" onClick={onAdd} className="flex items-center gap-2 shrink-0">
+                        <UserPlus size={16} className="md:w-4 md:h-4" />
+                        <span className="hidden sm:inline">新規登録</span>
+                        <span className="sm:hidden">登録</span>
+                    </Button>
+                </div>
+            </div>
+
+            {/* Filters */}
+            <div className="flex flex-wrap gap-3 items-center px-1 md:px-2">
                 <div className="flex-1 min-w-[250px] relative">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
                     <input
@@ -47,10 +66,6 @@ export default function UserTable({
                         {facilities.map(f => <option key={f} value={f}>{f}</option>)}
                     </select>
                 )}
-                <Button variant="outlined" onClick={onRefresh} size="md" className="rounded-full px-3">
-                    <RefreshCw size={18} className={loading ? "animate-spin" : ""} />
-                </Button>
-                <Button variant="filled" onClick={onAdd} icon={<UserPlus size={18} />}>新規登録</Button>
             </div>
 
             {/* Users Table */}

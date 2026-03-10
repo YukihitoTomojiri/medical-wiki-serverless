@@ -1,4 +1,4 @@
-import { Plus, Save } from 'lucide-react';
+import { Plus, Save, Building2, X } from 'lucide-react';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import { Card } from '../components/ui/Card';
@@ -22,18 +22,31 @@ const OrganizationManagement = () => {
     }
 
     return (
-        <div className="space-y-4 animate-in fade-in duration-300">
-            {/* Actions (右寄せ) */}
-            <div className="flex justify-end">
+        <div className="space-y-4 md:space-y-6 animate-in fade-in duration-300">
+            {/* Header / Actions */}
+            <div className="flex flex-row flex-wrap sm:flex-nowrap items-center justify-between px-1 md:px-2 gap-y-3 gap-x-2">
+                <h3 className="text-base md:text-lg font-bold text-gray-800 flex items-center gap-2">
+                    <Building2 className="text-blue-500 w-4 h-4 md:w-5 md:h-5 shrink-0" />
+                    組織・施設管理
+                </h3>
                 {org.showAddFacility ? (
-                    <div className="flex items-center gap-2">
+                    <div className="flex flex-1 sm:flex-none items-center gap-2">
                         <Input variant="outlined" value={org.newFacilityName} onChange={e => org.setNewFacilityName(e.target.value)}
-                            placeholder="施設名" autoFocus />
-                        <Button variant="filled" onClick={org.handleAddFacility} icon={<Save size={16} />}>保存</Button>
-                        <Button variant="text" onClick={() => org.setShowAddFacility(false)}>キャンセル</Button>
+                            placeholder="施設名" autoFocus className="flex-1 min-w-[120px]" />
+                        <Button variant="filled" onClick={org.handleAddFacility} className="shrink-0 flex items-center gap-1.5 px-3">
+                            <Save size={16} /> <span className="hidden sm:inline">保存</span>
+                        </Button>
+                        <Button variant="text" onClick={() => org.setShowAddFacility(false)} className="shrink-0 text-gray-500 px-2" title="キャンセル">
+                            <X size={20} className="sm:hidden" />
+                            <span className="hidden sm:inline">キャンセル</span>
+                        </Button>
                     </div>
                 ) : (
-                    <Button variant="filled" onClick={() => org.setShowAddFacility(true)} icon={<Plus size={18} />}>施設を追加</Button>
+                    <Button variant="filled" onClick={() => org.setShowAddFacility(true)} className="flex items-center gap-2 shrink-0">
+                        <Plus size={16} />
+                        <span className="hidden sm:inline">施設を追加</span>
+                        <span className="sm:hidden">追加</span>
+                    </Button>
                 )}
             </div>
 

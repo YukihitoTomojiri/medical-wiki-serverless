@@ -65,10 +65,20 @@ export default function AdminProfessionManagement() {
     if (loading) return <div className="p-12 text-center text-gray-400">読み込み中...</div>;
 
     return (
-        <div className="space-y-6 max-w-4xl mx-auto animate-in fade-in duration-300">
+        <div className="space-y-4 md:space-y-6 animate-in fade-in duration-300">
+            {/* Header */}
+            <div className="flex flex-row items-center justify-between px-1 md:px-2">
+                <h3 className="text-base md:text-lg font-bold text-gray-800 flex items-center gap-2">
+                    <Briefcase className="text-blue-500 w-4 h-4 md:w-5 md:h-5 shrink-0" />
+                    職種管理
+                </h3>
+                <span className="text-xs font-bold text-gray-500 bg-gray-100 px-2.5 py-1 rounded-full shrink-0">
+                    登録数: {professions.length}件
+                </span>
+            </div>
 
             {error && (
-                <div className="mx-4 p-4 bg-red-50 border border-red-200 rounded-xl text-sm text-red-700 font-bold flex items-center gap-2">
+                <div className="p-4 bg-red-50 border border-red-200 rounded-xl text-sm text-red-700 font-bold flex items-center gap-2">
                     <AlertCircle size={16} />
                     {error}
                     <button onClick={() => setError(null)} className="ml-auto text-red-400 hover:text-red-600">&times;</button>
@@ -76,11 +86,10 @@ export default function AdminProfessionManagement() {
             )}
 
             {/* 新規追加フォーム */}
-            <div className="mx-4 bg-white rounded-2xl border border-gray-100 shadow-sm p-4 md:p-6">
-                <h3 className="text-base md:text-lg font-bold text-gray-800 mb-3 md:mb-4 flex items-center gap-2">
-                    <Plus className="text-orange-500 w-4 h-4 md:w-5 md:h-5" />
-                    職種を追加
-                </h3>
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 md:p-6">
+                <h4 className="text-sm font-bold text-gray-600 mb-3 flex items-center gap-2">
+                    <Plus className="w-4 h-4" /> 新規職種を追加
+                </h4>
                 <form onSubmit={handleAdd} className="flex flex-col sm:flex-row gap-3">
                     <input
                         type="text"
@@ -100,7 +109,7 @@ export default function AdminProfessionManagement() {
                     <button
                         type="submit"
                         disabled={adding || !newName.trim()}
-                        className="px-6 py-3 bg-orange-500 text-white rounded-xl font-bold text-sm hover:bg-orange-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 shrink-0"
+                        className="px-6 py-3 bg-orange-500 text-white rounded-xl font-bold text-sm hover:bg-orange-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shrink-0"
                     >
                         <Plus size={16} />
                         {adding ? '追加中...' : '追加'}
@@ -109,14 +118,7 @@ export default function AdminProfessionManagement() {
             </div>
 
             {/* 職種一覧 */}
-            <div className="mx-4 bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-                <div className="px-6 py-4 border-b border-gray-50 bg-gray-50/50">
-                    <h3 className="font-bold text-gray-800 flex items-center gap-2">
-                        <Briefcase size={18} className="text-gray-500" />
-                        登録済みの職種
-                        <span className="text-xs font-bold text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full ml-2">{professions.length}件</span>
-                    </h3>
-                </div>
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
                 <div className="divide-y divide-gray-50">
                     {professions.length === 0 ? (
                         <div className="p-12 text-center text-gray-400">
