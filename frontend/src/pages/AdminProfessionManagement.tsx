@@ -87,7 +87,7 @@ export default function AdminProfessionManagement() {
                         value={newName}
                         onChange={(e) => setNewName(e.target.value)}
                         placeholder="職種名（例: 理学療法士）"
-                        className="flex-1 px-4 py-3 border border-gray-200 rounded-xl bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-400"
+                        className="flex-1 px-4 py-3 min-h-[48px] border border-gray-200 rounded-xl bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-400"
                         required
                     />
                     <input
@@ -95,12 +95,12 @@ export default function AdminProfessionManagement() {
                         value={newDesc}
                         onChange={(e) => setNewDesc(e.target.value)}
                         placeholder="説明（任意）"
-                        className="flex-1 px-4 py-3 border border-gray-200 rounded-xl bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-400"
+                        className="flex-1 px-4 py-3 min-h-[48px] border border-gray-200 rounded-xl bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-400"
                     />
                     <button
                         type="submit"
                         disabled={adding || !newName.trim()}
-                        className="px-6 py-3 bg-orange-500 text-white rounded-xl font-bold text-sm hover:bg-orange-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 shrink-0"
+                        className="px-6 py-3 min-h-[48px] bg-orange-500 text-white rounded-xl font-bold text-sm hover:bg-orange-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shrink-0 w-full sm:w-auto mt-2 sm:mt-0"
                     >
                         <Plus size={16} />
                         {adding ? '追加中...' : '追加'}
