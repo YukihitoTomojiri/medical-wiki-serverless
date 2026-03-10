@@ -96,7 +96,7 @@ export default function AdminProfessionManagement() {
                         value={newName}
                         onChange={(e) => setNewName(e.target.value)}
                         placeholder="職種名（例: 理学療法士）"
-                        className="flex-1 px-4 py-3 border border-gray-200 rounded-xl bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-400"
+                        className="flex-1 px-4 py-3 min-h-[48px] border border-gray-200 rounded-xl bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-400"
                         required
                     />
                     <input
@@ -104,7 +104,7 @@ export default function AdminProfessionManagement() {
                         value={newDesc}
                         onChange={(e) => setNewDesc(e.target.value)}
                         placeholder="説明（任意）"
-                        className="flex-1 px-4 py-3 border border-gray-200 rounded-xl bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-400"
+                        className="flex-1 px-4 py-3 min-h-[48px] border border-gray-200 rounded-xl bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-400"
                     />
                     <button
                         type="submit"
