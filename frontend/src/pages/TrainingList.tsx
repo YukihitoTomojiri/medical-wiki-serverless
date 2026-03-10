@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
 import { api, TrainingEvent, Committee } from '../api';
 import { useAuth } from '../context/AuthContext';
-import { Video, FileText, Calendar, ChevronRight, Users } from 'lucide-react';
+import { Video, FileText, Calendar, ChevronRight, Users, BookOpen } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import PageHeader from '../components/layout/PageHeader';
 
 export default function TrainingList() {
     const { user } = useAuth();
@@ -44,7 +45,11 @@ export default function TrainingList() {
 
     return (
         <div className="space-y-6">
-            <h1 className="text-2xl font-bold text-m3-on-surface">研修会一覧</h1>
+            <PageHeader
+                title="研修会一覧"
+                subtitle="社内研修や講習会の予定を確認・管理できます"
+                icon={BookOpen}
+            />
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {events.map(event => (

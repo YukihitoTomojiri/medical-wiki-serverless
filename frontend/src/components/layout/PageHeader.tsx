@@ -12,41 +12,42 @@ interface PageHeaderProps {
 const PageHeader = ({ title, subtitle, icon: Icon, children, variant = 'hero' }: PageHeaderProps) => {
     if (variant === 'compact') {
         return (
-            <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-3">
-                    {Icon && <Icon className="w-5 h-5 text-stone-500" />}
+            <div className="flex items-center justify-between mb-3 md:mb-4">
+                <div className="flex items-center gap-2 md:gap-3">
+                    {Icon && <Icon className="w-4 h-4 md:w-5 md:h-5 text-stone-500" />}
                     <div>
-                        <h2 className="text-lg font-bold text-stone-800 tracking-tight">{title}</h2>
+                        <h2 className="text-base md:text-lg font-bold text-stone-800 tracking-tight leading-none md:leading-normal">{title}</h2>
                         {subtitle && (
-                            <p className="text-xs text-stone-500 mt-0.5">{subtitle}</p>
+                            <p className="hidden md:block text-xs text-stone-500 mt-0.5">{subtitle}</p>
                         )}
                     </div>
                 </div>
-                {children && <div>{children}</div>}
+                {children && <div className="flex-shrink-0">{children}</div>}
             </div>
         );
     }
 
     return (
-        <div className="relative overflow-hidden mb-8">
+        <div className="relative overflow-hidden mb-4 md:mb-8">
             {/* M3スタイルの帯（Hero Section） */}
-            <div className="bg-orange-100 dark:bg-m3-orange-secondary-container rounded-[28px] p-8 flex flex-col md:flex-row items-center justify-between border border-orange-200 shadow-sm relative z-10">
-                <div className="flex flex-col gap-2 z-10 w-full md:w-auto">
-                    <div className="flex items-center gap-3">
-                        {Icon && <Icon className="w-8 h-8 text-orange-700" />}
-                        <h1 className="text-3xl font-bold text-orange-900 tracking-tight">
+            <div className="bg-orange-100 dark:bg-m3-orange-secondary-container rounded-[20px] md:rounded-[28px] p-4 md:p-8 flex flex-row items-center justify-between border border-orange-200 shadow-sm relative z-10 gap-3 md:gap-0">
+                <div className="flex flex-col gap-1 md:gap-2 z-10 flex-1 min-w-0">
+                    <div className="flex items-center gap-2 md:gap-3">
+                        {Icon && <Icon className="hidden md:block w-8 h-8 text-orange-700 flex-shrink-0" />}
+                        {Icon && <Icon className="md:hidden w-5 h-5 text-orange-700 flex-shrink-0" />}
+                        <h1 className="text-xl md:text-3xl font-bold text-orange-900 tracking-tight truncate">
                             {title}
                         </h1>
                     </div>
                     {subtitle && (
-                        <div className="text-orange-800/80 font-medium ml-1">
+                        <div className="hidden md:block text-orange-800/80 font-medium ml-1">
                             {subtitle}
                         </div>
                     )}
                 </div>
 
                 {children && (
-                    <div className="mt-4 md:mt-0 z-10">
+                    <div className="z-10 flex-shrink-0 ml-auto">
                         {children}
                     </div>
                 )}

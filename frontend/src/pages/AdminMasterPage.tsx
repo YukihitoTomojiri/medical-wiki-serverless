@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Building2, Briefcase } from 'lucide-react';
+import { Building2, Briefcase, Database } from 'lucide-react';
 import AdminPageLayout from '../components/layout/AdminPageLayout';
 import OrganizationManagement from './OrganizationManagement';
 import AdminProfessionManagement from './AdminProfessionManagement';
@@ -18,6 +18,7 @@ export default function AdminMasterPage() {
         <AdminPageLayout
             title="マスタ管理"
             subtitle="組織構成や職種など、システムの基盤データを管理します"
+            icon={Database}
             tabs={tabs as unknown as { id: string; label: string; icon: typeof Building2 }[]}
             activeTab={activeTab}
             onTabChange={(id) => setActiveTab(id as TabId)}

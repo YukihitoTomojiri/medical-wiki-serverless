@@ -1,5 +1,6 @@
 import { ReactNode } from 'react';
 import { LucideIcon } from 'lucide-react';
+import PageHeader from './PageHeader';
 
 export interface AdminTab {
     id: string;
@@ -10,6 +11,7 @@ export interface AdminTab {
 interface AdminPageLayoutProps {
     title: string;
     subtitle: string;
+    icon?: LucideIcon;
     tabs: readonly AdminTab[];
     activeTab: string;
     onTabChange: (tabId: string) => void;
@@ -25,20 +27,20 @@ interface AdminPageLayoutProps {
 export default function AdminPageLayout({
     title,
     subtitle,
+    icon: Icon,
     tabs,
     activeTab,
     onTabChange,
     children,
 }: AdminPageLayoutProps) {
     return (
-        <div className="max-w-7xl mx-auto px-4 py-6 animate-in fade-in duration-300">
-            {/* コンパクトヘッダー */}
-            <div className="mb-5">
-                <h1 className="text-xl font-bold text-stone-800 tracking-tight">
-                    {title}
-                </h1>
-                <p className="text-sm text-stone-500 mt-0.5">{subtitle}</p>
-            </div>
+        <div className="max-w-7xl mx-auto px-2 md:px-4 py-3 md:py-6 animate-in fade-in duration-300">
+            {/* 共通ページヘッダー (PCではリッチ、モバイルではコンパクト1行) */}
+            <PageHeader
+                title={title}
+                subtitle={subtitle}
+                icon={Icon}
+            />
 
             {/* タブ + コンテンツ */}
             <div className="bg-white rounded-2xl border border-stone-200 shadow-sm overflow-hidden">

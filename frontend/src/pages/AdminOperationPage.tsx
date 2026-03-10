@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Users, Bell, BookOpen } from 'lucide-react';
+import { Users, Bell, BookOpen, Settings } from 'lucide-react';
 import AdminPageLayout from '../components/layout/AdminPageLayout';
 import AdminUserManagement from './AdminUserManagement';
 import AdminAnnouncementManagement from './AdminAnnouncementManagement';
@@ -24,6 +24,7 @@ export default function AdminOperationPage() {
         <AdminPageLayout
             title="運用管理"
             subtitle="ユーザー、お知らせ、研修など日常運用に関する管理を行います"
+            icon={Settings}
             tabs={tabs as unknown as { id: string; label: string; icon: typeof Users }[]}
             activeTab={activeTab}
             onTabChange={(id) => setActiveTab(id as TabId)}
