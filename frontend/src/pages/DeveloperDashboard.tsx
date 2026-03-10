@@ -972,7 +972,7 @@ export default function DeveloperDashboard() {
                                         <table className="w-full table-fixed">
                                             <thead>
                                                 <tr className="text-left border-b border-gray-100 bg-gray-50/50">
-                                                    <th className="w-12 px-4 py-3">
+                                                    <th className="w-12 px-2 sm:px-4 py-2 sm:py-3">
                                                         <input
                                                             type="checkbox"
                                                             checked={selectedUsers.length === userList.length && userList.length > 0}
@@ -980,11 +980,11 @@ export default function DeveloperDashboard() {
                                                             className="rounded border-gray-300 text-orange-600 focus:ring-orange-500"
                                                         />
                                                     </th>
-                                                    <th className="w-32 sm:w-40 px-4 py-3 text-[10px] font-black text-gray-400 uppercase tracking-widest">Node ID / Name</th>
-                                                    <th className="w-24 sm:w-28 px-4 py-3 text-[10px] font-black text-gray-400 uppercase tracking-widest">Status</th>
-                                                    <th className="w-36 sm:w-48 px-4 py-3 text-[10px] font-black text-gray-400 uppercase tracking-widest">Leave Info</th>
-                                                    <th className="w-32 sm:w-40 px-4 py-3 text-[10px] font-black text-gray-400 uppercase tracking-widest">Facility / Dept</th>
-                                                    <th className="w-40 px-4 py-3 text-[10px] font-black text-gray-400 uppercase tracking-widest text-right">Actions</th>
+                                                    <th className="w-32 sm:w-40 px-2 sm:px-4 py-2 sm:py-3 text-[10px] font-black text-gray-400 uppercase tracking-widest">Node ID / Name</th>
+                                                    <th className="w-24 sm:w-28 px-2 sm:px-4 py-2 sm:py-3 text-[10px] font-black text-gray-400 uppercase tracking-widest">Status</th>
+                                                    <th className="w-36 sm:w-48 px-2 sm:px-4 py-2 sm:py-3 text-[10px] font-black text-gray-400 uppercase tracking-widest">Leave Info</th>
+                                                    <th className="w-32 sm:w-40 px-2 sm:px-4 py-2 sm:py-3 text-[10px] font-black text-gray-400 uppercase tracking-widest">Facility / Dept</th>
+                                                    <th className="w-40 px-2 sm:px-4 py-2 sm:py-3 text-[10px] font-black text-gray-400 uppercase tracking-widest text-right">Actions</th>
                                                 </tr>
                                             </thead>
                                         </table>
@@ -998,7 +998,7 @@ export default function DeveloperDashboard() {
                                                     const isEditing = editingUserId === user.id;
                                                     return (
                                                         <tr key={user.id} className={`group hover:bg-orange-50/30 transition-all ${selectedUsers.includes(user.id) ? 'bg-orange-50/50' : ''}`}>
-                                                            <td className="w-12 px-4 py-4">
+                                                            <td className="w-12 px-2 sm:px-4 py-2 sm:py-4">
                                                                 <input
                                                                     type="checkbox"
                                                                     checked={selectedUsers.includes(user.id)}
@@ -1006,20 +1006,20 @@ export default function DeveloperDashboard() {
                                                                     className="rounded border-gray-300 text-orange-600 focus:ring-orange-500"
                                                                 />
                                                             </td>
-                                                            <td className="px-4 py-4 min-w-[120px]">
-                                                                <div className="flex flex-col whitespace-nowrap">
-                                                                    <span className="text-xs font-mono font-black text-gray-400 uppercase tracking-tighter">#{user.employeeId}</span>
-                                                                    <span className="text-sm font-bold text-gray-800">{user.name}</span>
+                                                            <td className="px-2 sm:px-4 py-2 sm:py-4 min-w-[120px]">
+                                                                <div className="flex flex-col whitespace-nowrap gap-0.5">
+                                                                    <span className="text-[10px] sm:text-xs font-mono font-black text-gray-400 uppercase tracking-tighter leading-none">#{user.employeeId}</span>
+                                                                    <span className="text-xs sm:text-sm font-bold text-gray-800 leading-none">{user.name}</span>
                                                                 </div>
                                                             </td>
-                                                            <td className="px-4 py-4 w-40">
-                                                                <div className="flex items-center gap-2">
-                                                                    <div className={`w-2 h-2 rounded-full ${nodeInfo?.status === 'UP' ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]' :
+                                                            <td className="px-2 sm:px-4 py-2 sm:py-4 w-40">
+                                                                <div className="flex items-center gap-1 sm:gap-2">
+                                                                    <div className={`w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full ${nodeInfo?.status === 'UP' ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]' :
                                                                         nodeInfo?.status === 'WARNING' ? 'bg-yellow-500 shadow-[0_0_8px_rgba(245,158,11,0.5)]' :
                                                                             nodeInfo?.status === 'DOWN' ? 'bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.5)]' :
                                                                                 'bg-gray-300'
                                                                         }`} />
-                                                                    <span className={`text-[10px] font-black tracking-widest border px-2 py-0.5 rounded uppercase ${nodeInfo?.status === 'UP' ? 'text-emerald-700 bg-emerald-50 border-emerald-100' :
+                                                                    <span className={`text-[8px] sm:text-[10px] font-black tracking-widest border px-1 sm:px-2 py-px sm:py-0.5 rounded uppercase ${nodeInfo?.status === 'UP' ? 'text-emerald-700 bg-emerald-50 border-emerald-100' :
                                                                         nodeInfo?.status === 'WARNING' ? 'text-yellow-700 bg-yellow-50 border-yellow-100' :
                                                                             nodeInfo?.status === 'DOWN' ? 'text-red-700 bg-red-50 border-red-100' :
                                                                                 'text-gray-500 bg-gray-50 border-gray-100'
@@ -1028,7 +1028,7 @@ export default function DeveloperDashboard() {
                                                                     </span>
                                                                 </div>
                                                             </td>
-                                                            <td className="px-4 py-4 w-48">
+                                                            <td className="px-2 sm:px-4 py-2 sm:py-4 w-48">
                                                                 {isEditing ? (
                                                                     <div className="space-y-1">
                                                                         <div className="flex flex-col">
@@ -1053,19 +1053,19 @@ export default function DeveloperDashboard() {
                                                                         </div>
                                                                     </div>
                                                                 ) : (
-                                                                    <div className="flex flex-col">
+                                                                    <div className="flex flex-col gap-0.5">
                                                                         <div className="flex items-center gap-1">
                                                                             <Calendar size={10} className="text-gray-400" />
-                                                                            <span className="text-[10px] font-bold text-gray-600">{user.joinedDate || '未設定'}</span>
+                                                                            <span className="text-[9px] sm:text-[10px] font-bold text-gray-600 leading-none">{user.joinedDate || '未設定'}</span>
                                                                         </div>
-                                                                        <div className="flex items-center gap-1 mt-0.5">
+                                                                        <div className="flex items-center gap-1">
                                                                             <Clock size={10} className="text-orange-400" />
-                                                                            <span className="text-[11px] font-black text-orange-600">{user.paidLeaveDays ?? 0} <span className="text-[8px] font-bold">days</span></span>
+                                                                            <span className="text-[10px] sm:text-[11px] font-black text-orange-600 leading-none">{user.paidLeaveDays ?? 0} <span className="text-[7px] sm:text-[8px] font-bold">days</span></span>
                                                                         </div>
                                                                     </div>
                                                                 )}
                                                             </td>
-                                                            <td className="px-4 py-4">
+                                                            <td className="px-2 sm:px-4 py-2 sm:py-4">
                                                                 {isEditing ? (
                                                                     <div className="space-y-1">
                                                                         <select
@@ -1088,47 +1088,52 @@ export default function DeveloperDashboard() {
                                                                         </select>
                                                                     </div>
                                                                 ) : (
-                                                                    <div className="flex flex-col">
-                                                                        <span className="text-[10px] font-black text-orange-600/60 uppercase tracking-widest">{user.facility}</span>
-                                                                        <span className="text-xs font-bold text-gray-500">{user.department}</span>
+                                                                    <div className="flex flex-col gap-0.5">
+                                                                        <span className="text-[9px] sm:text-[10px] font-black text-orange-600/60 uppercase tracking-widest leading-none">{user.facility}</span>
+                                                                        <span className="text-[10px] sm:text-xs font-bold text-gray-500 leading-none">{user.department}</span>
                                                                     </div>
                                                                 )}
                                                             </td>
-                                                            <td className="px-4 py-4 text-right">
+                                                            <td className="px-2 sm:px-4 py-2 sm:py-4 text-right">
                                                                 {isEditing ? (
-                                                                    <div className="flex justify-end gap-2">
+                                                                    <div className="flex justify-end gap-1 sm:gap-2">
                                                                         <button
                                                                             onClick={cancelEdit}
-                                                                            className="p-2 hover:bg-gray-100 rounded-xl transition-all text-gray-400 hover:text-red-600"
+                                                                            className="p-1 sm:p-2 hover:bg-gray-100 rounded-lg sm:rounded-xl transition-all text-gray-400 hover:text-red-600"
                                                                             title="Cancel"
                                                                         >
-                                                                            <XIcon size={20} />
+                                                                            <XIcon size={16} className="sm:hidden" />
+                                                                            <XIcon size={20} className="hidden sm:block" />
                                                                         </button>
                                                                         <button
                                                                             onClick={() => saveEdit(user.id)}
-                                                                            className="flex items-center gap-2 px-4 py-2 bg-orange-600 text-white rounded-xl hover:bg-orange-700 shadow-lg shadow-orange-600/20 transition-all text-xs font-black tracking-widest"
+                                                                            className="flex items-center justify-center min-w-[32px] sm:min-w-[auto] gap-1 sm:gap-2 px-2 sm:px-4 py-1.5 sm:py-2 bg-orange-600 text-white rounded-lg sm:rounded-xl hover:bg-orange-700 shadow-lg shadow-orange-600/20 transition-all text-[10px] sm:text-xs font-black tracking-widest"
                                                                             title="Save Changes"
                                                                         >
-                                                                            <Check size={16} />
-                                                                            SAVE
+                                                                            <Check size={14} className="sm:hidden" />
+                                                                            <Check size={16} className="hidden sm:block" />
+                                                                            <span className="hidden sm:inline">SAVE</span>
                                                                         </button>
                                                                     </div>
                                                                 ) : (
-                                                                    <div className="flex justify-end gap-2">
+                                                                    <div className="flex justify-end gap-1 sm:gap-2">
                                                                         <button
                                                                             onClick={() => openResetModal(user)}
-                                                                            className="flex items-center gap-2 px-3 py-2 text-xs font-black tracking-widest text-emerald-600 bg-emerald-50 hover:bg-emerald-100 rounded-xl transition-all"
+                                                                            className="flex items-center justify-center min-w-[32px] sm:min-w-[auto] gap-1 sm:gap-2 px-2 sm:px-3 py-1.5 sm:py-2 text-[10px] sm:text-xs font-black tracking-widest text-emerald-600 bg-emerald-50 hover:bg-emerald-100 rounded-lg sm:rounded-xl transition-all"
                                                                             title="Reset Password"
                                                                         >
-                                                                            <Key size={14} />
-                                                                            RESET
+                                                                            <Key size={12} className="sm:hidden" />
+                                                                            <Key size={14} className="hidden sm:block" />
+                                                                            <span className="hidden sm:inline">RESET</span>
                                                                         </button>
                                                                         <button
                                                                             onClick={() => startEdit(user)}
-                                                                            className="flex items-center gap-2 px-4 py-2 text-xs font-black tracking-widest text-gray-400 hover:text-orange-600 hover:bg-orange-50 rounded-xl transition-all"
+                                                                            className="flex items-center justify-center min-w-[32px] sm:min-w-[auto] gap-1 sm:gap-2 px-2 sm:px-4 py-1.5 sm:py-2 text-[10px] sm:text-xs font-black tracking-widest text-gray-400 hover:text-orange-600 hover:bg-orange-50 rounded-lg sm:rounded-xl transition-all"
+                                                                            title="Edit User"
                                                                         >
-                                                                            <Edit2 size={14} />
-                                                                            EDIT
+                                                                            <Edit2 size={12} className="sm:hidden" />
+                                                                            <Edit2 size={14} className="hidden sm:block" />
+                                                                            <span className="hidden sm:inline">EDIT</span>
                                                                         </button>
                                                                     </div>
                                                                 )}
