@@ -14,7 +14,10 @@ export const AuthService = {
         const prisma = getPrisma(dbUrl)
         return await prisma.user.findUnique({
             where: { employeeId },
-            include: { facility: true, department: true }
+            include: {
+                facility: { select: { id: true, name: true } },
+                department: { select: { id: true, name: true } }
+            }
         })
     },
 

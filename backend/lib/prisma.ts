@@ -1,20 +1,36 @@
 import { PrismaClient } from '@prisma/client'
 import { PrismaPg } from '@prisma/adapter-pg'
 import { Pool } from 'pg'
-const globalForPrisma = globalThis as unknown as {
-    prisma?: PrismaClient;
-};
+import { AsyncLocalStorage } from 'node:async_hooks'
+
+export const prismaStorage = new AsyncLocalStorage<PrismaClient>()
 
 export const getPrisma = (databaseUrl: string) => {
-    if (!globalForPrisma.prisma) {
-        const pgPool = new Pool({
-            connectionString: databaseUrl,
-            max: 5,
-            idleTimeoutMillis: 0,
-            allowExitOnIdle: true
-        });
-        const adapter = new PrismaPg(pgPool);
-        globalForPrisma.prisma = new PrismaClient({ adapter });
+    const store = prismaStorage.getStore()
+    if (store) return store
+
+    // Fallback for non-hono contexts (e.g. scripts)
+    const pgPool = new Pool({ connectionString: databaseUrl, max: 1 })
+    const adapter = new PrismaPg(pgPool)
+    return new PrismaClient({ adapter })
+}
+
+export const prismaMiddleware = async (c: any, next: any) => {
+    const databaseUrl = c.env.DATABASE_URL as string
+    const pgPool = new Pool({
+        connectionString: databaseUrl,
+        max: 1 // 1 connection per request
+    })
+    const adapter = new PrismaPg(pgPool)
+    const prisma = new PrismaClient({ adapter })
+
+    try {
+        await prismaStorage.run(prisma, async () => {
+            await next()
+        })
+    } finally {
+        await prisma.$disconnect()
+        // Wait for pool to end to naturally resolve pending timers
+        await pgPool.end()
     }
-    return globalForPrisma.prisma;
-};
+}

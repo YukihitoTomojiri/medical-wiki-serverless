@@ -9,6 +9,11 @@ app.post('/login', async (c) => {
     try {
         const { employeeId, password } = await c.req.json()
 
+        if (!c.env.DATABASE_URL) {
+            console.error('[Auth] DATABASE_URL is missing in environment variables');
+            return c.json({ success: false, message: 'Server configuration error' }, 500);
+        }
+
         const user = await AuthService.findUserByEmployeeId(c.env.DATABASE_URL as string, employeeId)
 
         if (!user) {
@@ -21,7 +26,7 @@ app.post('/login', async (c) => {
             return c.json({ success: false, message: 'Invalid credentials' }, 401)
         }
 
-        const { password: _, ...userWithoutPassword } = user
+        const { password: _, ...userWithoutPassword } = user;
 
         const token = await sign({
             id: user.id,
@@ -34,27 +39,39 @@ app.post('/login', async (c) => {
             success: true,
             user: {
                 ...userWithoutPassword,
-                facility: user.facility.name,
-                department: user.department.name
+                facility: user.facility?.name || 'Unknown',
+                department: user.department?.name || 'Unknown'
             },
             token
         })
     } catch (e) {
-        console.error(e)
-        return c.json({ success: false, message: 'Internal Server Error' }, 500)
+        console.error('[Auth] Login Error:', e)
+        const errorMessage = e instanceof Error ? e.message : 'Unknown error';
+        return c.json({ success: false, message: 'Internal Server Error', error: errorMessage }, 500)
     }
 })
 
 app.post('/setup', async (c) => {
-    const { token, password, profession } = await c.req.json()
+    try {
+        const { token, password, profession } = await c.req.json()
 
-    const updatedUser = await AuthService.setupAccount(c.env.DATABASE_URL as string, token, password, profession)
+        if (!c.env.DATABASE_URL) {
+            console.error('[Auth] DATABASE_URL is missing in environment variables');
+            return c.json({ success: false, message: 'Server configuration error' }, 500);
+        }
 
-    if (!updatedUser) {
-        return c.json({ success: false, message: 'Invalid or expired token' }, 400)
+        const updatedUser = await AuthService.setupAccount(c.env.DATABASE_URL as string, token, password, profession)
+
+        if (!updatedUser) {
+            return c.json({ success: false, message: 'Invalid or expired token' }, 400)
+        }
+
+        return c.json({ success: true, message: 'Account setup successfully' })
+    } catch (e) {
+        console.error('[Auth] Setup Error:', e)
+        const errorMessage = e instanceof Error ? e.message : 'Unknown error';
+        return c.json({ success: false, message: 'Internal Server Error', error: errorMessage }, 500)
     }
-
-    return c.json({ success: true, message: 'Account setup successfully' })
 })
 
 export default app
