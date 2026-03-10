@@ -38,9 +38,16 @@ const Navbar = ({ onMenuClick, onLogout }: NavbarProps) => {
                 </button>
                 {user && (
                     <div className="flex items-center gap-3">
-                        <div className="flex items-center gap-3 bg-white/5 py-1.5 px-3 rounded-full border border-white/10 transition-colors hover:bg-white/10 cursor-pointer">
-                            <span className="text-xs font-bold text-white/90 hidden md:block">{user.facility || 'Facility'}</span>
-                            <div className="w-8 h-8 rounded-full bg-orange-500 flex items-center justify-center text-white font-bold text-xs shadow-sm ring-2 ring-white/20">
+                        <div className="flex items-center gap-3 bg-white/5 py-1.5 pl-4 pr-1.5 rounded-full border border-white/10 transition-colors hover:bg-white/10 cursor-pointer shadow-sm">
+                            <div className="hidden md:flex flex-col items-end mr-1">
+                                <div className="text-[10px] text-orange-200/80 mb-0.5 tracking-wider leading-none">
+                                    {user.facility || '未設定機関'} {user.department || ''}
+                                </div>
+                                <div className="text-sm font-bold text-white leading-none flex items-baseline gap-1">
+                                    {user.name} <span className="text-[10px] font-normal text-white/70">様でログイン中</span>
+                                </div>
+                            </div>
+                            <div className="w-8 h-8 rounded-full bg-orange-500 flex items-center justify-center text-white font-bold text-xs shadow-sm ring-2 ring-white/20 shrink-0" title={`${user.name} (${user.facility} ${user.department})`}>
                                 {user.name.charAt(0)}
                             </div>
                         </div>

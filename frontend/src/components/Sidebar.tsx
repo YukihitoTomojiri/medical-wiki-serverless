@@ -33,11 +33,23 @@ export default function Sidebar({ onClose }: SidebarProps) {
 
     return (
         <div className="flex flex-col h-full bg-m3-surface-container-low border-r border-m3-outline-variant/20 font-sans">
-            {/* Branding Area for Mobile/Drawer */}
-            {/* Branding Area removed for Modern Header integration */}
-            <div className="h-4" />
+            {/* User Profile Section (Visibility Enhancement) */}
+            <div className="p-4 mx-4 mt-6 mb-2 bg-m3-primary-container/30 border border-m3-primary/20 rounded-xl shadow-sm">
+                <div className="text-[10px] font-bold text-m3-primary/80 mb-1 uppercase tracking-wider">Login User</div>
+                <div className="font-bold text-m3-on-surface text-sm truncate" title={user.name}>
+                    {user.name} <span className="text-xs font-normal text-m3-on-surface-variant">様</span>
+                </div>
+                <div className="mt-1 flex flex-col gap-0.5">
+                    <span className="text-xs font-medium text-m3-on-surface-variant line-clamp-1" title={user.facility}>
+                        {user.facility || '未設定の施設'}
+                    </span>
+                    <span className="text-xs text-m3-outline line-clamp-1" title={user.department}>
+                        {user.department || '未設定の部署'}
+                    </span>
+                </div>
+            </div>
 
-            <nav className="flex-1 overflow-y-auto px-2 pb-32 flex flex-col">
+            <nav className="flex-1 overflow-y-auto px-2 pb-32 flex flex-col mt-4">
                 <div className="space-y-6">
                     <div>
                         <div className="px-6 mb-2 text-xs font-bold text-m3-outline uppercase tracking-wider">Main</div>
