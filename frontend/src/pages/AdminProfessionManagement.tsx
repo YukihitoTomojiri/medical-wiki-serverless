@@ -76,9 +76,9 @@ export default function AdminProfessionManagement() {
             )}
 
             {/* 新規追加フォーム */}
-            <div className="mx-4 bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-                <h3 className="font-bold text-gray-800 mb-4 flex items-center gap-2">
-                    <Plus size={18} className="text-orange-500" />
+            <div className="mx-4 bg-white rounded-2xl border border-gray-100 shadow-sm p-4 md:p-6">
+                <h3 className="text-base md:text-lg font-bold text-gray-800 mb-3 md:mb-4 flex items-center gap-2">
+                    <Plus className="text-orange-500 w-4 h-4 md:w-5 md:h-5" />
                     職種を追加
                 </h3>
                 <form onSubmit={handleAdd} className="flex flex-col sm:flex-row gap-3">

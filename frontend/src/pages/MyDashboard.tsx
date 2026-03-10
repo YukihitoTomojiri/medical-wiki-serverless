@@ -190,9 +190,9 @@ export default function MyDashboard({ user }: MyDashboardProps) {
                     {activeTab === 'STUDY' && (
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                             {/* Uncompleted List */}
-                            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-                                <h3 className="font-bold text-gray-800 mb-4 flex items-center gap-2">
-                                    <AlertCircle className="text-orange-500" size={18} />
+                            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 md:p-6">
+                                <h3 className="text-base md:text-lg font-bold text-gray-800 mb-3 md:mb-4 flex items-center gap-2">
+                                    <AlertCircle className="text-orange-500 w-4 h-4 md:w-5 md:h-5" />
                                     未完了の研修
                                 </h3>
                                 <div className="space-y-3">
@@ -218,9 +218,9 @@ export default function MyDashboard({ user }: MyDashboardProps) {
                             </div>
 
                             {/* Recent History */}
-                            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-                                <h3 className="font-bold text-gray-800 mb-4 flex items-center gap-2">
-                                    <CheckCircle2 className="text-emerald-500" size={18} />
+                            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 md:p-6">
+                                <h3 className="text-base md:text-lg font-bold text-gray-800 mb-3 md:mb-4 flex items-center gap-2">
+                                    <CheckCircle2 className="text-emerald-500 w-4 h-4 md:w-5 md:h-5" />
                                     直近の学習履歴
                                 </h3>
                                 <div className="space-y-4">
@@ -244,9 +244,9 @@ export default function MyDashboard({ user }: MyDashboardProps) {
 
                             {/* リハビリ専門セクション */}
                             {isRehabView && (
-                                <div className="lg:col-span-2 bg-white rounded-2xl border border-purple-100 shadow-sm p-6">
-                                    <h3 className="font-bold text-gray-800 mb-4 flex items-center gap-2">
-                                        <Stethoscope className="text-purple-500" size={18} />
+                                <div className="lg:col-span-2 bg-white rounded-2xl border border-purple-100 shadow-sm p-4 md:p-6">
+                                    <h3 className="text-base md:text-lg font-bold text-gray-800 mb-3 md:mb-4 flex items-center gap-2">
+                                        <Stethoscope className="text-purple-500 w-4 h-4 md:w-5 md:h-5" />
                                         リハビリ専門リソース
                                     </h3>
                                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -270,8 +270,8 @@ export default function MyDashboard({ user }: MyDashboardProps) {
 
                     {activeTab === 'NOTICE' && (
                         <div className="animate-in fade-in slide-in-from-top-4 duration-500">
-                            <h2 className="text-sm font-black text-blue-900/40 uppercase tracking-widest mb-6 flex items-center gap-2 px-2">
-                                <AlertCircle size={16} />
+                            <h2 className="text-sm font-black text-blue-900/40 uppercase tracking-widest mb-4 md:mb-6 flex items-center gap-2 px-1 md:px-2">
+                                <AlertCircle className="w-4 h-4 md:w-5 md:h-5" />
                                 お知らせ一覧
                             </h2>
                             <DashboardAnnouncements

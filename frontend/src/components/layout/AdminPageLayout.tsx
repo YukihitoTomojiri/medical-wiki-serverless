@@ -31,13 +31,16 @@ export default function AdminPageLayout({
     children,
 }: AdminPageLayoutProps) {
     return (
-        <div className="max-w-7xl mx-auto px-4 py-6 animate-in fade-in duration-300">
+        <div className="max-w-7xl mx-auto px-2 md:px-4 py-3 md:py-6 animate-in fade-in duration-300">
             {/* コンパクトヘッダー */}
-            <div className="mb-5">
-                <h1 className="text-xl font-bold text-stone-800 tracking-tight">
-                    {title}
-                </h1>
-                <p className="text-sm text-stone-500 mt-0.5">{subtitle}</p>
+            <div className="mb-3 md:mb-5 flex flex-row items-center justify-between">
+                <div>
+                    <h1 className="text-lg md:text-xl font-bold text-stone-800 tracking-tight leading-none md:leading-normal">
+                        {title}
+                    </h1>
+                    <p className="hidden md:block text-sm text-stone-500 mt-0.5">{subtitle}</p>
+                </div>
+                {/* 拡張領域: 将来的なアクションボタン等を右側に配置可能 */}
             </div>
 
             {/* タブ + コンテンツ */}
