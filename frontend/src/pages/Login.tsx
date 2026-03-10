@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { api } from '../api';
 import { User } from '../types';
-import { BookOpen, Eye, EyeOff, LogIn, Building2 } from 'lucide-react';
+import { BookOpen, Eye, EyeOff, LogIn, Building2, Loader2 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 interface LoginProps {
@@ -127,7 +127,10 @@ export default function Login({ onLogin }: LoginProps) {
                             className="w-full py-4 bg-gradient-to-r from-orange-500 to-orange-600 text-white text-base font-bold rounded-full hover:shadow-m3-2 focus:ring-4 focus:ring-orange-500/30 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                         >
                             {loading ? (
-                                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                <>
+                                    <Loader2 className="animate-spin" size={20} />
+                                    ログインしています...
+                                </>
                             ) : (
                                 <>
                                     <LogIn size={20} />

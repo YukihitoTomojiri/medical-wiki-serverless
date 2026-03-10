@@ -1,7 +1,6 @@
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
 import { logger } from 'hono/logger'
-import { prismaMiddleware } from './lib/prisma'
 import auth from './routes/auth'
 import users from './routes/users'
 import facilities from './routes/facilities'
@@ -21,7 +20,6 @@ const app = new Hono<{ Bindings: Bindings }>()
 // Middleware
 app.use('*', logger())
 app.use('*', cors())
-app.use('/api/*', prismaMiddleware)
 
 // Routes
 app.route('/api/auth', auth)
