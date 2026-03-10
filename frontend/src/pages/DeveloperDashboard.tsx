@@ -980,11 +980,11 @@ export default function DeveloperDashboard() {
                                                             className="rounded border-gray-300 text-orange-600 focus:ring-orange-500"
                                                         />
                                                     </th>
-                                                    <th className="px-4 py-3 text-[10px] font-black text-gray-400 uppercase tracking-widest">Node ID / Name</th>
-                                                    <th className="px-4 py-3 text-[10px] font-black text-gray-400 uppercase tracking-widest">Status</th>
-                                                    <th className="px-4 py-3 text-[10px] font-black text-gray-400 uppercase tracking-widest w-48">Leave Info</th>
-                                                    <th className="px-4 py-3 text-[10px] font-black text-gray-400 uppercase tracking-widest">Facility / Dept</th>
-                                                    <th className="px-4 py-3 text-[10px] font-black text-gray-400 uppercase tracking-widest text-right">Actions</th>
+                                                    <th className="w-32 sm:w-40 px-4 py-3 text-[10px] font-black text-gray-400 uppercase tracking-widest">Node ID / Name</th>
+                                                    <th className="w-24 sm:w-28 px-4 py-3 text-[10px] font-black text-gray-400 uppercase tracking-widest">Status</th>
+                                                    <th className="w-36 sm:w-48 px-4 py-3 text-[10px] font-black text-gray-400 uppercase tracking-widest">Leave Info</th>
+                                                    <th className="w-32 sm:w-40 px-4 py-3 text-[10px] font-black text-gray-400 uppercase tracking-widest">Facility / Dept</th>
+                                                    <th className="w-40 px-4 py-3 text-[10px] font-black text-gray-400 uppercase tracking-widest text-right">Actions</th>
                                                 </tr>
                                             </thead>
                                         </table>
@@ -1006,8 +1006,8 @@ export default function DeveloperDashboard() {
                                                                     className="rounded border-gray-300 text-orange-600 focus:ring-orange-500"
                                                                 />
                                                             </td>
-                                                            <td className="px-4 py-4">
-                                                                <div className="flex flex-col">
+                                                            <td className="px-4 py-4 min-w-[120px]">
+                                                                <div className="flex flex-col whitespace-nowrap">
                                                                     <span className="text-xs font-mono font-black text-gray-400 uppercase tracking-tighter">#{user.employeeId}</span>
                                                                     <span className="text-sm font-bold text-gray-800">{user.name}</span>
                                                                 </div>
