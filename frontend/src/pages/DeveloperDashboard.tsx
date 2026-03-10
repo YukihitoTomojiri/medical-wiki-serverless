@@ -968,9 +968,9 @@ export default function DeveloperDashboard() {
                                         </div>
                                     </div>
 
-                                    <div className="flex-none bg-white border-b border-gray-100">
+                                    <div className="flex-none bg-white border-b border-gray-100 hidden md:block">
                                         <table className="w-full table-fixed">
-                                            <thead>
+                                            <thead className="hidden md:table-header-group">
                                                 <tr className="text-left border-b border-gray-100 bg-gray-50/50">
                                                     <th className="w-10 px-2 md:px-4 py-1.5 md:py-3">
                                                         <input
@@ -997,37 +997,42 @@ export default function DeveloperDashboard() {
                                                     const nodeInfo = nodeStatuses.get(user.id);
                                                     const isEditing = editingUserId === user.id;
                                                     return (
-                                                        <tr key={user.id} className={`group hover:bg-orange-50/30 transition-all ${selectedUsers.includes(user.id) ? 'bg-orange-50/50' : ''}`}>
-                                                            <td className="w-10 px-2 md:px-4 py-1.5 md:py-4">
+                                                        <tr key={user.id} className={`group hover:bg-orange-50/30 transition-all ${selectedUsers.includes(user.id) ? 'bg-orange-50/50' : ''} flex flex-col md:table-row relative`}>
+                                                            <td className="w-10 px-2 md:px-4 py-2 md:py-4 absolute md:relative top-1.5 md:top-auto left-0 md:left-auto">
                                                                 <input
                                                                     type="checkbox"
                                                                     checked={selectedUsers.includes(user.id)}
                                                                     onChange={() => toggleSelectUser(user.id)}
-                                                                    className="rounded border-gray-300 text-orange-600 focus:ring-orange-500"
+                                                                    className="rounded border-gray-300 text-orange-600 focus:ring-orange-500 mt-1 md:mt-0"
                                                                 />
                                                             </td>
-                                                            <td className="px-2 md:px-4 py-1.5 md:py-4 min-w-[120px]">
-                                                                <div className="flex flex-col whitespace-nowrap gap-0.5">
-                                                                    <div className="flex items-center gap-1.5">
+                                                            <td className="px-2 md:px-4 py-2 md:py-4 md:min-w-[120px] pl-10 md:pl-4">
+                                                                <div className="flex flex-col gap-0.5 md:gap-0.5">
+                                                                    <div className="flex flex-row md:flex-col gap-1 md:gap-0.5 items-center md:items-start whitespace-normal md:whitespace-nowrap w-[calc(100%-40px)] md:w-full">
                                                                         <span className="hidden md:block text-xs font-mono font-black text-gray-400 uppercase tracking-tighter leading-none">#{user.employeeId}</span>
-                                                                        {/* Mobile Status Badge - relocated purely beside Name or ID depending on view */}
-                                                                    </div>
-                                                                    <div className="flex items-center gap-1 mb-0.5">
-                                                                        <span className="text-[13px] md:text-sm font-bold text-gray-800 leading-none truncate max-w-[80px] md:max-w-[none]">{user.name}</span>
-                                                                        <div className="md:hidden flex items-center gap-1">
-                                                                            <div className={`w-1 h-1 rounded-full ${nodeInfo?.status === 'UP' ? 'bg-emerald-500' :
-                                                                                nodeInfo?.status === 'WARNING' ? 'bg-yellow-500' :
-                                                                                    nodeInfo?.status === 'DOWN' ? 'bg-red-500' :
-                                                                                        'bg-gray-300'
-                                                                                }`} />
-                                                                            <span className={`text-[8px] font-black tracking-widest px-1 py-px rounded uppercase ${nodeInfo?.status === 'UP' ? 'text-emerald-700 bg-emerald-50' :
-                                                                                nodeInfo?.status === 'WARNING' ? 'text-yellow-700 bg-yellow-50' :
-                                                                                    nodeInfo?.status === 'DOWN' ? 'text-red-700 bg-red-50' :
-                                                                                        'text-gray-500 bg-gray-50'
-                                                                                }`}>
-                                                                                {nodeInfo?.status || 'UP'}
-                                                                            </span>
+                                                                        <div className="flex flex-wrap items-center gap-1.5 mb-0 md:mb-0.5 w-full">
+                                                                            <span className="text-base md:text-sm font-bold text-gray-800 leading-tight">{user.name}</span>
+                                                                            <div className="md:hidden flex items-center gap-1 flex-shrink-0">
+                                                                                <div className={`w-1.5 h-1.5 rounded-full ${nodeInfo?.status === 'UP' ? 'bg-emerald-500' :
+                                                                                    nodeInfo?.status === 'WARNING' ? 'bg-yellow-500' :
+                                                                                        nodeInfo?.status === 'DOWN' ? 'bg-red-500' :
+                                                                                            'bg-gray-300'
+                                                                                    }`} />
+                                                                                <span className={`text-[9px] font-black tracking-widest px-1 py-px rounded uppercase ${nodeInfo?.status === 'UP' ? 'text-emerald-700 bg-emerald-50' :
+                                                                                    nodeInfo?.status === 'WARNING' ? 'text-yellow-700 bg-yellow-50' :
+                                                                                        nodeInfo?.status === 'DOWN' ? 'text-red-700 bg-red-50' :
+                                                                                            'text-gray-500 bg-gray-50'
+                                                                                    }`}>
+                                                                                    {nodeInfo?.status || 'UP'}
+                                                                                </span>
+                                                                            </div>
                                                                         </div>
+                                                                    </div>
+                                                                    {/* Mobile Facility/Dept (moves to specific td on PC) */}
+                                                                    <div className="md:hidden flex flex-wrap items-center gap-1.5 text-xs">
+                                                                        <span className="font-bold text-gray-500 truncate max-w-[120px]">{user.facility}</span>
+                                                                        <span className="text-gray-300">•</span>
+                                                                        <span className="font-medium text-gray-400 truncate max-w-[100px]">{user.department}</span>
                                                                     </div>
                                                                 </div>
                                                             </td>
@@ -1084,7 +1089,7 @@ export default function DeveloperDashboard() {
                                                                     </div>
                                                                 )}
                                                             </td>
-                                                            <td className="px-2 md:px-4 py-1.5 md:py-4">
+                                                            <td className="hidden md:table-cell px-2 md:px-4 py-1.5 md:py-4">
                                                                 {isEditing ? (
                                                                     <div className="space-y-1">
                                                                         <select
@@ -1113,7 +1118,7 @@ export default function DeveloperDashboard() {
                                                                     </div>
                                                                 )}
                                                             </td>
-                                                            <td className="px-2 md:px-4 py-1.5 md:py-4 text-right">
+                                                            <td className="px-2 md:px-4 py-1.5 md:py-4 text-right absolute md:relative right-2 top-1/2 -translate-y-1/2 md:top-auto md:translate-y-0">
                                                                 {isEditing ? (
                                                                     <div className="flex justify-end gap-1 md:gap-2">
                                                                         <button
