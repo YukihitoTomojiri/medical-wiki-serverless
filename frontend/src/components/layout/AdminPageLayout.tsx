@@ -44,7 +44,7 @@ export default function AdminPageLayout({
             <div className="bg-white rounded-2xl border border-stone-200 shadow-sm overflow-hidden">
                 {/* タブナビゲーション — M3 Secondary Tabs風 */}
                 <div
-                    className="flex border-b border-stone-150 bg-stone-50/60"
+                    className="flex border-b border-stone-150 bg-stone-50/60 overflow-x-auto whitespace-nowrap scrollbar-hide"
                     role="tablist"
                 >
                     {tabs.map((tab) => {

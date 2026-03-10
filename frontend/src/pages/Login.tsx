@@ -54,24 +54,24 @@ export default function Login({ onLogin }: LoginProps) {
 
             <div className="w-full max-w-md relative">
                 {/* Logo & Title */}
-                <div className="text-center mb-8">
-                    <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-orange-400 to-orange-600 rounded-m3-xl shadow-m3-3 mb-4">
-                        <BookOpen className="text-white" size={40} />
+                <div className="text-center mb-6 md:mb-8">
+                    <div className="inline-flex items-center justify-center w-16 h-16 md:w-20 md:h-20 bg-gradient-to-br from-orange-400 to-orange-600 rounded-m3-xl shadow-m3-3 mb-4">
+                        <BookOpen className="text-white w-8 h-8 md:w-10 md:h-10" />
                     </div>
-                    <h1 className="text-3xl font-bold bg-gradient-to-r from-orange-600 via-amber-600 to-orange-500 bg-clip-text text-transparent">
+                    <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-orange-600 via-amber-600 to-orange-500 bg-clip-text text-transparent">
                         社内Wiki
                     </h1>
-                    <p className="text-m3-on-surface-variant mt-1 font-medium">学習管理システム</p>
+                    <p className="text-m3-on-surface-variant mt-1 font-medium text-sm md:text-base">学習管理システム</p>
                 </div>
 
                 {/* Login Card — M3 Extra Large shape */}
-                <div className="bg-white/80 backdrop-blur-xl rounded-m3-xl shadow-m3-2 p-8 border border-white/50">
+                <div className="bg-white/80 backdrop-blur-xl rounded-m3-xl shadow-m3-2 p-6 md:p-8 border border-white/50">
                     <div className="flex items-center gap-2 mb-6 pb-4 border-b border-m3-outline-variant/30">
                         <Building2 className="text-orange-500" size={20} />
-                        <span className="text-m3-on-surface font-bold text-lg">医療法人 職員ログイン</span>
+                        <span className="text-m3-on-surface font-bold text-base md:text-lg">医療法人 職員ログイン</span>
                     </div>
 
-                    <form onSubmit={handleSubmit} className="space-y-5">
+                    <form onSubmit={handleSubmit} className="space-y-4 md:space-y-5">
                         <div>
                             <label className="block text-sm font-bold text-m3-on-surface mb-2">
                                 職員番号
@@ -80,7 +80,7 @@ export default function Login({ onLogin }: LoginProps) {
                                 type="text"
                                 value={employeeId}
                                 onChange={(e) => setEmployeeId(e.target.value)}
-                                className="w-full px-4 py-4 text-base rounded-m3-lg border border-m3-outline-variant bg-transparent focus:border-m3-primary focus:border-2 focus:ring-0 outline-none transition-all font-medium placeholder:text-m3-on-surface-variant/40 text-m3-on-surface"
+                                className="w-full px-4 py-3 md:py-4 min-h-[48px] text-base rounded-m3-lg border border-m3-outline-variant bg-transparent focus:border-m3-primary focus:border-2 focus:ring-0 outline-none transition-all font-medium placeholder:text-m3-on-surface-variant/40 text-m3-on-surface"
                                 placeholder="例: dev001"
                                 required
                             />
@@ -95,21 +95,21 @@ export default function Login({ onLogin }: LoginProps) {
                                     type={showPassword ? 'text' : 'password'}
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
-                                    className="w-full px-4 py-4 text-base rounded-m3-lg border border-m3-outline-variant bg-transparent focus:border-m3-primary focus:border-2 focus:ring-0 outline-none transition-all pr-12 font-medium placeholder:text-m3-on-surface-variant/40 text-m3-on-surface"
+                                    className="w-full px-4 py-3 md:py-4 min-h-[48px] text-base rounded-m3-lg border border-m3-outline-variant bg-transparent focus:border-m3-primary focus:border-2 focus:ring-0 outline-none transition-all pr-12 font-medium placeholder:text-m3-on-surface-variant/40 text-m3-on-surface"
                                     placeholder="パスワードを入力してください"
                                     required
                                 />
                                 <button
                                     type="button"
                                     onClick={() => setShowPassword(!showPassword)}
-                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-m3-on-surface-variant/60 hover:text-m3-on-surface transition-colors p-1 rounded-full hover:bg-m3-on-surface/5"
+                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-m3-on-surface-variant/60 hover:text-m3-on-surface transition-colors p-2 rounded-full hover:bg-m3-on-surface/5 min-h-[40px] min-w-[40px] flex items-center justify-center"
                                 >
                                     {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                                 </button>
                             </div>
                         </div>
                         <div className="flex justify-end mt-2">
-                            <Link to="/forgot-password" className="text-sm font-bold text-m3-primary hover:underline transition-all">
+                            <Link to="/forgot-password" className="text-sm font-bold text-m3-primary hover:underline transition-all py-2">
                                 パスワードを忘れた方はこちら
                             </Link>
                         </div>
@@ -124,7 +124,7 @@ export default function Login({ onLogin }: LoginProps) {
                         <button
                             type="submit"
                             disabled={loading}
-                            className="w-full py-4 bg-gradient-to-r from-orange-500 to-orange-600 text-white text-base font-bold rounded-full hover:shadow-m3-2 focus:ring-4 focus:ring-orange-500/30 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                            className="w-full py-3 md:py-4 min-h-[48px] bg-gradient-to-r from-orange-500 to-orange-600 text-white text-base font-bold rounded-full hover:shadow-m3-2 focus:ring-4 focus:ring-orange-500/30 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                         >
                             {loading ? (
                                 <>
