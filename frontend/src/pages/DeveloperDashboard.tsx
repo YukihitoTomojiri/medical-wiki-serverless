@@ -972,7 +972,7 @@ export default function DeveloperDashboard() {
                                         <table className="w-full table-fixed">
                                             <thead>
                                                 <tr className="text-left border-b border-gray-100 bg-gray-50/50">
-                                                    <th className="w-12 px-2 sm:px-4 py-2 sm:py-3">
+                                                    <th className="w-12 px-2 md:px-4 py-1.5 md:py-3">
                                                         <input
                                                             type="checkbox"
                                                             checked={selectedUsers.length === userList.length && userList.length > 0}
@@ -980,11 +980,11 @@ export default function DeveloperDashboard() {
                                                             className="rounded border-gray-300 text-orange-600 focus:ring-orange-500"
                                                         />
                                                     </th>
-                                                    <th className="w-32 sm:w-40 px-2 sm:px-4 py-2 sm:py-3 text-[10px] font-black text-gray-400 uppercase tracking-widest">Node ID / Name</th>
-                                                    <th className="w-24 sm:w-28 px-2 sm:px-4 py-2 sm:py-3 text-[10px] font-black text-gray-400 uppercase tracking-widest">Status</th>
-                                                    <th className="w-36 sm:w-48 px-2 sm:px-4 py-2 sm:py-3 text-[10px] font-black text-gray-400 uppercase tracking-widest">Leave Info</th>
-                                                    <th className="w-32 sm:w-40 px-2 sm:px-4 py-2 sm:py-3 text-[10px] font-black text-gray-400 uppercase tracking-widest">Facility / Dept</th>
-                                                    <th className="w-40 px-2 sm:px-4 py-2 sm:py-3 text-[10px] font-black text-gray-400 uppercase tracking-widest text-right">Actions</th>
+                                                    <th className="w-32 md:w-40 px-2 md:px-4 py-1.5 md:py-3 text-[10px] font-black text-gray-400 uppercase tracking-widest">Node ID / Name</th>
+                                                    <th className="hidden md:table-cell w-24 md:w-28 px-2 md:px-4 py-1.5 md:py-3 text-[10px] font-black text-gray-400 uppercase tracking-widest">Status</th>
+                                                    <th className="w-40 md:w-48 px-2 md:px-4 py-1.5 md:py-3 text-[10px] font-black text-gray-400 uppercase tracking-widest">Leave Info</th>
+                                                    <th className="w-24 md:w-40 px-2 md:px-4 py-1.5 md:py-3 text-[10px] font-black text-gray-400 uppercase tracking-widest">Facility / Dept</th>
+                                                    <th className="w-20 md:w-40 px-2 md:px-4 py-1.5 md:py-3 text-[10px] font-black text-gray-400 uppercase tracking-widest text-right">Actions</th>
                                                 </tr>
                                             </thead>
                                         </table>
@@ -998,7 +998,7 @@ export default function DeveloperDashboard() {
                                                     const isEditing = editingUserId === user.id;
                                                     return (
                                                         <tr key={user.id} className={`group hover:bg-orange-50/30 transition-all ${selectedUsers.includes(user.id) ? 'bg-orange-50/50' : ''}`}>
-                                                            <td className="w-12 px-2 sm:px-4 py-2 sm:py-4">
+                                                            <td className="w-12 px-2 md:px-4 py-1.5 md:py-4">
                                                                 <input
                                                                     type="checkbox"
                                                                     checked={selectedUsers.includes(user.id)}
@@ -1006,20 +1006,37 @@ export default function DeveloperDashboard() {
                                                                     className="rounded border-gray-300 text-orange-600 focus:ring-orange-500"
                                                                 />
                                                             </td>
-                                                            <td className="px-2 sm:px-4 py-2 sm:py-4 min-w-[120px]">
+                                                            <td className="px-2 md:px-4 py-1.5 md:py-4 min-w-[120px]">
                                                                 <div className="flex flex-col whitespace-nowrap gap-0.5">
-                                                                    <span className="text-[10px] sm:text-xs font-mono font-black text-gray-400 uppercase tracking-tighter leading-none">#{user.employeeId}</span>
-                                                                    <span className="text-xs sm:text-sm font-bold text-gray-800 leading-none">{user.name}</span>
+                                                                    <div className="flex items-center gap-1.5">
+                                                                        <span className="text-[10px] md:text-xs font-mono font-black text-gray-400 uppercase tracking-tighter leading-none">#{user.employeeId}</span>
+                                                                        {/* Mobile Status Badge */}
+                                                                        <div className="md:hidden flex items-center gap-1">
+                                                                            <div className={`w-1 h-1 rounded-full ${nodeInfo?.status === 'UP' ? 'bg-emerald-500' :
+                                                                                nodeInfo?.status === 'WARNING' ? 'bg-yellow-500' :
+                                                                                    nodeInfo?.status === 'DOWN' ? 'bg-red-500' :
+                                                                                        'bg-gray-300'
+                                                                                }`} />
+                                                                            <span className={`text-[8px] font-black tracking-widest border px-1 py-px rounded uppercase ${nodeInfo?.status === 'UP' ? 'text-emerald-700 bg-emerald-50 border-emerald-100' :
+                                                                                nodeInfo?.status === 'WARNING' ? 'text-yellow-700 bg-yellow-50 border-yellow-100' :
+                                                                                    nodeInfo?.status === 'DOWN' ? 'text-red-700 bg-red-50 border-red-100' :
+                                                                                        'text-gray-500 bg-gray-50 border-gray-100'
+                                                                                }`}>
+                                                                                {nodeInfo?.status || 'UP'}
+                                                                            </span>
+                                                                        </div>
+                                                                    </div>
+                                                                    <span className="text-xs md:text-sm font-bold text-gray-800 leading-none">{user.name}</span>
                                                                 </div>
                                                             </td>
-                                                            <td className="px-2 sm:px-4 py-2 sm:py-4 w-40">
-                                                                <div className="flex items-center gap-1 sm:gap-2">
-                                                                    <div className={`w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full ${nodeInfo?.status === 'UP' ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]' :
+                                                            <td className="hidden md:table-cell px-2 md:px-4 py-1.5 md:py-4 w-40">
+                                                                <div className="flex items-center gap-1 md:gap-2">
+                                                                    <div className={`w-1.5 h-1.5 md:w-2 md:h-2 rounded-full ${nodeInfo?.status === 'UP' ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]' :
                                                                         nodeInfo?.status === 'WARNING' ? 'bg-yellow-500 shadow-[0_0_8px_rgba(245,158,11,0.5)]' :
                                                                             nodeInfo?.status === 'DOWN' ? 'bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.5)]' :
                                                                                 'bg-gray-300'
                                                                         }`} />
-                                                                    <span className={`text-[8px] sm:text-[10px] font-black tracking-widest border px-1 sm:px-2 py-px sm:py-0.5 rounded uppercase ${nodeInfo?.status === 'UP' ? 'text-emerald-700 bg-emerald-50 border-emerald-100' :
+                                                                    <span className={`text-[8px] md:text-[10px] font-black tracking-widest border px-1 md:px-2 py-px md:py-0.5 rounded uppercase ${nodeInfo?.status === 'UP' ? 'text-emerald-700 bg-emerald-50 border-emerald-100' :
                                                                         nodeInfo?.status === 'WARNING' ? 'text-yellow-700 bg-yellow-50 border-yellow-100' :
                                                                             nodeInfo?.status === 'DOWN' ? 'text-red-700 bg-red-50 border-red-100' :
                                                                                 'text-gray-500 bg-gray-50 border-gray-100'
@@ -1028,7 +1045,7 @@ export default function DeveloperDashboard() {
                                                                     </span>
                                                                 </div>
                                                             </td>
-                                                            <td className="px-2 sm:px-4 py-2 sm:py-4 w-48">
+                                                            <td className="px-2 md:px-4 py-1.5 md:py-4 w-40 md:w-48">
                                                                 {isEditing ? (
                                                                     <div className="space-y-1">
                                                                         <div className="flex flex-col">
@@ -1053,19 +1070,19 @@ export default function DeveloperDashboard() {
                                                                         </div>
                                                                     </div>
                                                                 ) : (
-                                                                    <div className="flex flex-col gap-0.5">
+                                                                    <div className="flex flex-row md:flex-col items-center md:items-start gap-1.5 md:gap-0.5">
                                                                         <div className="flex items-center gap-1">
                                                                             <Calendar size={10} className="text-gray-400" />
-                                                                            <span className="text-[9px] sm:text-[10px] font-bold text-gray-600 leading-none">{user.joinedDate || '未設定'}</span>
+                                                                            <span className="text-[9px] md:text-[10px] font-bold text-gray-600 leading-none">{user.joinedDate || '未設定'}</span>
                                                                         </div>
                                                                         <div className="flex items-center gap-1">
                                                                             <Clock size={10} className="text-orange-400" />
-                                                                            <span className="text-[10px] sm:text-[11px] font-black text-orange-600 leading-none">{user.paidLeaveDays ?? 0} <span className="text-[7px] sm:text-[8px] font-bold">days</span></span>
+                                                                            <span className="text-[10px] md:text-[11px] font-black text-orange-600 leading-none">{user.paidLeaveDays ?? 0} <span className="text-[7px] md:text-[8px] font-bold">days</span></span>
                                                                         </div>
                                                                     </div>
                                                                 )}
                                                             </td>
-                                                            <td className="px-2 sm:px-4 py-2 sm:py-4">
+                                                            <td className="px-2 md:px-4 py-1.5 md:py-4">
                                                                 {isEditing ? (
                                                                     <div className="space-y-1">
                                                                         <select
@@ -1089,51 +1106,51 @@ export default function DeveloperDashboard() {
                                                                     </div>
                                                                 ) : (
                                                                     <div className="flex flex-col gap-0.5">
-                                                                        <span className="text-[9px] sm:text-[10px] font-black text-orange-600/60 uppercase tracking-widest leading-none">{user.facility}</span>
-                                                                        <span className="text-[10px] sm:text-xs font-bold text-gray-500 leading-none">{user.department}</span>
+                                                                        <span className="text-[9px] md:text-[10px] font-black text-orange-600/60 uppercase tracking-widest leading-none block truncate max-w-[70px] md:max-w-none">{user.facility}</span>
+                                                                        <span className="text-[10px] md:text-xs font-bold text-gray-500 leading-none block truncate max-w-[70px] md:max-w-none">{user.department}</span>
                                                                     </div>
                                                                 )}
                                                             </td>
-                                                            <td className="px-2 sm:px-4 py-2 sm:py-4 text-right">
+                                                            <td className="px-2 md:px-4 py-1.5 md:py-4 text-right">
                                                                 {isEditing ? (
-                                                                    <div className="flex justify-end gap-1 sm:gap-2">
+                                                                    <div className="flex justify-end gap-1 md:gap-2">
                                                                         <button
                                                                             onClick={cancelEdit}
-                                                                            className="p-1 sm:p-2 hover:bg-gray-100 rounded-lg sm:rounded-xl transition-all text-gray-400 hover:text-red-600"
+                                                                            className="p-1.5 md:p-2 hover:bg-gray-100 rounded-lg md:rounded-xl transition-all text-gray-400 hover:text-red-600"
                                                                             title="Cancel"
                                                                         >
-                                                                            <XIcon size={16} className="sm:hidden" />
-                                                                            <XIcon size={20} className="hidden sm:block" />
+                                                                            <XIcon size={16} className="md:hidden" />
+                                                                            <XIcon size={20} className="hidden md:block" />
                                                                         </button>
                                                                         <button
                                                                             onClick={() => saveEdit(user.id)}
-                                                                            className="flex items-center justify-center min-w-[32px] sm:min-w-[auto] gap-1 sm:gap-2 px-2 sm:px-4 py-1.5 sm:py-2 bg-orange-600 text-white rounded-lg sm:rounded-xl hover:bg-orange-700 shadow-lg shadow-orange-600/20 transition-all text-[10px] sm:text-xs font-black tracking-widest"
+                                                                            className="flex items-center justify-center min-w-[28px] md:min-w-[auto] gap-1 md:gap-2 px-1.5 md:px-4 py-1.5 md:py-2 bg-orange-600 text-white rounded-lg md:rounded-xl hover:bg-orange-700 shadow-lg shadow-orange-600/20 transition-all text-[10px] md:text-xs font-black tracking-widest"
                                                                             title="Save Changes"
                                                                         >
-                                                                            <Check size={14} className="sm:hidden" />
-                                                                            <Check size={16} className="hidden sm:block" />
-                                                                            <span className="hidden sm:inline">SAVE</span>
+                                                                            <Check size={14} className="md:hidden" />
+                                                                            <Check size={16} className="hidden md:block" />
+                                                                            <span className="hidden md:inline">SAVE</span>
                                                                         </button>
                                                                     </div>
                                                                 ) : (
-                                                                    <div className="flex justify-end gap-1 sm:gap-2">
+                                                                    <div className="flex justify-end gap-1 md:gap-2">
                                                                         <button
                                                                             onClick={() => openResetModal(user)}
-                                                                            className="flex items-center justify-center min-w-[32px] sm:min-w-[auto] gap-1 sm:gap-2 px-2 sm:px-3 py-1.5 sm:py-2 text-[10px] sm:text-xs font-black tracking-widest text-emerald-600 bg-emerald-50 hover:bg-emerald-100 rounded-lg sm:rounded-xl transition-all"
+                                                                            className="flex items-center justify-center min-w-[28px] md:min-w-[auto] gap-1 md:gap-2 px-1.5 md:px-3 py-1.5 md:py-2 text-[10px] md:text-xs font-black tracking-widest text-emerald-600 bg-emerald-50 hover:bg-emerald-100 rounded-lg md:rounded-xl transition-all"
                                                                             title="Reset Password"
                                                                         >
-                                                                            <Key size={12} className="sm:hidden" />
-                                                                            <Key size={14} className="hidden sm:block" />
-                                                                            <span className="hidden sm:inline">RESET</span>
+                                                                            <Key size={14} className="md:hidden" />
+                                                                            <Key size={14} className="hidden md:block" />
+                                                                            <span className="hidden md:inline">RESET</span>
                                                                         </button>
                                                                         <button
                                                                             onClick={() => startEdit(user)}
-                                                                            className="flex items-center justify-center min-w-[32px] sm:min-w-[auto] gap-1 sm:gap-2 px-2 sm:px-4 py-1.5 sm:py-2 text-[10px] sm:text-xs font-black tracking-widest text-gray-400 hover:text-orange-600 hover:bg-orange-50 rounded-lg sm:rounded-xl transition-all"
+                                                                            className="flex items-center justify-center min-w-[28px] md:min-w-[auto] gap-1 md:gap-2 px-1.5 md:px-4 py-1.5 md:py-2 text-[10px] md:text-xs font-black tracking-widest text-gray-400 hover:text-orange-600 hover:bg-orange-50 rounded-lg md:rounded-xl transition-all"
                                                                             title="Edit User"
                                                                         >
-                                                                            <Edit2 size={12} className="sm:hidden" />
-                                                                            <Edit2 size={14} className="hidden sm:block" />
-                                                                            <span className="hidden sm:inline">EDIT</span>
+                                                                            <Edit2 size={14} className="md:hidden" />
+                                                                            <Edit2 size={14} className="hidden md:block" />
+                                                                            <span className="hidden md:inline">EDIT</span>
                                                                         </button>
                                                                     </div>
                                                                 )}
