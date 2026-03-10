@@ -381,10 +381,14 @@ export default function DeveloperDashboard() {
     const saveEdit = async (id: number) => {
         try {
             addLog(`Updating user ID:${id}...`, 'info');
+
+            const facId = orgFacilities.find(f => f.name === editForm.facility)?.id || 0;
+            const depId = orgDepartments.find(d => d.name === editForm.department)?.id || 0;
+
             await api.updateUser(1, id, {
                 role: editForm.role,
-                facility: editForm.facility,
-                department: editForm.department,
+                facilityId: facId,
+                departmentId: depId,
                 email: editForm.email,
                 paidLeaveDays: editForm.paidLeaveDays,
                 joinedDate: editForm.joinedDate

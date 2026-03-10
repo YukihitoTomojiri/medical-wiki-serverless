@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client'
-import { hash } from 'bcryptjs'
+
 import * as dotenv from 'dotenv'
 import { Pool } from 'pg'
 import { PrismaPg } from '@prisma/adapter-pg'
@@ -11,8 +11,16 @@ const pool = new Pool({ connectionString })
 const adapter = new PrismaPg(pool)
 const prisma = new PrismaClient({ adapter })
 
+async function hashPassword(plain: string): Promise<string> {
+    const encoder = new TextEncoder()
+    const data = encoder.encode(plain)
+    const hashBuffer = await crypto.subtle.digest('SHA-256', data)
+    const hashArray = Array.from(new Uint8Array(hashBuffer))
+    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('')
+}
+
 async function main() {
-    const password = await hash('password123', 10)
+    const password = await hashPassword('password123')
 
     // マスターデータ (施設と部署)
     const facilitiesData = [
@@ -34,15 +42,18 @@ async function main() {
         },
     ];
 
+    const facilityMap = new Map<string, number>();
+    const departmentMap = new Map<string, number>();
+
     for (const facData of facilitiesData) {
         const facility = await prisma.facility.upsert({
             where: { name: facData.name },
             update: {},
             create: { name: facData.name },
         });
+        facilityMap.set(facData.name, facility.id);
 
         for (const depName of facData.departments) {
-            // Unique constraint is typically on ID, so we need to find first or use an alternative if we don't know the ID
             const existingDept = await prisma.department.findFirst({
                 where: {
                     name: depName,
@@ -51,20 +62,22 @@ async function main() {
             });
 
             if (existingDept) {
-                await prisma.department.update({
+                const updated = await prisma.department.update({
                     where: { id: existingDept.id },
                     data: {
                         name: depName,
                         facilityId: facility.id,
                     },
                 });
+                departmentMap.set(`${facData.name}_${depName}`, updated.id);
             } else {
-                await prisma.department.create({
+                const created = await prisma.department.create({
                     data: {
                         name: depName,
                         facilityId: facility.id,
                     },
                 });
+                departmentMap.set(`${facData.name}_${depName}`, created.id);
             }
         }
     }
@@ -74,15 +87,15 @@ async function main() {
     const devUser = await prisma.user.upsert({
         where: { employeeId: 'dev001' },
         update: {
-            facility: '本部病院',
-            department: '事務局',
+            facilityId: facilityMap.get('本部病院')!,
+            departmentId: departmentMap.get('本部病院_事務局')!,
         },
         create: {
             employeeId: 'dev001',
             password,
             name: 'Developer User',
-            facility: '本部病院',
-            department: '事務局',
+            facilityId: facilityMap.get('本部病院')!,
+            departmentId: departmentMap.get('本部病院_事務局')!,
             role: 'DEVELOPER',
             email: 'dev@example.com',
         },
@@ -93,15 +106,15 @@ async function main() {
     const adminUser = await prisma.user.upsert({
         where: { employeeId: 'admin001' },
         update: {
-            facility: '本部病院',
-            department: '理学療法課',
+            facilityId: facilityMap.get('本部病院')!,
+            departmentId: departmentMap.get('本部病院_理学療法課')!,
         },
         create: {
             employeeId: 'admin001',
             password,
             name: 'Admin User',
-            facility: '本部病院',
-            department: '理学療法課',
+            facilityId: facilityMap.get('本部病院')!,
+            departmentId: departmentMap.get('本部病院_理学療法課')!,
             role: 'ADMIN',
             email: 'admin@example.com',
         },
@@ -112,15 +125,15 @@ async function main() {
     const satoUser = await prisma.user.upsert({
         where: { employeeId: 'user001' },
         update: {
-            facility: '本部病院',
-            department: '理学療法課',
+            facilityId: facilityMap.get('本部病院')!,
+            departmentId: departmentMap.get('本部病院_理学療法課')!,
         },
         create: {
             employeeId: 'user001',
             password,
             name: '佐藤 健太',
-            facility: '本部病院',
-            department: '理学療法課',
+            facilityId: facilityMap.get('本部病院')!,
+            departmentId: departmentMap.get('本部病院_理学療法課')!,
             role: 'USER',
             email: 'kenta.sato@example.com',
             profession: '理学療法士',
@@ -132,15 +145,15 @@ async function main() {
     const suzukiUser = await prisma.user.upsert({
         where: { employeeId: 'user002' },
         update: {
-            facility: '本部病院',
-            department: '看護部',
+            facilityId: facilityMap.get('本部病院')!,
+            departmentId: departmentMap.get('本部病院_看護部')!,
         },
         create: {
             employeeId: 'user002',
             password,
             name: '鈴木 舞',
-            facility: '本部病院',
-            department: '看護部',
+            facilityId: facilityMap.get('本部病院')!,
+            departmentId: departmentMap.get('本部病院_看護部')!,
             role: 'USER',
             email: 'mai.suzuki@example.com',
             profession: '看護師',

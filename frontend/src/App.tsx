@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { Loader2 } from 'lucide-react';
 import Login from './pages/Login';
 import ManualList from './pages/ManualList';
 import ManualDetail from './pages/ManualDetail';
@@ -26,7 +27,14 @@ function AppRoutes() {
     const { user, login, loading, isDeveloper, isAdmin } = useAuth();
 
     if (loading) {
-        return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+        return (
+            <div className="fixed inset-0 bg-m3-surface/80 backdrop-blur-sm flex flex-col items-center justify-center z-[9999]">
+                <div className="bg-white p-8 rounded-2xl shadow-xl flex flex-col items-center gap-4">
+                    <Loader2 className="animate-spin text-orange-500" size={40} />
+                    <p className="text-m3-on-surface-variant font-bold">システムを読み込み中...</p>
+                </div>
+            </div>
+        );
     }
 
     if (!user) {

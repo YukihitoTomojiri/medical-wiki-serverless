@@ -52,7 +52,7 @@ app.get('/events/:id', async (c) => {
         where: { id },
         include: {
             responses: {
-                include: { user: { select: { name: true, facility: true, department: true } } }
+                include: { user: { include: { facility: true, department: true } } }
             }
         }
     })
@@ -60,7 +60,19 @@ app.get('/events/:id', async (c) => {
     if (!event) {
         return c.json({ error: 'Not found' }, 404)
     }
-    return c.json(event)
+
+    const mappedEvent = {
+        ...event,
+        responses: event.responses.map(r => ({
+            ...r,
+            user: {
+                ...r.user,
+                facility: r.user.facility.name,
+                department: r.user.department.name
+            }
+        }))
+    }
+    return c.json(mappedEvent)
 })
 
 app.put('/events/:id', async (c) => {

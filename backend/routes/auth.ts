@@ -1,81 +1,77 @@
 import { Hono } from 'hono'
-import { getPrisma } from '../lib/prisma'
+import { AuthService } from '../services/authService'
 import { sign } from 'hono/jwt'
-import { env } from 'hono/adapter'
-import { compare } from 'bcryptjs'
 import { Bindings } from '../types'
 
 const app = new Hono<{ Bindings: Bindings }>()
 
 app.post('/login', async (c) => {
-    const prisma = getPrisma(c.env.DATABASE_URL as string)
     try {
         const { employeeId, password } = await c.req.json()
 
-        const user = await prisma.user.findUnique({
-            where: { employeeId },
-            include: { paidLeaves: false } // Minimal fetch
-        })
+        if (!c.env.DATABASE_URL) {
+            console.error('[Auth] DATABASE_URL is missing in environment variables');
+            return c.json({ success: false, message: 'Server configuration error' }, 500);
+        }
+
+        const user = await AuthService.findUserByEmployeeId(c.env.DATABASE_URL as string, employeeId)
 
         if (!user) {
             return c.json({ success: false, message: 'Invalid credentials' }, 401)
         }
 
-        const isValid = await compare(password, user.password)
+        const isValid = await AuthService.verifyPassword(password, user.password)
 
         if (!isValid) {
             return c.json({ success: false, message: 'Invalid credentials' }, 401)
         }
 
-        // Return user object as expected by frontend
-        const { password: _, ...userWithoutPassword } = user
+        const { password: _, ...userWithoutPassword } = user;
 
-        // Generate JWT token
         const token = await sign({
             id: user.id,
             employeeId: user.employeeId,
             role: user.role,
-            exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24 // 24 hours
+            exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24
         }, c.env.JWT_SECRET || 'dev-secret')
 
         return c.json({
             success: true,
-            user: userWithoutPassword,
+            user: {
+                ...userWithoutPassword,
+                facility: user.facility?.name || 'Unknown',
+                department: user.department?.name || 'Unknown'
+            },
             token
         })
-    } finally {
-        // Disconnect immediately to prevent Cloudflare Worker generic 'hung' errors due to open TCP sockets from pg adapter
-        await prisma.$disconnect();
+    } catch (e) {
+        console.error('[Auth] Login Error:', e)
+        const errorMessage = e instanceof Error ? e.message : 'Unknown error';
+        return c.json({ success: false, message: 'Internal Server Error', error: errorMessage }, 500)
     }
 })
 
 app.post('/setup', async (c) => {
-    const prisma = getPrisma(c.env.DATABASE_URL as string)
-    const { token, password, profession } = await c.req.json()
+    try {
+        const { token, password, profession } = await c.req.json()
 
-    // Find user by invitation token
-    const user = await prisma.user.findFirst({
-        where: { invitationToken: token }
-    })
-
-    if (!user) {
-        return c.json({ success: false, message: 'Invalid or expired token' }, 400)
-    }
-
-    const { hash } = await import('bcryptjs')
-    const hashedPassword = await hash(password, 10)
-
-    await prisma.user.update({
-        where: { id: user.id },
-        data: {
-            password: hashedPassword,
-            profession: profession,
-            invitationToken: null,
-            mustChangePassword: false
+        if (!c.env.DATABASE_URL) {
+            console.error('[Auth] DATABASE_URL is missing in environment variables');
+            return c.json({ success: false, message: 'Server configuration error' }, 500);
         }
-    })
 
-    return c.json({ success: true, message: 'Account setup successfully' })
+        const updatedUser = await AuthService.setupAccount(c.env.DATABASE_URL as string, token, password, profession)
+
+        if (!updatedUser) {
+            return c.json({ success: false, message: 'Invalid or expired token' }, 400)
+        }
+
+        return c.json({ success: true, message: 'Account setup successfully' })
+    } catch (e) {
+        console.error('[Auth] Setup Error:', e)
+        const errorMessage = e instanceof Error ? e.message : 'Unknown error';
+        return c.json({ success: false, message: 'Internal Server Error', error: errorMessage }, 500)
+    }
 })
 
 export default app

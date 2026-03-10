@@ -62,8 +62,8 @@ export interface LoginResponse {
 
 export interface UserUpdateRequest {
     role?: 'ADMIN' | 'USER' | 'DEVELOPER';
-    facility?: string;
-    department?: string;
+    facilityId?: number;
+    departmentId?: number;
     email?: string;
     paidLeaveDays?: number;
     joinedDate?: string;
@@ -73,8 +73,8 @@ export interface UserCreateRequest {
     employeeId: string;
     name: string;
     password?: string;
-    facility: string;
-    department: string;
+    facilityId: number;
+    departmentId: number;
     role: 'ADMIN' | 'USER' | 'DEVELOPER';
     email?: string;
     paidLeaveDays?: number;

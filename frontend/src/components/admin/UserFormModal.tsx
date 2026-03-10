@@ -11,7 +11,8 @@ interface UserFormModalProps {
     onSubmit: (e: React.FormEvent) => void;
     onClose: () => void;
     onDelete?: () => void;
-    facilities: string[];
+    allFacilities: { id: number; name: string }[];
+    allDepartments: { id: number; name: string; facilityId: number }[];
     currentUserRole: string;
     submitting: boolean;
     error: string | null;
@@ -19,7 +20,7 @@ interface UserFormModalProps {
 
 export default function UserFormModal({
     mode, formData, onFormChange, onSubmit, onClose, onDelete,
-    facilities, currentUserRole, submitting, error,
+    allFacilities, allDepartments, currentUserRole, submitting, error,
 }: UserFormModalProps) {
     const title = mode === 'add' ? '新規ユーザー登録' : 'ユーザー編集';
     const update = (field: string, value: any) => onFormChange({ ...formData, [field]: value });
@@ -42,11 +43,21 @@ export default function UserFormModal({
                             <div>
                                 <label className="block text-xs font-bold text-m3-on-surface-variant mb-1.5 ml-1">施設</label>
                                 <select required className="w-full px-4 py-3 bg-m3-surface border border-m3-outline rounded-lg focus:ring-1 focus:ring-m3-primary focus:border-m3-primary outline-none transition-all disabled:bg-gray-100 disabled:text-gray-500 text-sm"
-                                    value={formData.facility} onChange={e => update('facility', e.target.value)} disabled={currentUserRole === 'ADMIN'}>
-                                    {facilities.map(f => <option key={f} value={f}>{f}</option>)}
+                                    value={formData.facilityId} onChange={e => update('facilityId', Number(e.target.value))} disabled={currentUserRole === 'ADMIN'}>
+                                    <option value={0} disabled>選択してください</option>
+                                    {allFacilities.map(f => <option key={f.id} value={f.id}>{f.name}</option>)}
                                 </select>
                             </div>
-                            <Input label="部署" value={formData.department} onChange={e => update('department', e.target.value)} placeholder="例: 事務部" />
+                            <div>
+                                <label className="block text-xs font-bold text-m3-on-surface-variant mb-1.5 ml-1">部署</label>
+                                <select required className="w-full px-4 py-3 bg-m3-surface border border-m3-outline rounded-lg focus:ring-1 focus:ring-m3-primary focus:border-m3-primary outline-none transition-all text-sm"
+                                    value={formData.departmentId} onChange={e => update('departmentId', Number(e.target.value))}>
+                                    <option value={0} disabled>選択してください</option>
+                                    {allDepartments.filter(d => d.facilityId === formData.facilityId).map(d => (
+                                        <option key={d.id} value={d.id}>{d.name}</option>
+                                    ))}
+                                </select>
+                            </div>
                         </div>
 
                         <div>

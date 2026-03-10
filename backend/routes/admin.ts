@@ -48,10 +48,18 @@ app.get('/paid-leaves', async (c) => {
     const prisma = getPrisma(c.env.DATABASE_URL as string)
     const leaves = await prisma.paidLeave.findMany({
         where: { type: 'PAID_LEAVE' },
-        include: { user: true },
+        include: { user: { include: { facility: true, department: true } } },
         orderBy: { startDate: 'desc' }
     })
-    return c.json(leaves)
+    const mappedLeaves = leaves.map(leave => ({
+        ...leave,
+        user: {
+            ...leave.user,
+            facility: leave.user.facility.name,
+            department: leave.user.department.name
+        }
+    }))
+    return c.json(mappedLeaves)
 })
 
 app.put('/paid-leaves/:id/approve', async (c) => {

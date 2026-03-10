@@ -1,66 +1,74 @@
 import { Hono } from 'hono'
-import { getPrisma } from '../lib/prisma'
+import { OrgService } from '../services/orgService'
 import { Bindings } from '../types'
 
 const app = new Hono<{ Bindings: Bindings }>()
 
-// 職種一覧取得
 app.get('/', async (c) => {
-    const prisma = getPrisma(c.env.DATABASE_URL as string)
-    const professions = await prisma.profession.findMany({
-        orderBy: { id: 'asc' }
-    })
+    const professions = await OrgService.getProfessions(c.env.DATABASE_URL as string)
     return c.json(professions)
 })
 
-// 職種新規作成
 app.post('/', async (c) => {
-    const prisma = getPrisma(c.env.DATABASE_URL as string)
-    const { name, description } = await c.req.json()
-    if (!name || typeof name !== 'string' || name.trim().length === 0) {
+    const data = await c.req.json()
+
+    if (!data.name || data.name.trim() === '') {
         return c.json({ error: '職種名は必須です' }, 400)
     }
+
     try {
-        const profession = await prisma.profession.create({
-            data: { name: name.trim(), description: description || null }
-        })
-        return c.json(profession)
-    } catch (e: any) {
-        if (e.code === 'P2002') {
-            return c.json({ error: 'この職種名は既に登録されています' }, 409)
-        }
-        throw e
+        const newProfession = await OrgService.createProfession(
+            c.env.DATABASE_URL as string,
+            data.name,
+            data.description
+        )
+        return c.json(newProfession, 201)
+    } catch (error) {
+        console.error('Error creating profession:', error)
+        return c.json({ error: '職種の作成に失敗しました。名前が重複している可能性があります。' }, 500)
     }
 })
 
-// 職種編集
 app.put('/:id', async (c) => {
-    const prisma = getPrisma(c.env.DATABASE_URL as string)
-    const id = Number(c.req.param('id'))
-    const { name, description } = await c.req.json()
-    if (!name || typeof name !== 'string' || name.trim().length === 0) {
+    const id = parseInt(c.req.param('id'), 10)
+
+    if (isNaN(id)) {
+        return c.json({ error: '無効なIDです' }, 400)
+    }
+
+    const data = await c.req.json()
+    if (!data.name || data.name.trim() === '') {
         return c.json({ error: '職種名は必須です' }, 400)
     }
+
     try {
-        const profession = await prisma.profession.update({
-            where: { id },
-            data: { name: name.trim(), description: description || null }
-        })
-        return c.json(profession)
-    } catch (e: any) {
-        if (e.code === 'P2002') {
-            return c.json({ error: 'この職種名は既に登録されています' }, 409)
-        }
-        throw e
+        const updatedProfession = await OrgService.updateProfession(
+            c.env.DATABASE_URL as string,
+            id,
+            data.name,
+            data.description
+        )
+        return c.json(updatedProfession)
+    } catch (error) {
+        console.error('Error updating profession:', error)
+        return c.json({ error: '職種の更新に失敗しました' }, 500)
     }
 })
 
-// 職種削除
 app.delete('/:id', async (c) => {
-    const prisma = getPrisma(c.env.DATABASE_URL as string)
-    const id = Number(c.req.param('id'))
-    await prisma.profession.delete({ where: { id } })
-    return c.json({ success: true })
+    const id = parseInt(c.req.param('id'), 10)
+
+    if (isNaN(id)) {
+        return c.json({ error: '無効なIDです' }, 400)
+    }
+
+    try {
+        await OrgService.deleteProfession(c.env.DATABASE_URL as string, id)
+        return new Response(null, { status: 204 })
+    } catch (error) {
+        console.error('Error deleting profession:', error)
+        return c.json({ error: '職種の削除に失敗しました' }, 500)
+    }
 })
 
 export default app
