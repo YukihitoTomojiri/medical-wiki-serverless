@@ -12,6 +12,10 @@
         "test:e2e": "playwright test"
     },
     "dependencies": {
+        "@tiptap/extension-placeholder": "^3.20.1",
+        "@tiptap/pm": "^3.20.1",
+        "@tiptap/react": "^3.20.1",
+        "@tiptap/starter-kit": "^3.20.1",
         "jwt-decode": "^4.0.0",
         "lucide-react": "^0.303.0",
         "react": "^18.2.0",
