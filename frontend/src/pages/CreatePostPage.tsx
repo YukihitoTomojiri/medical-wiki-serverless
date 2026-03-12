@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { api } from '../api';
 import { useAuth } from '../context/AuthContext';
+import RichTextEditor from '../components/common/RichTextEditor';
 
 type PostType = 'manual' | 'notice' | 'training';
 
@@ -342,12 +343,10 @@ const CreatePostPage: React.FC = () => {
                                 本文
                                 <span className="text-orange-500 bg-orange-50 px-2 py-0.5 rounded text-[10px] font-bold">必須</span>
                             </label>
-                            <textarea
+                            <RichTextEditor
                                 value={content}
-                                onChange={(e) => setContent(e.target.value)}
-                                className="w-full px-5 py-4 rounded-2xl border border-m3-outline-variant focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10 outline-none transition-all font-medium text-m3-on-surface placeholder:text-m3-on-surface-variant/40 min-h-[300px] resize-none"
+                                onChange={setContent}
                                 placeholder="投稿の詳細内容を入力してください"
-                                required
                             />
                         </div>
                     </div>
