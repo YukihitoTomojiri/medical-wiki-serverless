@@ -24,9 +24,7 @@ app.get('/', async (c) => {
                 { facilityId: facilityId || -1 } // Facility specific
             ]
         },
-        orderBy: { priority: 'asc' } // HIGH=0 if enum? Prisma enums are strings usually, unless mapped.
-        // If enum is string (HIGH, LOW), 'HIGH' < 'LOW' is false. 'H' < 'L'.
-        // We might need to handle sort in code or consistent naming.
+        orderBy: { createdAt: 'desc' } // Changed from priority to createdAt for consistency with admin
     })
     return c.json(announcements)
 })

@@ -30,7 +30,7 @@ const TrainingAdmin = () => {
                 onQr={training.openQr}
                 onViewResponses={(id) => navigate(`/training/${id}/responses`)}
                 onPreview={(id) => navigate(`/training/${id}`)}
-                onCreateNew={training.openCreateModal}
+                onCreateNew={() => navigate('/admin/create?type=training')}
             />
 
             {training.showCreateModal && (
