@@ -20,6 +20,7 @@ import SubmissionSuccessPage from './pages/SubmissionSuccessPage';
 import TrainingList from './pages/TrainingList';
 import TrainingDetail from './pages/TrainingDetail';
 import TrainingResponseAdmin from './pages/TrainingResponseAdmin';
+import CreatePostPage from './pages/CreatePostPage';
 import { AuthProvider, useAuth } from './context/AuthContext';
 
 
@@ -83,6 +84,7 @@ function AppRoutes() {
                         <Route path="/admin/all-users" element={<AllUsersAdmin />} />
                         <Route path="/admin/master" element={<AdminMasterPage />} />
                         <Route path="/admin/operations" element={<AdminOperationPage />} />
+                        <Route path="/admin/create" element={<CreatePostPage />} />
                         <Route path="/admin/training/responses/:eventId" element={<TrainingResponseAdmin />} />
 
                     </>

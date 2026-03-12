@@ -3,13 +3,15 @@ import { Users, Bell, BookOpen, Settings } from 'lucide-react';
 import AdminPageLayout from '../components/layout/AdminPageLayout';
 import AdminUserManagement from './AdminUserManagement';
 import AdminAnnouncementManagement from './AdminAnnouncementManagement';
+import AdminManualManagement from './AdminManualManagement';
 import TrainingAdmin from './TrainingAdmin';
 import { useAuth } from '../context/AuthContext';
 
 const tabs = [
     { id: 'users', label: 'ユーザー管理', icon: Users },
+    { id: 'manuals', label: 'マニュアル管理', icon: BookOpen },
     { id: 'announcements', label: 'お知らせ管理', icon: Bell },
-    { id: 'training', label: '研修管理', icon: BookOpen },
+    { id: 'training', label: '研修管理', icon: Settings },
 ] as const;
 
 type TabId = (typeof tabs)[number]['id'];
@@ -30,6 +32,7 @@ export default function AdminOperationPage() {
             onTabChange={(id) => setActiveTab(id as TabId)}
         >
             {activeTab === 'users' && <AdminUserManagement />}
+            {activeTab === 'manuals' && <AdminManualManagement user={user} />}
             {activeTab === 'announcements' && <AdminAnnouncementManagement user={user} />}
             {activeTab === 'training' && <TrainingAdmin />}
         </AdminPageLayout>

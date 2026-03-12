@@ -25,8 +25,8 @@ export default function TrainingEventTable({
                 </h3>
                 <Button variant="filled" onClick={onCreateNew} className="flex items-center gap-2 shrink-0">
                     <Plus size={16} className="md:w-4 md:h-4" />
-                    <span className="hidden sm:inline">新規作成</span>
-                    <span className="sm:hidden">作成</span>
+                    <span className="hidden sm:inline">新規追加</span>
+                    <span className="sm:hidden">追加</span>
                 </Button>
             </div>
 

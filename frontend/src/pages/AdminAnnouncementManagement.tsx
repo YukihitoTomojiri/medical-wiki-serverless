@@ -4,12 +4,14 @@ import { api, Announcement } from '../api';
 import { Manual } from '../types';
 import { Button } from '../components/ui/Button';
 import { User } from '../types';
+import { useNavigate } from 'react-router-dom';
 
 interface props {
     user: User;
 }
 
 export default function AdminAnnouncementManagement({ user }: props) {
+    const navigate = useNavigate();
     const [announcements, setAnnouncements] = useState<Announcement[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -144,12 +146,12 @@ export default function AdminAnnouncementManagement({ user }: props) {
                 </h3>
                 <Button
                     variant="filled"
-                    onClick={() => handleOpenModal()}
+                    onClick={() => navigate('/admin/create?type=notice')}
                     className="flex items-center gap-2 shrink-0"
                 >
                     <Plus size={16} className="md:w-4 md:h-4" />
-                    <span className="hidden sm:inline">新規作成</span>
-                    <span className="sm:hidden">作成</span>
+                    <span className="hidden sm:inline">新規追加</span>
+                    <span className="sm:hidden">追加</span>
                 </Button>
             </div>
 
