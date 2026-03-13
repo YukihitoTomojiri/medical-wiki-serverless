@@ -45,6 +45,7 @@ const CreatePostPage: React.FC = () => {
     const [category, setCategory] = useState('');
     const [categories, setCategories] = useState<string[]>([]);
     const [startTime, setStartTime] = useState('');
+    const [endTime, setEndTime] = useState('');
     const [location, setLocation] = useState('');
     
     // Target Selection State
@@ -118,13 +119,66 @@ const CreatePostPage: React.FC = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        if (!user) return;
+
+        if (!title.trim() || !content.trim()) {
+            alert('タイトルと本文を入力してください。');
+            return;
+        }
+
         setSaving(true);
-        // 実装はステップ3で行うため、ここではログ出力のみ
-        console.log('Submit:', { postType, title, content, category, startTime, location });
-        setTimeout(() => {
+        try {
+            let result;
+            if (postType === 'manual') {
+                if (!category.trim()) {
+                    alert('カテゴリを入力してください。');
+                    setSaving(false);
+                    return;
+                }
+                result = await api.createManual(user.id, {
+                    title,
+                    content,
+                    category,
+                    facilityId: selectedFacilityId ? parseInt(selectedFacilityId) : undefined,
+                    departmentId: selectedDepartmentId ? parseInt(selectedDepartmentId) : undefined,
+                } as any);
+            } else if (postType === 'notice') {
+                result = await api.createAnnouncement(user.id, {
+                    title,
+                    content,
+                    priority: 'NORMAL',
+                    displayUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+                    facilityId: selectedFacilityId ? parseInt(selectedFacilityId) : undefined,
+                    departmentId: selectedDepartmentId ? parseInt(selectedDepartmentId) : undefined,
+                } as any);
+            } else if (postType === 'training') {
+                if (!startTime || !location.trim()) {
+                    alert('開催日時と場所を入力してください。');
+                    setSaving(false);
+                    return;
+                }
+                result = await api.createTrainingEvent(user.id, {
+                    title,
+                    description: content,
+                    startTime: new Date(startTime).toISOString(),
+                    endTime: endTime ? new Date(endTime).toISOString() : new Date(new Date(startTime).getTime() + 60 * 60 * 1000).toISOString(),
+                    location,
+                    facilityId: selectedFacilityId ? parseInt(selectedFacilityId) : undefined,
+                    departmentId: selectedDepartmentId ? parseInt(selectedDepartmentId) : undefined,
+                });
+            }
+
+            console.log('Post created:', result);
+            alert('投稿が正常に保存されました。');
+            
+            // リダイレクト（管理画面へ）
+            navigate('/admin/operations');
+        } catch (error: any) {
+            console.error('Failed to save post:', error);
+            alert(`保存に失敗しました: ${error.message || '不明なエラー'}`);
+        } finally {
             setSaving(false);
-            alert('保存ボタンが押されました（実際のアクションは次のステップで実装します）');
-        }, 1000);
+        }
     };
 
     return (
@@ -261,7 +315,7 @@ const CreatePostPage: React.FC = () => {
                                 <div className="space-y-2">
                                     <label className="text-sm font-black text-m3-on-surface-variant ml-1 flex items-center gap-2">
                                         <span className="bg-m3-surface-container-highest p-1 rounded-md"><Clock size={14}/></span>
-                                        開催日時
+                                        開始日時
                                         <span className="text-orange-500 bg-orange-50 px-2 py-0.5 rounded text-[10px] font-bold">必須</span>
                                     </label>
                                     <input
@@ -270,6 +324,19 @@ const CreatePostPage: React.FC = () => {
                                         onChange={(e) => setStartTime(e.target.value)}
                                         className="w-full px-5 py-4 rounded-2xl border border-m3-outline-variant focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10 outline-none transition-all font-medium text-m3-on-surface"
                                         required
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-sm font-black text-m3-on-surface-variant ml-1 flex items-center gap-2">
+                                        <span className="bg-m3-surface-container-highest p-1 rounded-md"><Clock size={14}/></span>
+                                        終了日時
+                                        <span className="text-m3-on-surface-variant/40 bg-m3-surface-container-high px-2 py-0.5 rounded text-[10px] font-bold">任意</span>
+                                    </label>
+                                    <input
+                                        type="datetime-local"
+                                        value={endTime}
+                                        onChange={(e) => setEndTime(e.target.value)}
+                                        className="w-full px-5 py-4 rounded-2xl border border-m3-outline-variant focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10 outline-none transition-all font-medium text-m3-on-surface"
                                     />
                                 </div>
                                 <div className="space-y-2">

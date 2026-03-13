@@ -38,4 +38,35 @@ app.get('/:id', async (c) => {
     return c.json(manual)
 })
 
+// Create Manual
+app.post('/', async (c) => {
+    const prisma = getPrisma(c.env.DATABASE_URL as string)
+    // Normally we'd get authorName from the user context/session
+    const userId = Number(c.req.header('X-User-Id'))
+    const data = await c.req.json()
+
+    if (!data.title || !data.content || !data.category) {
+        return c.json({ error: 'Title, content, and category are required' }, 400)
+    }
+
+    try {
+        const user = await prisma.user.findUnique({ where: { id: userId } })
+        
+        const manual = await prisma.manual.create({
+            data: {
+                title: data.title,
+                content: data.content,
+                category: data.category,
+                authorName: user?.name || 'Unknown',
+                facilityId: data.facilityId ? Number(data.facilityId) : null,
+                departmentId: data.departmentId ? Number(data.departmentId) : null,
+            }
+        })
+        return c.json(manual, 201)
+    } catch (error: any) {
+        console.error('Failed to create manual:', error)
+        return c.json({ error: 'Failed to create manual', details: error.message }, 500)
+    }
+})
+
 export default app

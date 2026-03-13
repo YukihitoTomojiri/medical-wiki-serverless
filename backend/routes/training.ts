@@ -31,17 +31,25 @@ app.post('/events', async (c) => {
     const prisma = getPrisma(c.env.DATABASE_URL as string)
     const data = await c.req.json()
 
-    const event = await prisma.trainingEvent.create({
-        data: {
-            title: data.title,
-            description: data.description,
-            startTime: new Date(data.startTime),
-            endTime: new Date(data.endTime),
-            videoUrl: data.videoUrl,
-            materialsUrl: data.materialsUrl,
-        }
-    })
-    return c.json(event)
+    try {
+        const event = await prisma.trainingEvent.create({
+            data: {
+                title: data.title,
+                description: data.description,
+                startTime: new Date(data.startTime),
+                endTime: new Date(data.endTime),
+                location: data.location,
+                videoUrl: data.videoUrl,
+                materialsUrl: data.materialsUrl,
+                facilityId: data.facilityId ? Number(data.facilityId) : null,
+                departmentId: data.departmentId ? Number(data.departmentId) : null,
+            }
+        })
+        return c.json(event, 201)
+    } catch (error: any) {
+        console.error('Failed to create training event:', error)
+        return c.json({ error: 'Failed to create training event', details: error.message }, 500)
+    }
 })
 
 // /api/training/events/:id
@@ -87,8 +95,11 @@ app.put('/events/:id', async (c) => {
             description: data.description,
             startTime: new Date(data.startTime),
             endTime: new Date(data.endTime),
+            location: data.location,
             videoUrl: data.videoUrl,
             materialsUrl: data.materialsUrl,
+            facilityId: data.facilityId ? Number(data.facilityId) : null,
+            departmentId: data.departmentId ? Number(data.departmentId) : null,
         }
     })
     return c.json(event)

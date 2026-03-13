@@ -38,7 +38,7 @@ export const announcementsApi = {
         relatedEventId?: number | null;
         relatedType?: 'WIKI' | 'TRAINING_EVENT' | null;
     }): Promise<Announcement> => {
-        const res = await fetch(`${API_BASE}/admin/announcements`, {
+        const res = await fetch(`${API_BASE}/announcements`, {
             method: 'POST',
             headers: getHeaders(userId),
             body: JSON.stringify(data),
