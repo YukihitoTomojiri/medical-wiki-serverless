@@ -23,17 +23,29 @@ export default function ManualList({ user }: ManualListProps) {
     const [manuals, setManuals] = useState<Manual[]>([]);
     const [categories, setCategories] = useState<string[]>([]);
     const [selectedCategory, setSelectedCategory] = useState<string>('');
+    const [selectedProfession, setSelectedProfession] = useState<string>('ALL');
     const [searchQuery, setSearchQuery] = useState('');
     const [loading, setLoading] = useState(true);
 
+    const professionOptions = [
+        { value: 'ALL', label: 'すべて' },
+        { value: 'REHAB', label: 'リハビリ' },
+        { value: 'NURSE', label: '看護師' },
+        { value: 'CARE', label: '介護職' },
+        { value: 'OTHER', label: 'その他' },
+        { value: 'MINE', label: '自分の投稿' },
+    ];
+
     useEffect(() => {
         loadData();
-    }, []);
+    }, [selectedProfession]);
 
     const loadData = async () => {
+        setLoading(true);
         try {
+            const isMine = selectedProfession === 'MINE';
             const [manualsData, categoriesData] = await Promise.all([
-                api.getManuals(user.id),
+                api.getManuals(user.id, { isMine }),
                 api.getCategories(),
             ]);
             setManuals(manualsData);
@@ -50,7 +62,15 @@ export default function ManualList({ user }: ManualListProps) {
         const matchesSearch = !searchQuery ||
             manual.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
             manual.content.toLowerCase().includes(searchQuery.toLowerCase());
-        return matchesCategory && matchesSearch;
+        
+        // Profession Filtering Logic
+        const matchesProfession = 
+            selectedProfession === 'MINE' || // Skip client-side filtering if fetching for 'MINE'
+            selectedProfession === 'ALL' || 
+            (manual.targetProfessions && manual.targetProfessions.length === 0) ||
+            (manual.targetProfessions && manual.targetProfessions.includes(selectedProfession));
+
+        return matchesCategory && matchesSearch && matchesProfession;
     });
 
     const readCount = manuals.filter(m => m.isRead).length;
@@ -74,7 +94,7 @@ export default function ManualList({ user }: ManualListProps) {
                 icon={BookOpen}
             >
                 {user.role === 'ADMIN' && (
-                    <Link to="/admin/manuals/new">
+                    <Link to="/posts/create?type=manual">
                         <Button variant="filled" icon={<Plus size={18} />}>
                             新規作成
                         </Button>
@@ -119,7 +139,7 @@ export default function ManualList({ user }: ManualListProps) {
             </div>
 
             {/* M3 Search & Filter */}
-            <div className="space-y-4">
+            <div className="space-y-6">
                 <div className="max-w-md">
                     <div className="relative">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-m3-on-surface-variant" size={20} />
@@ -133,27 +153,50 @@ export default function ManualList({ user }: ManualListProps) {
                     </div>
                 </div>
 
-                {/* Filter Chips (Horizontal Scroll) */}
-                <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
-                    <Button
-                        variant={selectedCategory === '' ? 'filled' : 'outlined'}
-                        size="sm"
-                        onClick={() => setSelectedCategory('')}
-                        className="rounded-lg whitespace-nowrap"
-                    >
-                        すべて
-                    </Button>
-                    {categories.map((category) => (
+                {/* Profession Filter Pills */}
+                <div className="space-y-2">
+                    <div className="text-[10px] font-black text-m3-on-surface-variant uppercase tracking-widest pl-1">職種別に絞り込む</div>
+                    <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
+                        {professionOptions.map((opt) => (
+                            <button
+                                key={opt.value}
+                                onClick={() => setSelectedProfession(opt.value)}
+                                className={`px-5 py-2 rounded-full text-xs font-bold transition-all whitespace-nowrap border-2 ${
+                                    selectedProfession === opt.value
+                                    ? 'bg-blue-600 border-blue-600 text-white shadow-md shadow-blue-200'
+                                    : 'bg-white border-gray-100 text-gray-500 hover:border-blue-200'
+                                }`}
+                            >
+                                {opt.label}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+
+                {/* Category Filter Chips (Horizontal Scroll) */}
+                <div className="space-y-2">
+                    <div className="text-[10px] font-black text-m3-on-surface-variant uppercase tracking-widest pl-1">カテゴリーから探す</div>
+                    <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
                         <Button
-                            key={category}
-                            variant={selectedCategory === category ? 'filled' : 'outlined'}
+                            variant={selectedCategory === '' ? 'tonal' : 'outlined'}
                             size="sm"
-                            onClick={() => setSelectedCategory(category)}
+                            onClick={() => setSelectedCategory('')}
                             className="rounded-lg whitespace-nowrap"
                         >
-                            {category}
+                            すべて
                         </Button>
-                    ))}
+                        {categories.map((category) => (
+                            <Button
+                                key={category}
+                                variant={selectedCategory === category ? 'tonal' : 'outlined'}
+                                size="sm"
+                                onClick={() => setSelectedCategory(category)}
+                                className="rounded-lg whitespace-nowrap"
+                            >
+                                {category}
+                            </Button>
+                        ))}
+                    </div>
                 </div>
             </div>
  
@@ -166,6 +209,7 @@ export default function ManualList({ user }: ManualListProps) {
                         rawHtmlContent={manual.content}
                         date={new Date(manual.createdAt).toLocaleDateString('ja-JP')}
                         badgeText={manual.isRead ? `${manual.category} (読了済み)` : manual.category}
+                        status={manual.status as any}
                         onClick={() => navigate(`/manuals/${manual.id}`)}
                     />
                 ))}

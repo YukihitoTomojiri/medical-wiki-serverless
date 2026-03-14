@@ -4,15 +4,21 @@ export interface TrainingEvent {
     id: number;
     title: string;
     description: string;
+    startTime: string;
+    endTime: string;
+    location: string;
     videoUrl?: string;
     videoUrl2?: string;
     videoUrl3?: string;
     materialsUrl?: string;
+    facilityId?: number | null;
+    departmentId?: number | null;
+    status?: string;
+    targetProfessions?: string[];
     targetCommitteeId?: number;
     targetJobType?: string;
-    startTime: string;
-    endTime: string;
     qrCodeToken?: string;
+    authorId?: number | null;
     createdAt: string;
 }
 

@@ -65,6 +65,8 @@ function AppRoutes() {
                 <Route path="/" element={<Navigate to="/my-dashboard" replace />} />
                 <Route path="/manuals" element={<ManualList user={user} />} />
                 <Route path="/manuals/:id" element={<ManualDetail user={user} />} />
+                <Route path="/manuals/create" element={<CreatePostPage />} />
+                <Route path="/manuals/edit/:id" element={<CreatePostPage />} />
                 <Route path="/my-dashboard" element={<MyDashboard user={user} />} />
                 <Route path="/dashboard" element={<Navigate to="/my-dashboard" replace />} />
 
