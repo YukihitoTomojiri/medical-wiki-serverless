@@ -12,18 +12,32 @@ app.get('/', async (c) => {
     const user = await prisma.user.findUnique({ where: { id: userId } })
     if (!user) return c.json([]) // Should probably 401
 
+    const isAdmin = user.role === 'ADMIN' || user.role === 'DEVELOPER'
     const facilityId = user.facilityId;
-
     const now = new Date()
 
+    const where: any = {
+        displayUntil: { gte: now },
+        OR: [
+            { facilityId: null }, // Global
+            { facilityId: facilityId || -1 } // Facility specific
+        ]
+    }
+
+    if (!isAdmin) {
+        where.status = 'PUBLISHED'
+        where.AND = [
+            {
+                OR: [
+                    { targetProfessions: { isEmpty: true } },
+                    { targetProfessions: { has: user.profession } }
+                ]
+            }
+        ]
+    }
+
     const announcements = await prisma.announcement.findMany({
-        where: {
-            displayUntil: { gte: now },
-            OR: [
-                { facilityId: null }, // Global
-                { facilityId: facilityId || -1 } // Facility specific
-            ]
-        },
+        where,
         orderBy: { createdAt: 'desc' } // Changed from priority to createdAt for consistency with admin
     })
     return c.json(announcements)
@@ -40,12 +54,22 @@ app.post('/', async (c) => {
     }
 
     try {
+        const user = await prisma.user.findUnique({ where: { id: userId } })
+
+        // Determine status based on role
+        let finalStatus = data.status || 'PUBLISHED'
+        if (user?.role !== 'ADMIN' && user?.role !== 'DEVELOPER') {
+            finalStatus = 'REVIEW'
+        }
+
         const announcement = await prisma.announcement.create({
             data: {
                 title: data.title,
                 content: data.content,
                 priority: data.priority || 'NORMAL',
                 displayUntil: data.displayUntil ? new Date(data.displayUntil) : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // Default 30 days
+                status: finalStatus,
+                targetProfessions: data.targetProfessions || [],
                 facilityId: data.facilityId ? Number(data.facilityId) : null,
                 departmentId: data.departmentId ? Number(data.departmentId) : null,
                 createdBy: userId,

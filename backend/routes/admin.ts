@@ -20,20 +20,35 @@ app.post('/announcements', async (c) => {
     const userId = Number(c.req.header('X-User-Id'))
     const data = await c.req.json()
 
-    const announcement = await prisma.announcement.create({
-        data: {
-            title: data.title,
-            content: data.content,
-            priority: data.priority,
-            displayUntil: new Date(data.displayUntil),
-            facilityId: data.facilityId ? Number(data.facilityId) : null,
-            createdBy: userId,
-            relatedType: data.relatedType,
-            relatedWikiId: data.relatedWikiId ? Number(data.relatedWikiId) : null,
-            relatedEventId: data.relatedEventId ? Number(data.relatedEventId) : null
+    try {
+        const user = await prisma.user.findUnique({ where: { id: userId } })
+        
+        // Determine status based on role (even in admin route, for consistency)
+        let finalStatus = data.status || 'PUBLISHED'
+        if (user?.role !== 'ADMIN' && user?.role !== 'DEVELOPER') {
+            finalStatus = 'REVIEW'
         }
-    })
-    return c.json(announcement)
+
+        const announcement = await prisma.announcement.create({
+            data: {
+                title: data.title,
+                content: data.content,
+                priority: data.priority || 'NORMAL',
+                displayUntil: data.displayUntil ? new Date(data.displayUntil) : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+                status: finalStatus,
+                targetProfessions: data.targetProfessions || [],
+                facilityId: data.facilityId ? Number(data.facilityId) : null,
+                createdBy: userId,
+                relatedType: data.relatedType,
+                relatedWikiId: data.relatedWikiId ? Number(data.relatedWikiId) : null,
+                relatedEventId: data.relatedEventId ? Number(data.relatedEventId) : null
+            }
+        })
+        return c.json(announcement)
+    } catch (error: any) {
+        console.error('Failed to create admin announcement:', error)
+        return c.json({ error: 'Failed to create announcement', details: error.message }, 500)
+    }
 })
 
 app.delete('/announcements/:id', async (c) => {

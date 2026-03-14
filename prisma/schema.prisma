@@ -3,10 +3,10 @@ generator client {
 }
 
 datasource db {
-  provider  = "postgresql"
+  provider = "postgresql"
 }
 
-model Profession {
+model MasterProfession {
   id          Int      @id @default(autoincrement())
   name        String   @unique
   description String?
@@ -16,34 +16,36 @@ model Profession {
 }
 
 model User {
-  id                 Int       @id @default(autoincrement())
-  employeeId         String    @unique @map("employee_id")
+  id                 Int        @id @default(autoincrement())
+  employeeId         String     @unique @map("employee_id")
   password           String
   name               String
-  facilityId         Int       @map("facility_id")
-  departmentId       Int       @map("department_id")
+  facilityId         Int        @map("facility_id")
+  departmentId       Int        @map("department_id")
   role               Role
-  profession         String?
+  profession         Profession @default(OTHER)
   email              String?
-  paidLeaveDays      Float     @default(0.0) @map("paid_leave_days")
-  joinedDate         DateTime? @map("joined_date")
-  mustChangePassword Boolean   @default(false) @map("must_change_password")
-  invitationToken    String?   @map("invitation_token")
-  resetToken         String?   @map("reset_token")
-  resetTokenExpiry   DateTime? @map("reset_token_expiry")
-  lastSeenAt         DateTime? @map("last_seen_at")
-  createdAt          DateTime  @default(now()) @map("created_at")
-  updatedAt          DateTime  @updatedAt @map("updated_at")
-  deletedAt          DateTime? @map("deleted_at")
+  paidLeaveDays      Float      @default(0.0) @map("paid_leave_days")
+  joinedDate         DateTime?  @map("joined_date")
+  mustChangePassword Boolean    @default(false) @map("must_change_password")
+  invitationToken    String?    @map("invitation_token")
+  resetToken         String?    @map("reset_token")
+  resetTokenExpiry   DateTime?  @map("reset_token_expiry")
+  lastSeenAt         DateTime?  @map("last_seen_at")
+  createdAt          DateTime   @default(now()) @map("created_at")
+  updatedAt          DateTime   @updatedAt @map("updated_at")
+  deletedAt          DateTime?  @map("deleted_at")
 
   // Relations
   paidLeaves        PaidLeave[]
   trainingResponses TrainingResponse[]
   progress          Progress[]
   announcements     Announcement[] // Created announcements
+  manuals           Manual[]       @relation("ManualAuthor")
+  trainingEvents    TrainingEvent[] @relation("TrainingAuthor")
 
-  facility          Facility   @relation(fields: [facilityId], references: [id])
-  department        Department @relation(fields: [departmentId], references: [id])
+  facility   Facility   @relation(fields: [facilityId], references: [id])
+  department Department @relation(fields: [departmentId], references: [id])
 
   @@map("users")
 }
@@ -75,19 +77,19 @@ model Department {
 }
 
 model PaidLeave {
-  id              Int        @id @default(autoincrement())
-  userId          Int        @map("user_id")
-  type            RequestType @default(PAID_LEAVE)
+  id              Int           @id @default(autoincrement())
+  userId          Int           @map("user_id")
+  type            RequestType   @default(PAID_LEAVE)
   durationType    DurationType? @map("duration_type")
-  startDate       DateTime   @map("start_date")
-  endDate         DateTime   @map("end_date")
-  startTime       String?    @map("start_time")
-  endTime         String?    @map("end_time")
+  startDate       DateTime      @map("start_date")
+  endDate         DateTime      @map("end_date")
+  startTime       String?       @map("start_time")
+  endTime         String?       @map("end_time")
   reason          String
-  rejectionReason String?    @map("rejection_reason")
-  status          Status     @default(PENDING)
-  createdAt       DateTime   @default(now()) @map("created_at")
-  updatedAt       DateTime   @updatedAt @map("updated_at")
+  rejectionReason String?       @map("rejection_reason")
+  status          Status        @default(PENDING)
+  createdAt       DateTime      @default(now()) @map("created_at")
+  updatedAt       DateTime      @updatedAt @map("updated_at")
 
   user User @relation(fields: [userId], references: [id])
 
@@ -95,17 +97,21 @@ model PaidLeave {
 }
 
 model Manual {
-  id           Int      @id @default(autoincrement())
-  title        String
-  content      String   @db.Text
-  category     String
-  authorName   String   @map("author_name")
-  pdfUrl       String?  @map("pdf_url")
-  facilityId   Int?     @map("facility_id")
-  departmentId Int?     @map("department_id")
-  createdAt    DateTime @default(now()) @map("created_at")
-  updatedAt    DateTime @updatedAt @map("updated_at")
+  id                Int          @id @default(autoincrement())
+  title             String
+  content           String       @db.Text
+  category          String
+  status            PostStatus   @default(DRAFT)
+  targetProfessions Profession[]
+  authorName        String       @map("author_name")
+  authorId          Int?         @map("author_id")
+  pdfUrl            String?      @map("pdf_url")
+  facilityId        Int?         @map("facility_id")
+  departmentId      Int?         @map("department_id")
+  createdAt         DateTime     @default(now()) @map("created_at")
+  updatedAt         DateTime     @updatedAt @map("updated_at")
 
+  author   User?      @relation(fields: [authorId], references: [id], name: "ManualAuthor")
   progress Progress[]
 
   @@map("manuals")
@@ -125,21 +131,25 @@ model Progress {
 }
 
 model TrainingEvent {
-  id           Int      @id @default(autoincrement())
-  title        String
-  description  String?  @db.Text
-  startTime    DateTime @map("start_time")
-  endTime      DateTime @map("end_time")
-  location     String?  // Added for training location
-  videoUrl     String?  @map("video_url")
-  videoUrl2    String?  @map("video_url_2")
-  videoUrl3    String?  @map("video_url_3")
-  materialsUrl String?  @map("materials_url")
-  facilityId   Int?     @map("facility_id")
-  departmentId Int?     @map("department_id")
-  createdAt    DateTime @default(now()) @map("created_at")
-  updatedAt    DateTime @updatedAt @map("updated_at")
+  id                Int          @id @default(autoincrement())
+  title             String
+  description       String?      @db.Text
+  startTime         DateTime     @map("start_time")
+  endTime           DateTime     @map("end_time")
+  location          String? // Added for training location
+  status            PostStatus   @default(DRAFT)
+  targetProfessions Profession[]
+  videoUrl          String?      @map("video_url")
+  videoUrl2         String?      @map("video_url_2")
+  videoUrl3         String?      @map("video_url_3")
+  materialsUrl      String?      @map("materials_url")
+  facilityId        Int?         @map("facility_id")
+  departmentId      Int?         @map("department_id")
+  createdAt         DateTime     @default(now()) @map("created_at")
+  updatedAt         DateTime     @updatedAt @map("updated_at")
 
+  authorId          Int?         @map("author_id")
+  author            User?        @relation(fields: [authorId], references: [id], name: "TrainingAuthor")
   responses TrainingResponse[]
 
   @@map("training_events")
@@ -163,19 +173,21 @@ model TrainingResponse {
 }
 
 model Announcement {
-  id             Int       @id @default(autoincrement())
-  title          String
-  content        String    @db.Text
-  priority       Priority  @default(NORMAL)
-  displayUntil   DateTime  @map("display_until")
-  facilityId     Int?      @map("facility_id") // For facility-specific targets
-  departmentId   Int?      @map("department_id") // Added for department-specific targets
-  createdBy      Int       @map("created_by")
-  relatedType    RelatedType? @map("related_type")
-  relatedWikiId  Int?      @map("related_wiki_id")
-  relatedEventId Int?      @map("related_event_id")
-  createdAt      DateTime  @default(now()) @map("created_at")
-  updatedAt      DateTime  @updatedAt @map("updated_at")
+  id                Int          @id @default(autoincrement())
+  title             String
+  content           String       @db.Text
+  priority          Priority     @default(NORMAL)
+  displayUntil      DateTime     @map("display_until")
+  status            PostStatus   @default(PUBLISHED)
+  targetProfessions Profession[]
+  facilityId        Int?         @map("facility_id") // For facility-specific targets
+  departmentId      Int?         @map("department_id") // Added for department-specific targets
+  createdBy         Int          @map("created_by")
+  relatedType       RelatedType? @map("related_type")
+  relatedWikiId     Int?         @map("related_wiki_id")
+  relatedEventId    Int?         @map("related_event_id")
+  createdAt         DateTime     @default(now()) @map("created_at")
+  updatedAt         DateTime     @updatedAt @map("updated_at")
 
   creator User @relation(fields: [createdBy], references: [id])
 
@@ -226,4 +238,17 @@ enum Priority {
 enum RelatedType {
   WIKI
   TRAINING_EVENT
+}
+
+enum PostStatus {
+  DRAFT
+  REVIEW
+  PUBLISHED
+}
+
+enum Profession {
+  REHAB
+  NURSE
+  CARE
+  OTHER
 }

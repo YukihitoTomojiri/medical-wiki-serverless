@@ -16,7 +16,22 @@ app.get('/events/admin', async (c) => {
 // /api/training/events
 app.get('/events', async (c) => {
     const prisma = getPrisma(c.env.DATABASE_URL as string)
+    const userId = Number(c.req.header('X-User-Id'))
+
+    const user = await prisma.user.findUnique({ where: { id: userId } })
+    const isAdmin = user?.role === 'ADMIN' || user?.role === 'DEVELOPER'
+
+    const where: any = {}
+    if (!isAdmin) {
+        where.status = 'PUBLISHED'
+        where.OR = [
+            { targetProfessions: { isEmpty: true } },
+            { targetProfessions: { has: user?.profession } }
+        ]
+    }
+
     const events = await prisma.trainingEvent.findMany({
+        where,
         orderBy: { startTime: 'desc' },
         include: {
             responses: {
@@ -32,6 +47,18 @@ app.post('/events', async (c) => {
     const data = await c.req.json()
 
     try {
+        const userId = Number(c.req.header('X-User-Id'))
+        const user = await prisma.user.findUnique({ where: { id: userId } })
+
+        // Security check: Only ADMIN or DEVELOPER can create training events
+        const isAdmin = user?.role === 'ADMIN' || user?.role === 'DEVELOPER'
+        if (!isAdmin) {
+            return c.json({ error: 'Only administrators can create training events' }, 403)
+        }
+
+        // Determine status based on role
+        let finalStatus = data.status || 'DRAFT'
+
         const event = await prisma.trainingEvent.create({
             data: {
                 title: data.title,
@@ -40,6 +67,9 @@ app.post('/events', async (c) => {
                 endTime: new Date(data.endTime),
                 location: data.location,
                 videoUrl: data.videoUrl,
+                status: finalStatus,
+                authorId: userId,
+                targetProfessions: data.targetProfessions || [],
                 materialsUrl: data.materialsUrl,
                 facilityId: data.facilityId ? Number(data.facilityId) : null,
                 departmentId: data.departmentId ? Number(data.departmentId) : null,
@@ -97,6 +127,8 @@ app.put('/events/:id', async (c) => {
             endTime: new Date(data.endTime),
             location: data.location,
             videoUrl: data.videoUrl,
+            status: data.status,
+            targetProfessions: data.targetProfessions || [],
             materialsUrl: data.materialsUrl,
             facilityId: data.facilityId ? Number(data.facilityId) : null,
             departmentId: data.departmentId ? Number(data.departmentId) : null,

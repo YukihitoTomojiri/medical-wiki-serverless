@@ -6,6 +6,7 @@ interface ContentCardProps {
     rawHtmlContent: string;
     date: string;
     badgeText?: string;
+    status?: 'DRAFT' | 'REVIEW' | 'PUBLISHED';
     onClick: () => void;
 }
 
@@ -17,6 +18,7 @@ const ContentCard: React.FC<ContentCardProps> = ({
     rawHtmlContent,
     date,
     badgeText,
+    status,
     onClick
 }) => {
     const summary = stripHtmlAndTruncate(rawHtmlContent);
@@ -27,9 +29,22 @@ const ContentCard: React.FC<ContentCardProps> = ({
             className="group bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all cursor-pointer flex flex-col h-full"
         >
             <div className="flex justify-between items-start mb-3">
-                <span className="text-xs font-bold text-gray-400">
-                    {date}
-                </span>
+                <div className="flex flex-col gap-1.5">
+                    <span className="text-xs font-bold text-gray-400">
+                        {date}
+                    </span>
+                    {status && status !== 'PUBLISHED' && (
+                        <div className="flex">
+                            <span className={`text-[9px] font-black px-2 py-0.5 rounded shadow-sm border ${
+                                status === 'DRAFT' 
+                                ? 'bg-gray-100 text-gray-600 border-gray-200' 
+                                : 'bg-amber-50 text-amber-700 border-amber-200'
+                            }`}>
+                                {status === 'DRAFT' ? '下書き' : '承認待ち'}
+                            </span>
+                        </div>
+                    )}
+                </div>
                 {badgeText && (
                     <span className="text-[10px] font-black bg-blue-50 text-blue-600 px-2 py-0.5 rounded-md uppercase tracking-wider">
                         {badgeText}

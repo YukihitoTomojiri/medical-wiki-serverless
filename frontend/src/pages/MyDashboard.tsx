@@ -8,7 +8,10 @@ import {
     CheckCircle2,
     LayoutDashboard,
     AlertCircle,
-    Stethoscope
+    Stethoscope,
+    FileEdit,
+    Clock,
+    ChevronRight
 } from 'lucide-react';
 import { useSearchParams, Link } from 'react-router-dom';
 import DashboardAnnouncements from '../components/DashboardAnnouncements';
@@ -48,6 +51,7 @@ export default function MyDashboard({ user }: MyDashboardProps) {
     const [trainingResponses, setTrainingResponses] = useState<any[]>([]);
     const [announcements, setAnnouncements] = useState<any[]>([]);
     const [readAnnouncementIds, setReadAnnouncementIds] = useState<number[]>([]);
+    const [myDrafts, setMyDrafts] = useState<any[]>([]);
 
     const [historyStartDate] = useState(() => {
         const d = new Date();
@@ -61,19 +65,25 @@ export default function MyDashboard({ user }: MyDashboardProps) {
 
     const loadData = async () => {
         try {
-            const [, progressData, , , eventsData, responsesData, announcementData] = await Promise.all([
+            const [, progressData, , , eventsData, responsesData, announcementData, myManualsData] = await Promise.all([
                 api.getMyDashboard(user.id),
                 api.getMyProgress(user.id),
                 api.getMyHistory(user.id, historyStartDate),
                 api.getLeaveStatus(user.id),
                 api.getTrainingEvents(user.id),
                 api.getMyTrainingResponses(user.id),
-                api.getAnnouncements(user.id)
+                api.getAnnouncements(user.id),
+                api.getManuals(user.id, { isMine: true })
             ]);
             setProgress(progressData);
             setTrainingEvents(eventsData);
             setTrainingResponses(responsesData);
             setAnnouncements(announcementData);
+            
+            // Filter drafts and review pending posts
+            if (Array.isArray(myManualsData)) {
+                setMyDrafts(myManualsData.filter((m: any) => m.status === 'DRAFT' || m.status === 'REVIEW'));
+            }
 
             // Load read IDs from localStorage
             const storedReadIds = localStorage.getItem(`readAnnouncements_${user.id}`);
@@ -99,6 +109,84 @@ export default function MyDashboard({ user }: MyDashboardProps) {
                 subtitle={`ようこそ、${user.name}さん。今日のタスクを確認しましょう。`}
                 icon={LayoutDashboard}
             />
+
+            {/* クイックアクション導線 */}
+            <div className="px-4 md:px-6">
+                <div className="bg-gradient-to-br from-orange-500 to-orange-600 rounded-[32px] p-6 text-white shadow-lg shadow-orange-500/20 flex flex-col md:flex-row items-center justify-between gap-6 overflow-hidden relative group">
+                    <div className="relative z-10 text-center md:text-left">
+                        <h3 className="text-xl font-black mb-1">新しい知見を共有しましょう</h3>
+                        <p className="text-orange-100 text-sm font-bold">気づいたことやマニュアルの下書きをここから作成できます</p>
+                    </div>
+                    <Link 
+                        to="/manuals/create?type=manual"
+                        className="relative z-10 flex items-center gap-2 px-8 py-4 bg-white text-orange-600 rounded-2xl font-black hover:bg-orange-50 transition-all active:scale-95 shadow-xl shadow-orange-950/20 whitespace-nowrap"
+                    >
+                        <BookOpen size={20} />
+                        ＋ 新しいマニュアルを作成
+                    </Link>
+                    
+                    {/* 装飾用背景 */}
+                    <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-20 -mt-20 blur-3xl transition-transform duration-700 group-hover:scale-110" />
+                    <div className="absolute bottom-0 left-0 w-32 h-32 bg-orange-400/20 rounded-full -ml-10 -mb-10 blur-2xl" />
+                </div>
+            </div>
+
+            {/* 執筆中・承認待ちリスト */}
+            {myDrafts.length > 0 && (
+                <div className="px-4 md:px-6">
+                    <div className="bg-white rounded-[32px] border border-stone-200 p-6 md:p-8 shadow-sm">
+                        <div className="flex items-center justify-between mb-6">
+                            <div className="flex items-center gap-3">
+                                <div className="p-2 bg-orange-100 rounded-xl text-orange-600">
+                                    <FileEdit size={24} />
+                                </div>
+                                <div>
+                                    <h3 className="text-xl font-black text-stone-900">執筆中・承認待ちのマニュアル</h3>
+                                    <p className="text-sm text-stone-500 font-medium">作成途中の下書きや、承認待ちの項目を再開できます</p>
+                                </div>
+                            </div>
+                            <div className="hidden sm:flex items-center gap-1.5 px-3 py-1 bg-stone-100 rounded-full text-stone-500 font-bold text-xs">
+                                <Clock size={14} />
+                                <span>{myDrafts.length} 件</span>
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {myDrafts.map((manual) => (
+                                <Link
+                                    key={manual.id} 
+                                    to={`/manuals/edit/${manual.id}?type=manual`}
+                                    className="block group bg-white border border-stone-200 rounded-2xl p-4 hover:shadow-xl hover:shadow-orange-500/5 hover:-translate-y-1 transition-all duration-300"
+                                >
+                                    <div className="flex items-center gap-4 min-w-0">
+                                        <div className="w-1.5 h-10 bg-orange-400 rounded-full group-hover:bg-orange-500 transition-colors shrink-0" />
+                                        <div className="min-w-0">
+                                            <div className="flex items-center gap-2 mb-1">
+                                                <h4 className="font-bold text-stone-800 truncate group-hover:text-orange-700 transition-colors">
+                                                    {manual.title}
+                                                </h4>
+                                                <span className={`px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider shrink-0 ${
+                                                    manual.status === 'REVIEW' 
+                                                    ? 'bg-blue-100 text-blue-700 border border-blue-200' 
+                                                    : 'bg-stone-200 text-stone-600 border border-stone-300'
+                                                }`}>
+                                                    {manual.status === 'REVIEW' ? '承認待ち' : '下書き'}
+                                                </span>
+                                            </div>
+                                            <p className="text-[10px] text-stone-400 font-bold flex items-center gap-1">
+                                                最終更新: {new Date(manual.updatedAt).toLocaleDateString('ja-JP')}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div className="p-2 rounded-xl bg-white text-stone-300 group-hover:text-orange-500 group-hover:translate-x-1 transition-all shadow-sm">
+                                        <ChevronRight size={18} />
+                                    </div>
+                                </Link>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            )}
 
             {/* 職種切り替えタブ（ADMIN / DEVELOPER のみ表示） */}
             {canSwitchProfession && (

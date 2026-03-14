@@ -1,25 +1,55 @@
-import { useState, useMemo } from 'react';
-import { User } from '../types';
+import { useState, useMemo, useEffect } from 'react';
+import { User, Manual } from '../types';
 import ComplianceDashboard from '../components/ComplianceDashboard';
 import OrganizationStatsDashboard from '../components/OrganizationStatsDashboard';
 import FeedbackDashboard from '../components/FeedbackDashboard';
-import { LayoutDashboard, BarChart3, MessageSquareHeart } from 'lucide-react';
+import { LayoutDashboard, BarChart3, MessageSquareHeart, AlertCircle, BookOpen, Calendar } from 'lucide-react';
 import PageHeader from '../components/layout/PageHeader';
+import { api } from '../api';
+import { TrainingEvent } from '../api/training';
+import ContentCard from '../components/common/ContentCard';
+import { useNavigate } from 'react-router-dom';
 
 export default function AdminDashboard() {
     const [user] = useState<User>(() => JSON.parse(localStorage.getItem('user') || '{}'));
-    const isDev = user.role === 'DEVELOPER';
+
+    const [activeTab, setActiveTab] = useState('dashboard');
+    const navigate = useNavigate();
+    const [manuals, setManuals] = useState<Manual[]>([]);
+    const [trainings, setTrainings] = useState<TrainingEvent[]>([]);
+    const [loadingReviews, setLoadingReviews] = useState(false);
 
     const tabs = useMemo(() => {
         const commonTabs = [
             { id: 'dashboard', label: '学習進捗', icon: LayoutDashboard, color: 'indigo' },
+            { id: 'pending_reviews', label: '承認待ち', icon: AlertCircle, color: 'amber' },
             { id: 'organization_stats', label: '組織統計', icon: BarChart3, color: 'teal' },
             { id: 'feedback', label: '現場の声', icon: MessageSquareHeart, color: 'rose' },
         ];
         return commonTabs;
-    }, [isDev]);
+    }, []);
 
-    const [activeTab, setActiveTab] = useState('dashboard');
+    useEffect(() => {
+        if (activeTab === 'pending_reviews') {
+            const loadPending = async () => {
+                setLoadingReviews(true);
+                try {
+                    const [manualsData, trainingsData] = await Promise.all([
+                        api.getManuals(user.id),
+                        api.getTrainingEvents(user.id)
+                    ]);
+                    
+                    setManuals((manualsData as any[]).filter(m => m.status === 'REVIEW'));
+                    setTrainings((trainingsData as any[]).filter(t => t.status === 'REVIEW'));
+                } catch (error) {
+                    console.error('Failed to load pending reviews:', error);
+                } finally {
+                    setLoadingReviews(false);
+                }
+            };
+            loadPending();
+        }
+    }, [activeTab, user.id]);
 
     const activeColor = tabs.find(t => t.id === activeTab)?.color ?? 'indigo';
 
@@ -71,6 +101,75 @@ export default function AdminDashboard() {
                     {activeTab === 'dashboard' && <ComplianceDashboard />}
                     {activeTab === 'organization_stats' && <OrganizationStatsDashboard />}
                     {activeTab === 'feedback' && <FeedbackDashboard />}
+                    {activeTab === 'pending_reviews' && (
+                        <div className="space-y-8">
+                            <div className="flex items-center gap-3">
+                                <AlertCircle className="text-amber-600" size={24} />
+                                <h2 className="text-xl font-black text-amber-900">承認待ちの投稿 ({manuals.length + trainings.length})</h2>
+                            </div>
+
+                            {loadingReviews ? (
+                                <div className="flex items-center justify-center py-20">
+                                    <div className="w-8 h-8 border-4 border-amber-500 border-t-transparent rounded-full animate-spin" />
+                                </div>
+                            ) : manuals.length + trainings.length === 0 ? (
+                                <div className="bg-white/50 border-2 border-dashed border-amber-200 rounded-3xl p-12 text-center">
+                                    <p className="text-amber-800/60 font-bold text-lg">
+                                        現在、承認待ちの投稿はありません。
+                                    </p>
+                                    <p className="text-amber-800/40 text-sm mt-1">
+                                        スタッフからの投稿が完了すると、ここに表示されます。
+                                    </p>
+                                </div>
+                            ) : (
+                                <div className="grid gap-6">
+                                    {/* Manuals */}
+                                    {manuals.length > 0 && (
+                                        <div className="space-y-4">
+                                            <div className="flex items-center gap-2 text-sm font-black text-amber-800/40 uppercase tracking-widest pl-1">
+                                                <BookOpen size={16} />
+                                                マニュアル ({manuals.length})
+                                            </div>
+                                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                                {manuals.map(m => (
+                                                    <ContentCard
+                                                        key={m.id}
+                                                        title={m.title}
+                                                        rawHtmlContent={m.content}
+                                                        date={new Date(m.createdAt).toLocaleDateString('ja-JP')}
+                                                        status={m.status as any}
+                                                        onClick={() => navigate(`/admin/create?type=manual&id=${m.id}`)}
+                                                    />
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {/* Trainings */}
+                                    {trainings.length > 0 && (
+                                        <div className="space-y-4">
+                                            <div className="flex items-center gap-2 text-sm font-black text-amber-800/40 uppercase tracking-widest pl-1">
+                                                <Calendar size={16} />
+                                                研修会 ({trainings.length})
+                                            </div>
+                                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                                {trainings.map(t => (
+                                                    <ContentCard
+                                                        key={t.id}
+                                                        title={t.title}
+                                                        rawHtmlContent={t.description || ''}
+                                                        date={new Date(t.startTime).toLocaleDateString('ja-JP')}
+                                                        status={(t as any).status}
+                                                        onClick={() => navigate(`/admin/create?type=training&id=${t.id}`)}
+                                                    />
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+                        </div>
+                    )}
                 </div>
             </div>
         </div>

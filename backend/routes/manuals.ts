@@ -8,10 +8,27 @@ const app = new Hono<{ Bindings: Bindings }>()
 app.get('/', async (c) => {
     const prisma = getPrisma(c.env.DATABASE_URL as string)
     const category = c.req.query('category')
+    const isMine = c.req.query('isMine') === 'true'
+    const userId = Number(c.req.header('X-User-Id'))
+
+    const user = await prisma.user.findUnique({ where: { id: userId } })
+    const isAdmin = user?.role === 'ADMIN' || user?.role === 'DEVELOPER'
 
     const where: any = {}
     if (category) {
         where.category = category
+    }
+
+    if (isMine) {
+        where.authorId = userId
+    } else {
+        if (!isAdmin) {
+            where.status = 'PUBLISHED'
+            where.OR = [
+                { targetProfessions: { isEmpty: true } },
+                { targetProfessions: { has: user?.profession } }
+            ]
+        }
     }
 
     const manuals = await prisma.manual.findMany({
@@ -52,12 +69,21 @@ app.post('/', async (c) => {
     try {
         const user = await prisma.user.findUnique({ where: { id: userId } })
         
+        // Determine status based on role
+        let finalStatus = data.status || 'DRAFT'
+        if (user?.role !== 'ADMIN' && user?.role !== 'DEVELOPER') {
+            finalStatus = 'REVIEW'
+        }
+
         const manual = await prisma.manual.create({
             data: {
                 title: data.title,
                 content: data.content,
                 category: data.category,
                 authorName: user?.name || 'Unknown',
+                authorId: userId,
+                status: finalStatus,
+                targetProfessions: data.targetProfessions || [],
                 facilityId: data.facilityId ? Number(data.facilityId) : null,
                 departmentId: data.departmentId ? Number(data.departmentId) : null,
             }
@@ -66,6 +92,32 @@ app.post('/', async (c) => {
     } catch (error: any) {
         console.error('Failed to create manual:', error)
         return c.json({ error: 'Failed to create manual', details: error.message }, 500)
+    }
+})
+
+// Update Manual
+app.put('/:id', async (c) => {
+    const prisma = getPrisma(c.env.DATABASE_URL as string)
+    const id = Number(c.req.param('id'))
+    const data = await c.req.json()
+
+    try {
+        const manual = await prisma.manual.update({
+            where: { id },
+            data: {
+                title: data.title,
+                content: data.content,
+                category: data.category,
+                status: data.status,
+                targetProfessions: data.targetProfessions || [],
+                facilityId: data.facilityId ? Number(data.facilityId) : undefined,
+                departmentId: data.departmentId ? Number(data.departmentId) : undefined,
+            }
+        })
+        return c.json(manual)
+    } catch (error: any) {
+        console.error('Failed to update manual:', error)
+        return c.json({ error: 'Failed to update manual', details: error.message }, 500)
     }
 })
 

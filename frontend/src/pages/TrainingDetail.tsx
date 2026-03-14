@@ -47,6 +47,7 @@ export default function TrainingDetail() {
     const [submitting, setSubmitting] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [userRole, setUserRole] = useState<string | null>(null);
+    const [currentUserId, setCurrentUserId] = useState<number | null>(null);
 
     // Questionnaire Form State
     const [comprehension, setComprehension] = useState(5);
@@ -76,6 +77,7 @@ export default function TrainingDetail() {
                     setEvent(eventData);
                     setResponses(myResponses);
                     setUserRole(userData.role);
+                    setCurrentUserId(userData.id);
                     setError(null);
                 }
             } catch (err: any) {
@@ -190,14 +192,12 @@ export default function TrainingDetail() {
                         <h1 className="text-4xl md:text-5xl font-black text-m3-on-surface tracking-tight leading-tight">
                             {event.title}
                         </h1>
-                        {(userRole === 'ADMIN' || userRole === 'DEVELOPER') && (
+                        {(userRole === 'ADMIN' || userRole === 'DEVELOPER' || event.authorId === currentUserId) && (
                             <button
-                                onClick={() => navigate('/admin/training')} // Simple redirect to admin list as we don't have a direct edit page yet, but the user requested an edit button.
-                                // Actually, it's better to navigate to admin and let them find it, or we could add a specific param.
-                                // But for now, direct navigation to Admin Training is a good start as requested.
+                                onClick={() => navigate(`/manuals/edit/${event.id}?type=training`)}
                                 className="flex items-center gap-2 px-6 py-2 bg-m3-primary/10 text-m3-primary hover:bg-m3-primary/20 rounded-full font-bold transition-all shadow-sm"
                             >
-                                <Edit2 size={18} /> 編集
+                                <Edit2 size={18} /> ✏️ 編集する
                             </button>
                         )}
                     </div>

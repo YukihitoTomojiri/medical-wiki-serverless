@@ -10,8 +10,16 @@ import {
     List, 
     ListOrdered,
     Undo,
-    Redo
+    Redo,
+    Table as TableIcon,
+    Rows,
+    Columns,
+    Trash2
 } from 'lucide-react';
+import { Table } from '@tiptap/extension-table';
+import { TableRow } from '@tiptap/extension-table-row';
+import { TableHeader } from '@tiptap/extension-table-header';
+import { TableCell } from '@tiptap/extension-table-cell';
 
 interface RichTextEditorProps {
     value: string;
@@ -60,6 +68,12 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({ value, onChange, placeh
             Placeholder.configure({
                 placeholder: placeholder || '内容を入力してください...',
             }),
+            Table.configure({
+                resizable: true,
+            }),
+            TableRow,
+            TableHeader,
+            TableCell,
         ],
         content: value,
         onUpdate: ({ editor }) => {
@@ -131,6 +145,36 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({ value, onChange, placeh
                     isActive={editor.isActive('orderedList')}
                 >
                     <ListOrdered size={18} />
+                </MenuButton>
+
+                <div className="w-px h-6 bg-stone-200 mx-1" />
+
+                <MenuButton
+                    title="表を挿入"
+                    onClick={() => editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()}
+                >
+                    <TableIcon size={18} />
+                </MenuButton>
+                <MenuButton
+                    title="行を追加"
+                    onClick={() => editor.chain().focus().addRowAfter().run()}
+                    disabled={!editor.isActive('table')}
+                >
+                    <Rows size={18} />
+                </MenuButton>
+                <MenuButton
+                    title="列を追加"
+                    onClick={() => editor.chain().focus().addColumnAfter().run()}
+                    disabled={!editor.isActive('table')}
+                >
+                    <Columns size={18} />
+                </MenuButton>
+                <MenuButton
+                    title="表を削除"
+                    onClick={() => editor.chain().focus().deleteTable().run()}
+                    disabled={!editor.isActive('table')}
+                >
+                    <Trash2 size={18} className="text-red-500" />
                 </MenuButton>
 
                 <div className="w-px h-6 bg-stone-200 mx-1" />
@@ -214,6 +258,48 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({ value, onChange, placeh
                     margin-bottom: 0.75rem !important;
                     line-height: 1.6 !important;
                     display: block !important;
+                }
+                /* Tables */
+                .ProseMirror table {
+                    border-collapse: collapse;
+                    table-layout: fixed;
+                    width: 100%;
+                    margin: 1.5rem 0 !important;
+                    overflow: hidden;
+                    border: 2px solid #ced4da;
+                }
+                .ProseMirror td, .ProseMirror th {
+                    min-width: 1em;
+                    border: 1px solid #ced4da;
+                    padding: 8px 12px;
+                    vertical-align: top;
+                    box-sizing: border-box;
+                    position: relative;
+                }
+                .ProseMirror th {
+                    font-weight: bold;
+                    text-align: left;
+                    background-color: #f8f9fa;
+                }
+                .ProseMirror .column-resize-handle {
+                    position: absolute;
+                    right: -2px;
+                    top: 0;
+                    bottom: -2px;
+                    width: 4px;
+                    background-color: #edf2ff;
+                    pointer-events: none;
+                }
+                .ProseMirror .selectedCell:after {
+                    z-index: 2;
+                    position: absolute;
+                    content: "";
+                    left: 0; right: 0; top: 0; bottom: 0;
+                    background: rgba(200, 200, 255, 0.4);
+                    pointer-events: none;
+                }
+                .ProseMirror .tableWrapper {
+                    overflow-x: auto;
                 }
             ` }} />
         </div>

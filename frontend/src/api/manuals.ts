@@ -2,10 +2,13 @@ import { Manual, Progress, UserProgress } from '../types';
 import { API_BASE, getHeaders } from './helpers';
 
 export const manualsApi = {
-    getManuals: async (userId: number, category?: string): Promise<Manual[]> => {
-        const url = category
-            ? `${API_BASE}/manuals?category=${encodeURIComponent(category)}`
-            : `${API_BASE}/manuals`;
+    getManuals: async (userId: number, options?: { category?: string; isMine?: boolean }): Promise<Manual[]> => {
+        const params = new URLSearchParams();
+        if (options?.category) params.append('category', options.category);
+        if (options?.isMine) params.append('isMine', 'true');
+        
+        const queryString = params.toString();
+        const url = queryString ? `${API_BASE}/manuals?${queryString}` : `${API_BASE}/manuals`;
         const res = await fetch(url, { headers: getHeaders(userId) });
         return res.json();
     },
@@ -20,7 +23,7 @@ export const manualsApi = {
         return res.json();
     },
 
-    createManual: async (userId: number, data: { title: string; content: string; category: string }): Promise<Manual> => {
+    createManual: async (userId: number, data: { title: string; content: string; category: string; targetProfessions?: string[]; status?: string }): Promise<Manual> => {
         const res = await fetch(`${API_BASE}/manuals`, {
             method: 'POST',
             headers: getHeaders(userId),
@@ -29,7 +32,7 @@ export const manualsApi = {
         return res.json();
     },
 
-    updateManual: async (userId: number, id: number, data: { title: string; content: string; category: string }): Promise<Manual> => {
+    updateManual: async (userId: number, id: number, data: { title: string; content: string; category: string; targetProfessions?: string[]; status?: string }): Promise<Manual> => {
         const res = await fetch(`${API_BASE}/manuals/${id}`, {
             method: 'PUT',
             headers: getHeaders(userId),

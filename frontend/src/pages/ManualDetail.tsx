@@ -120,13 +120,13 @@ export default function ManualDetail({ user }: ManualDetailProps) {
                         <ArrowLeft size={18} />
                         一覧に戻る
                     </button>
-                    {user.role === 'ADMIN' && (
+                    {(user.role === 'ADMIN' || user.role === 'DEVELOPER' || manual.authorId === user.id) && (
                         <Link
-                            to={`/admin/manuals/edit/${manual.id}`}
+                            to={`/manuals/edit/${manual.id}?type=manual`}
                             className="flex items-center gap-2 px-4 py-2 bg-orange-200 text-orange-900 hover:bg-orange-300 rounded-lg transition-all text-sm font-medium"
                         >
                             <Edit size={18} />
-                            編集
+                            ✏️ 編集する
                         </Link>
                     )}
                 </div>

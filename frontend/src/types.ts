@@ -22,6 +22,11 @@ export interface Manual {
     content: string;
     category: string;
     authorName: string;
+    authorId?: number | null;
+    facilityId?: number | null;
+    departmentId?: number | null;
+    status?: string;
+    targetProfessions?: string[];
     createdAt: string;
     updatedAt: string;
     isRead: boolean;
