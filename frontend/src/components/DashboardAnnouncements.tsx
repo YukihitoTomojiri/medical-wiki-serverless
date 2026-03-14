@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import { api, Announcement } from '../api';
 import { Bell, Info, AlertTriangle, MessageCircle, ChevronRight, X, BookOpen } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { stripHtmlAndTruncate } from '../utils/textUtils';
 
 interface Props {
     userId: number;
@@ -87,7 +88,7 @@ export default function DashboardAnnouncements({ userId, readAnnouncementIds = [
                                     )}
                                 </h4>
                                 <p className="text-xs text-gray-500 leading-relaxed truncate">
-                                    {a.content}
+                                    {stripHtmlAndTruncate(a.content, 40)}
                                 </p>
                                 <div className="flex gap-2 mt-3">
                                     {a.relatedWikiId && a.relatedType === 'WIKI' && (

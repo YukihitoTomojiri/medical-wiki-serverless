@@ -1,20 +1,17 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { api } from '../api';
 import { Manual, User } from '../types';
 import {
     BookOpen,
     Search,
     CheckCircle2,
-    Plus,
-    FileText,
-    Clock,
-    Circle
+    Plus
 } from 'lucide-react';
 import PageHeader from '../components/layout/PageHeader';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
-import { Badge } from '../components/ui/Badge';
+import ContentCard from '../components/common/ContentCard';
 
 
 interface ManualListProps {
@@ -22,6 +19,7 @@ interface ManualListProps {
 }
 
 export default function ManualList({ user }: ManualListProps) {
+    const navigate = useNavigate();
     const [manuals, setManuals] = useState<Manual[]>([]);
     const [categories, setCategories] = useState<string[]>([]);
     const [selectedCategory, setSelectedCategory] = useState<string>('');
@@ -158,45 +156,18 @@ export default function ManualList({ user }: ManualListProps) {
                     ))}
                 </div>
             </div>
-
+ 
             {/* Manual Grid */}
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {filteredManuals.map((manual) => (
-                    <Link key={manual.id} to={`/manuals/${manual.id}`}>
-                        <Card variant="elevated" className="h-full group hover:shadow-m3-2 transition-all duration-300">
-                            <div className="p-5 flex flex-col h-full relative">
-                                <div className="flex items-start justify-between mb-4">
-                                    <Badge variant="neutral" className="bg-m3-secondary-container text-m3-on-secondary-container">
-                                        {manual.category}
-                                    </Badge>
-                                    {manual.isRead ? (
-                                        <CheckCircle2 className="text-m3-primary" size={24} />
-                                    ) : (
-                                        <Circle className="text-m3-outline-variant group-hover:text-m3-primary transition-colors" size={24} />
-                                    )}
-                                </div>
-
-                                <div className="flex-1 mb-4">
-                                    <h3 className="text-lg font-bold text-m3-on-surface group-hover:text-m3-primary transition-colors line-clamp-2 leading-snug">
-                                        {manual.title}
-                                    </h3>
-                                </div>
-
-                                <div className="flex items-center gap-3 pt-4 border-t border-m3-outline-variant/20">
-                                    <div className="w-8 h-8 rounded-full bg-m3-surface-variant flex items-center justify-center text-m3-on-surface-variant text-xs font-bold">
-                                        <FileText size={14} />
-                                    </div>
-                                    <div className="flex flex-col text-xs text-m3-outline">
-                                        <span className="font-medium text-m3-on-surface-variant">{manual.authorName}</span>
-                                        <div className="flex items-center gap-1">
-                                            <Clock size={10} />
-                                            <span>{new Date(manual.createdAt).toLocaleDateString('ja-JP')}</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </Card>
-                    </Link>
+                    <ContentCard
+                        key={manual.id}
+                        title={manual.title}
+                        rawHtmlContent={manual.content}
+                        date={new Date(manual.createdAt).toLocaleDateString('ja-JP')}
+                        badgeText={manual.isRead ? `${manual.category} (読了済み)` : manual.category}
+                        onClick={() => navigate(`/manuals/${manual.id}`)}
+                    />
                 ))}
             </div>
 
