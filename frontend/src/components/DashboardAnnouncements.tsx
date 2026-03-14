@@ -180,9 +180,10 @@ export default function DashboardAnnouncements({ userId, readAnnouncementIds = [
 
                             <div className="h-px bg-gray-50" />
 
-                            <div className="text-sm text-gray-600 leading-relaxed whitespace-pre-wrap">
-                                {selectedAnnouncement.content}
-                            </div>
+                            <div 
+                                className="text-sm text-gray-600 leading-relaxed prose prose-stone prose-sm max-w-none"
+                                dangerouslySetInnerHTML={{ __html: selectedAnnouncement.content }}
+                            />
 
                             {(selectedAnnouncement.relatedWikiId || selectedAnnouncement.relatedEventId) && (
                                 <div className="pt-4 border-t border-gray-50">

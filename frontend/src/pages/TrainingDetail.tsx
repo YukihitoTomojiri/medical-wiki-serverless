@@ -215,9 +215,10 @@ export default function TrainingDetail() {
                             </div>
                             <h2 className="text-2xl font-black text-m3-on-surface tracking-tight">研修の目的と概要</h2>
                         </div>
-                        <div className="prose prose-lg max-w-none text-m3-on-surface-variant leading-relaxed whitespace-pre-wrap">
-                            {event.description || "この研修に関する詳細な説明は提供されていません。"}
-                        </div>
+                        <div 
+                            className="prose prose-stone prose-lg max-w-none text-m3-on-surface-variant leading-relaxed"
+                            dangerouslySetInnerHTML={{ __html: event.description || "この研修に関する詳細な説明は提供されていません。" }}
+                        />
                     </div>
 
                     {/* Video / Player Section */}
