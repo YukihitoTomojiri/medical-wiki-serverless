@@ -3,7 +3,6 @@ import { useParams, useNavigate, useSearchParams, Link } from 'react-router-dom'
 import { api } from '../api';
 import { Manual, User } from '../types';
 import PageHeader from '../components/layout/PageHeader';
-import ReactMarkdown from 'react-markdown';
 import {
     ArrowLeft,
     CheckCircle2,
@@ -174,15 +173,17 @@ export default function ManualDetail({ user }: ManualDetailProps) {
                             <h3 className="text-sm font-semibold text-gray-500 mb-4 uppercase tracking-wider">
                                 補足事項 (Markdown)
                             </h3>
-                            <div className="markdown-content prose prose-gray max-w-none">
-                                <ReactMarkdown>{manual.content}</ReactMarkdown>
-                            </div>
+                            <div 
+                                className="markdown-content prose prose-stone max-w-none text-m3-on-surface-variant leading-relaxed"
+                                dangerouslySetInnerHTML={{ __html: manual.content }}
+                            />
                         </div>
                     </div>
                 ) : (
-                    <div className="markdown-content prose prose-gray max-w-none">
-                        <ReactMarkdown>{manual.content}</ReactMarkdown>
-                    </div>
+                    <div 
+                        className="markdown-content prose prose-stone max-w-none text-m3-on-surface-variant leading-relaxed"
+                        dangerouslySetInnerHTML={{ __html: manual.content }}
+                    />
                 )}
             </div>
 
