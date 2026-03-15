@@ -33,7 +33,6 @@ export default function ManualList({ user }: ManualListProps) {
         { value: 'NURSE', label: '看護師' },
         { value: 'CARE', label: '介護職' },
         { value: 'OTHER', label: 'その他' },
-        { value: 'MINE', label: '自分の投稿' },
     ];
 
     useEffect(() => {
@@ -43,9 +42,8 @@ export default function ManualList({ user }: ManualListProps) {
     const loadData = async () => {
         setLoading(true);
         try {
-            const isMine = selectedProfession === 'MINE';
             const [manualsData, categoriesData] = await Promise.all([
-                api.getManuals(user.id, { isMine }),
+                api.getManuals(user.id),
                 api.getCategories(),
             ]);
             setManuals(manualsData);
@@ -65,7 +63,6 @@ export default function ManualList({ user }: ManualListProps) {
         
         // Profession Filtering Logic
         const matchesProfession = 
-            selectedProfession === 'MINE' || // Skip client-side filtering if fetching for 'MINE'
             selectedProfession === 'ALL' || 
             (manual.targetProfessions && manual.targetProfessions.length === 0) ||
             (manual.targetProfessions && manual.targetProfessions.includes(selectedProfession));

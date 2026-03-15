@@ -21,6 +21,7 @@ import TrainingList from './pages/TrainingList';
 import TrainingDetail from './pages/TrainingDetail';
 import TrainingResponseAdmin from './pages/TrainingResponseAdmin';
 import CreatePostPage from './pages/CreatePostPage';
+import MyPostsPage from './pages/MyPostsPage';
 import { AuthProvider, useAuth } from './context/AuthContext';
 
 
@@ -67,6 +68,8 @@ function AppRoutes() {
                 <Route path="/manuals/:id" element={<ManualDetail user={user} />} />
                 <Route path="/manuals/create" element={<CreatePostPage />} />
                 <Route path="/manuals/edit/:id" element={<CreatePostPage />} />
+                <Route path="/manualsCreate" element={<Navigate to="/posts/create?type=manual" replace />} /> {/* Fallback or create directly */}
+                <Route path="/my-posts" element={<MyPostsPage user={user} />} />
                 <Route path="/my-dashboard" element={<MyDashboard user={user} />} />
                 <Route path="/dashboard" element={<Navigate to="/my-dashboard" replace />} />
 

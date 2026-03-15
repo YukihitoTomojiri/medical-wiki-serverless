@@ -1,5 +1,5 @@
 import {
-    BookOpen, LayoutDashboard, Database, ClipboardList
+    BookOpen, LayoutDashboard, Database, ClipboardList, FileText
 } from 'lucide-react';
 import { useMemo } from 'react';
 import { NavigationDrawer } from './ui/NavigationDrawer';
@@ -19,6 +19,7 @@ export default function Sidebar({ onClose }: SidebarProps) {
         { path: '/my-dashboard', label: 'Myダッシュボード', icon: LayoutDashboard },
         { path: '/manuals', label: 'マニュアル', icon: BookOpen },
         { path: '/training', label: '研修・アンケート', icon: BookOpen },
+        { path: '/my-posts', label: '自分の投稿', icon: FileText },
     ], []);
 
     const adminItems = useMemo(() => [

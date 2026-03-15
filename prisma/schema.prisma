@@ -114,6 +114,10 @@ model Manual {
   author   User?      @relation(fields: [authorId], references: [id], name: "ManualAuthor")
   progress Progress[]
 
+  originalId Int?    @map("original_id")
+  original   Manual? @relation("ManualRevision", fields: [originalId], references: [id])
+  revisions  Manual[] @relation("ManualRevision")
+
   @@map("manuals")
 }
 
