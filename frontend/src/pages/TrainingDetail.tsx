@@ -123,6 +123,22 @@ export default function TrainingDetail() {
         }
     };
 
+    const handleApprove = async () => {
+        if (!event || !currentUserId) return;
+        try {
+            const payload = {
+                ...event,
+                status: 'PUBLISHED'
+            };
+            await api.updateTrainingEvent(currentUserId, event.id, payload);
+            alert('研修会を承認・公開しました。');
+            navigate('/my-dashboard');
+        } catch (error) {
+            console.error('Failed to approve training event:', error);
+            alert('承認に失敗しました。');
+        }
+    };
+
     const isCompleted = useMemo(() => {
         return event ? responses.some((r: any) => r.eventId === event.id) : false;
     }, [responses, event]);
@@ -192,6 +208,14 @@ export default function TrainingDetail() {
                         <h1 className="text-4xl md:text-5xl font-black text-m3-on-surface tracking-tight leading-tight">
                             {event.title}
                         </h1>
+                        {((userRole === 'ADMIN' || userRole === 'DEVELOPER') && event.status === 'REVIEW') && (
+                            <button
+                                onClick={handleApprove}
+                                className="flex items-center gap-2 px-6 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-full font-bold transition-all shadow-sm"
+                            >
+                                <CheckCircle2 size={18} /> ✅ 承認して公開する
+                            </button>
+                        )}
                         {(userRole === 'ADMIN' || userRole === 'DEVELOPER' || event.authorId === currentUserId) && (
                             <button
                                 onClick={() => navigate(`/manuals/edit/${event.id}?type=training`)}

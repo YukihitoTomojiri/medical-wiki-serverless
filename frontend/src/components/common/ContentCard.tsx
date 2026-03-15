@@ -33,17 +33,6 @@ const ContentCard: React.FC<ContentCardProps> = ({
                     <span className="text-xs font-bold text-gray-400">
                         {date}
                     </span>
-                    {status && status !== 'PUBLISHED' && (
-                        <div className="flex">
-                            <span className={`text-[9px] font-black px-2 py-0.5 rounded shadow-sm border ${
-                                status === 'DRAFT' 
-                                ? 'bg-gray-100 text-gray-600 border-gray-200' 
-                                : 'bg-amber-50 text-amber-700 border-amber-200'
-                            }`}>
-                                {status === 'DRAFT' ? '下書き' : '承認待ち'}
-                            </span>
-                        </div>
-                    )}
                 </div>
                 {badgeText && (
                     <span className="text-[10px] font-black bg-blue-50 text-blue-600 px-2 py-0.5 rounded-md uppercase tracking-wider">
@@ -52,8 +41,17 @@ const ContentCard: React.FC<ContentCardProps> = ({
                 )}
             </div>
             
-            <h3 className="text-lg font-black text-gray-800 mb-2 group-hover:text-blue-600 transition-colors line-clamp-2">
-                {title}
+            <h3 className="text-lg font-black text-gray-800 mb-2 group-hover:text-blue-600 transition-colors flex items-center flex-wrap gap-2">
+                <span className="line-clamp-2">{title}</span>
+                {status && status !== 'PUBLISHED' && (
+                    <span className={`text-[10px] font-black px-2 py-0.5 rounded shadow-sm border shrink-0 ${
+                        status === 'DRAFT' 
+                        ? 'bg-gray-100 text-gray-600 border-gray-200' 
+                        : 'bg-amber-100 text-amber-800 border-amber-200'
+                    }`}>
+                        {status === 'DRAFT' ? '下書き' : '承認待ち'}
+                    </span>
+                )}
             </h3>
             
             <p className="text-sm text-gray-500 leading-relaxed line-clamp-3">

@@ -47,6 +47,22 @@ export default function ManualDetail({ user }: ManualDetailProps) {
         }
     };
 
+    const handleApprove = async () => {
+        if (!manual) return;
+        try {
+            const payload = {
+                ...manual,
+                status: 'PUBLISHED'
+            };
+            await api.updateManual(user.id, manual.id, payload as any);
+            alert('マニュアルを承認・公開しました。');
+            navigate('/manuals');
+        } catch (error) {
+            console.error('Failed to approve manual:', error);
+            alert('承認に失敗しました。');
+        }
+    };
+
     const handleMarkAsRead = async () => {
         if (!manual) return;
         setMarking(true);
@@ -120,7 +136,16 @@ export default function ManualDetail({ user }: ManualDetailProps) {
                         <ArrowLeft size={18} />
                         一覧に戻る
                     </button>
-                    {(user.role === 'ADMIN' || user.role === 'DEVELOPER' || manual.authorId === user.id) && (
+                    {((user.role === 'ADMIN' || user.role === 'DEVELOPER') && manual.status === 'REVIEW') && (
+                        <button
+                            onClick={handleApprove}
+                            className="flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-all text-sm font-medium shadow-sm"
+                        >
+                            <CheckCircle2 size={18} />
+                            ✅ 承認して公開する
+                        </button>
+                    )}
+                    {(user.role === 'ADMIN' || user.role === 'DEVELOPER' || manual.authorId === user.id || manual.status === 'PUBLISHED') && (
                         <Link
                             to={`/manuals/edit/${manual.id}?type=manual`}
                             className="flex items-center gap-2 px-4 py-2 bg-orange-200 text-orange-900 hover:bg-orange-300 rounded-lg transition-all text-sm font-medium"

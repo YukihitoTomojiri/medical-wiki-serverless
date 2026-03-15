@@ -72,7 +72,9 @@ app.post('/', async (c) => {
         // Determine status based on role
         let finalStatus = data.status || 'DRAFT'
         if (user?.role !== 'ADMIN' && user?.role !== 'DEVELOPER') {
-            finalStatus = 'REVIEW'
+            if (finalStatus !== 'DRAFT') {
+                finalStatus = 'REVIEW'
+            }
         }
 
         const manual = await prisma.manual.create({
@@ -101,14 +103,75 @@ app.put('/:id', async (c) => {
     const id = Number(c.req.param('id'))
     const data = await c.req.json()
 
+    const userId = Number(c.req.header('X-User-Id'))
+
     try {
+        const user = await prisma.user.findUnique({ where: { id: userId } })
+        const isAdmin = user?.role === 'ADMIN' || user?.role === 'DEVELOPER'
+
+        // 既存マニュアルを取得
+        const existingManual = await prisma.manual.findUnique({ where: { id } })
+        if (!existingManual) {
+            return c.json({ error: 'Manual not found' }, 404)
+        }
+
+        // 一般ユーザーが公開済みマニュアルを編集 → 改訂版コピーを作成
+        if (!isAdmin && existingManual.status === 'PUBLISHED') {
+            const revision = await prisma.manual.create({
+                data: {
+                    title: data.title,
+                    content: data.content,
+                    category: data.category,
+                    status: 'REVIEW',
+                    targetProfessions: data.targetProfessions || [],
+                    authorName: user?.name || 'Unknown',
+                    authorId: userId,
+                    pdfUrl: data.pdfUrl || existingManual.pdfUrl,
+                    facilityId: data.facilityId ? Number(data.facilityId) : existingManual.facilityId,
+                    departmentId: data.departmentId ? Number(data.departmentId) : existingManual.departmentId,
+                    originalId: existingManual.id,
+                }
+            })
+            return c.json(revision)
+        }
+
+        // 管理者 or 下書き/REVIEW記事 → 通常の更新
+        let finalStatus = data.status
+        if (!isAdmin) {
+            if (finalStatus !== 'DRAFT') {
+                finalStatus = 'REVIEW'
+            }
+        }
+
+        // 管理者が改訂版コピーを承認（PUBLISHED）→ 元マニュアルにマージして改訂版を削除
+        if (isAdmin && finalStatus === 'PUBLISHED' && existingManual.originalId) {
+            const result = await prisma.$transaction(async (tx: any) => {
+                // ① 元マニュアルに改訂版の内容を上書き
+                const merged = await tx.manual.update({
+                    where: { id: existingManual.originalId },
+                    data: {
+                        title: existingManual.title,
+                        content: existingManual.content,
+                        category: existingManual.category,
+                        targetProfessions: existingManual.targetProfessions,
+                        pdfUrl: existingManual.pdfUrl,
+                        status: 'PUBLISHED',
+                    }
+                })
+                // ② 改訂版レコードを削除
+                await tx.manual.delete({ where: { id: existingManual.id } })
+                return merged
+            })
+            return c.json(result)
+        }
+
         const manual = await prisma.manual.update({
             where: { id },
             data: {
                 title: data.title,
                 content: data.content,
                 category: data.category,
-                status: data.status,
+                status: finalStatus,
                 targetProfessions: data.targetProfessions || [],
                 facilityId: data.facilityId ? Number(data.facilityId) : undefined,
                 departmentId: data.departmentId ? Number(data.departmentId) : undefined,

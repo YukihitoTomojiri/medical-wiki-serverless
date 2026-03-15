@@ -202,7 +202,7 @@ const CreatePostPage: React.FC = () => {
                     title,
                     content,
                     category,
-                    status,
+                    status: isAdminUser ? status : (status === 'DRAFT' ? 'DRAFT' : 'REVIEW'),
                     targetProfessions,
                     facilityId: selectedFacilityId ? parseInt(selectedFacilityId) : undefined,
                     departmentId: selectedDepartmentId ? parseInt(selectedDepartmentId) : undefined,
@@ -609,7 +609,7 @@ const CreatePostPage: React.FC = () => {
                                     ) : (
                                         <>
                                             <Send size={20} />
-                                            承認を依頼する
+                                            {isEdit && currentStatus === 'PUBLISHED' ? '修正して承認を依頼する' : '承認を依頼する'}
                                         </>
                                     )}
                                 </button>
